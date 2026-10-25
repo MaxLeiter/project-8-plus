@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.vercel/
+# Encoded screenshots and clips show game content: they stay out of the repository (scripts/media.py rebuilds them).
+public/media/
+
+.vercel
+.env*

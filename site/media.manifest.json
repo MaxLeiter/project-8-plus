@@ -1,0 +1,1391 @@
+{
+ "version": 1,
+ "files": {
+  "g-900-deck-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-deck-1280.avif",
+   "sha256": "6b861a323b5b1186e3cb27768af2cc6cf239264d455299bdfb403727f29d05d5",
+   "bytes": 84007,
+   "uploaded": "2026-10-07T03:23:22.969Z"
+  },
+  "g-900-deck-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-deck-1280.webp",
+   "sha256": "c27e703b7ae70d5f831d5d3c676b9f41ac56cc3c30db85bb7546ddce28b391fc",
+   "bytes": 108718,
+   "uploaded": "2026-10-07T03:23:23.002Z"
+  },
+  "g-900-deck-1920.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-deck-1920.avif",
+   "sha256": "99ac635c4f7775b3141a0cec543a8da369dc719f4e074fadaf2e57b142467527",
+   "bytes": 163849,
+   "uploaded": "2026-10-07T03:23:28.751Z"
+  },
+  "g-900-deck-1920.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-deck-1920.webp",
+   "sha256": "125b679302a9e74483ccc393599da51823467194163921f47d887598b556854f",
+   "bytes": 206920,
+   "uploaded": "2026-10-07T03:23:28.931Z"
+  },
+  "g-900-deck-2490.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-deck-2490.avif",
+   "sha256": "b99e7a53659f43cd0dbd0f6f4af7c470844569540eb1eb88fc56ff51ccfb5ffa",
+   "bytes": 246952,
+   "uploaded": "2026-10-07T03:23:35.618Z"
+  },
+  "g-900-deck-2490.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-deck-2490.webp",
+   "sha256": "424f20c894d3348978e8a9d0451aec35dbaf5021b3ca955b59533e5c15e9cf1d",
+   "bytes": 310698,
+   "uploaded": "2026-10-07T03:23:35.514Z"
+  },
+  "g-900-deck-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-deck-640.avif",
+   "sha256": "22aa30d8ef02f759b0eff92abdf35d47b7eb320db1e15fafd7a555890499b0b9",
+   "bytes": 25102,
+   "uploaded": "2026-10-07T03:23:41.015Z"
+  },
+  "g-900-deck-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-deck-640.webp",
+   "sha256": "da26723a8d7f0265c1f43b0827bb11ee1b6138e873ced52550eba585efe17945",
+   "bytes": 33860,
+   "uploaded": "2026-10-07T03:23:41.213Z"
+  },
+  "g-900-side-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-side-1280.avif",
+   "sha256": "568ad3db9317d2ba8a5d1bfe31d8979e070b899867fda8a1eaf4b97e95e4f3ec",
+   "bytes": 50640,
+   "uploaded": "2026-10-07T03:23:46.838Z"
+  },
+  "g-900-side-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-side-1280.webp",
+   "sha256": "fe76d9e2a72a1e17ed672103ce82c84c2d9dfcc55726bf1e70bd3a508863415c",
+   "bytes": 71812,
+   "uploaded": "2026-10-07T03:23:47.111Z"
+  },
+  "g-900-side-1920.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-side-1920.avif",
+   "sha256": "8b3e8589c76286fd1de0a0f2d8da90af74c5774e6d3e4ea49dacd109908e8516",
+   "bytes": 92794,
+   "uploaded": "2026-10-07T03:23:54.606Z"
+  },
+  "g-900-side-1920.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-side-1920.webp",
+   "sha256": "132caabf9a5ed60cae86adecf8a7475299c88a82cf9bc11db66a49a74702bd17",
+   "bytes": 129052,
+   "uploaded": "2026-10-07T03:23:54.507Z"
+  },
+  "g-900-side-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-side-640.avif",
+   "sha256": "f4ef27be9f5c17d2c43fa057b0bf64358c075252fdab0e3de45fe990f87db84f",
+   "bytes": 16418,
+   "uploaded": "2026-10-07T03:23:59.673Z"
+  },
+  "g-900-side-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-900-side-640.webp",
+   "sha256": "876e9b3256b2a1e8cded4524eab3c34e52250682a24f2e1289b585f9c834a5e7",
+   "bytes": 24092,
+   "uploaded": "2026-10-07T03:23:59.648Z"
+  },
+  "g-crete-drone-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-crete-drone-1280.avif",
+   "sha256": "f86263eb90e45d8704ea1fa6f31bd0c4fd608f3fe38d9cbba64e7e8669e3c4fd",
+   "bytes": 91157,
+   "uploaded": "2026-10-07T03:24:05.229Z"
+  },
+  "g-crete-drone-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-crete-drone-1280.webp",
+   "sha256": "473aef2cbf6d59b17d7f261532e54118d416365b8588d60cf97f1b403e3da23a",
+   "bytes": 119038,
+   "uploaded": "2026-10-07T03:24:05.417Z"
+  },
+  "g-crete-drone-1920.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-crete-drone-1920.avif",
+   "sha256": "8a122ff95a320d4f5ab9927d0eec41a7268ab3835f5f467b2e8e188655006384",
+   "bytes": 176676,
+   "uploaded": "2026-10-07T03:24:11.841Z"
+  },
+  "g-crete-drone-1920.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-crete-drone-1920.webp",
+   "sha256": "62f55f81bd62b33cae01e19b41ad631e529b7c545d451067b280d1acecde7e80",
+   "bytes": 220158,
+   "uploaded": "2026-10-07T03:24:12.076Z"
+  },
+  "g-crete-drone-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-crete-drone-640.avif",
+   "sha256": "442ecc2ec9a3308d500d37efabce9583c2d087fad2df28a541f65ecd02dee16e",
+   "bytes": 26332,
+   "uploaded": "2026-10-07T03:24:19.052Z"
+  },
+  "g-crete-drone-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-crete-drone-640.webp",
+   "sha256": "f44cda4d6175fd41a6e68dfb838c718ceb455fd82b850d4f951e873b988ab083",
+   "bytes": 35984,
+   "uploaded": "2026-10-07T03:24:19.024Z"
+  },
+  "g-editor-park-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-editor-park-1280.avif",
+   "sha256": "5158437b8cd8303b59bbff279e4ab87e4760f42c1bba5b33507b3a194eb3b6b4",
+   "bytes": 82924,
+   "uploaded": "2026-10-07T03:24:26.052Z"
+  },
+  "g-editor-park-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-editor-park-1280.webp",
+   "sha256": "ddafea09fdb67f808551bd0cb2d7b8836039dabafe6142a4115ef5ee90bf0573",
+   "bytes": 120718,
+   "uploaded": "2026-10-07T03:24:26.099Z"
+  },
+  "g-editor-park-1920.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-editor-park-1920.avif",
+   "sha256": "46b62d19a6b76be3f674caddcf9b84d0ad403e796429de2a7faf6b9b9bb22ed7",
+   "bytes": 169219,
+   "uploaded": "2026-10-07T03:24:32.260Z"
+  },
+  "g-editor-park-1920.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-editor-park-1920.webp",
+   "sha256": "5cf63af52d9d5c87aad762a2923bd4397e56ad833df813046f91045cd1a69ebd",
+   "bytes": 239630,
+   "uploaded": "2026-10-07T03:24:32.344Z"
+  },
+  "g-editor-park-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-editor-park-640.avif",
+   "sha256": "bacc5fbb5555c3f0974b173477a2d476c62c35ca62b95d1cd779bf7f47b784c6",
+   "bytes": 23267,
+   "uploaded": "2026-10-07T03:24:39.129Z"
+  },
+  "g-editor-park-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-editor-park-640.webp",
+   "sha256": "eedaad1de979bdba4def7e8381a94b83a0320cda4ea714eef79aabe3a1557737",
+   "bytes": 34680,
+   "uploaded": "2026-10-07T03:24:39.105Z"
+  },
+  "g-houses-drone-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-houses-drone-1280.avif",
+   "sha256": "23ec6738514c82e5a631f306a02b82e806d916fc0a007aaff0063cdfc77c92e2",
+   "bytes": 104278,
+   "uploaded": "2026-10-07T03:24:46.582Z"
+  },
+  "g-houses-drone-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-houses-drone-1280.webp",
+   "sha256": "d059fa80946e9d7327fb8b48420ffd198660d46b537acd56e273ac10d100fe17",
+   "bytes": 149972,
+   "uploaded": "2026-10-07T03:24:46.608Z"
+  },
+  "g-houses-drone-1920.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-houses-drone-1920.avif",
+   "sha256": "6e6aaccebb70566ecd7328522c84e45611f9f74aae7b58c93136cc61461aca1c",
+   "bytes": 208529,
+   "uploaded": "2026-10-07T03:24:53.889Z"
+  },
+  "g-houses-drone-1920.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-houses-drone-1920.webp",
+   "sha256": "b27834d583883e863cfc6b7418bc26aedb5de2facc87adc69ef19a5d9637438c",
+   "bytes": 289052,
+   "uploaded": "2026-10-07T03:24:53.985Z"
+  },
+  "g-houses-drone-2490.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-houses-drone-2490.avif",
+   "sha256": "49258810ee9896bcbae85c96b1d53dfd1999fcc1a45bfb9bba90f3f9340b9df3",
+   "bytes": 329737,
+   "uploaded": "2026-10-07T03:25:00.542Z"
+  },
+  "g-houses-drone-2490.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-houses-drone-2490.webp",
+   "sha256": "b0b664bcaad7993f096da78eebec50bba0b6c40e1ea4e10bf2a204ff8084179c",
+   "bytes": 446676,
+   "uploaded": "2026-10-07T03:25:00.865Z"
+  },
+  "g-houses-drone-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-houses-drone-640.avif",
+   "sha256": "1bb4b4b72627258b3bd1a9191c742401adae627f6fc9fa33e27253cd2bc7864a",
+   "bytes": 30012,
+   "uploaded": "2026-10-07T03:25:06.604Z"
+  },
+  "g-houses-drone-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-houses-drone-640.webp",
+   "sha256": "371d4acdc6139ee1e10da755df49aa7349ef24d70287f177f67de2425b8b6d2c",
+   "bytes": 44934,
+   "uploaded": "2026-10-07T03:25:06.912Z"
+  },
+  "g-kickflip-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-kickflip-1280.avif",
+   "sha256": "7f0401765b6720e0b48f2413f3eacfee8e572b870eec2b61a5c73b39a225d462",
+   "bytes": 92647,
+   "uploaded": "2026-10-07T03:25:12.712Z"
+  },
+  "g-kickflip-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-kickflip-1280.webp",
+   "sha256": "b917ba12df34c4e609253708acec06f087277c6c579bcdfe3e88ad06086bd189",
+   "bytes": 128752,
+   "uploaded": "2026-10-07T03:25:12.897Z"
+  },
+  "g-kickflip-1920.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-kickflip-1920.avif",
+   "sha256": "d11966e13b01e6d0b98a381c5d42d6737257d427aef55d4f7600941ce8c35ee3",
+   "bytes": 190476,
+   "uploaded": "2026-10-07T03:25:19.333Z"
+  },
+  "g-kickflip-1920.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-kickflip-1920.webp",
+   "sha256": "ffa823bc32aef8153dbbac959eb7f6bf683683c59aa222e8e4d157d16387cdac",
+   "bytes": 259196,
+   "uploaded": "2026-10-07T03:25:19.538Z"
+  },
+  "g-kickflip-2490.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-kickflip-2490.avif",
+   "sha256": "e5288fb1c0e53f8d74aa130f06ad9d09ff7955fee46e961da2f8e9c599d04511",
+   "bytes": 298593,
+   "uploaded": "2026-10-07T03:25:25.676Z"
+  },
+  "g-kickflip-2490.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-kickflip-2490.webp",
+   "sha256": "833124b1bd2b06cb55cd4ec02eb17a34083e077cb56c7319b91e9de69fb7cc36",
+   "bytes": 409796,
+   "uploaded": "2026-10-07T03:25:25.851Z"
+  },
+  "g-kickflip-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-kickflip-640.avif",
+   "sha256": "cca51ef653dd49a26311ea679747b3c316f961e79f054fef2447e9daefcb7fc4",
+   "bytes": 23679,
+   "uploaded": "2026-10-07T03:25:31.613Z"
+  },
+  "g-kickflip-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-kickflip-640.webp",
+   "sha256": "e98ea857b01d6aa0037e81ad65046fa5d150818e9a6ee74a081760fe560001c5",
+   "bytes": 34022,
+   "uploaded": "2026-10-07T03:25:31.869Z"
+  },
+  "g-people-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-people-1280.avif",
+   "sha256": "1a3ceb0ae1243fe85b32cd0663f463e95fccdf7b31ed12c783242c6d7106a5a2",
+   "bytes": 100372,
+   "uploaded": "2026-10-07T03:25:37.663Z"
+  },
+  "g-people-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-people-1280.webp",
+   "sha256": "1f19d73462d2a8fee7d4343b8ea3e81b828c831522f0d81500c070dc91f74683",
+   "bytes": 146358,
+   "uploaded": "2026-10-07T03:25:37.873Z"
+  },
+  "g-people-1920.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-people-1920.avif",
+   "sha256": "43b86dba528b3eccdccc84904f86020b7278e1b52f6723144380cf2552beb0cc",
+   "bytes": 195907,
+   "uploaded": "2026-10-07T03:25:44.554Z"
+  },
+  "g-people-1920.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-people-1920.webp",
+   "sha256": "82c4ffb5a27cdbf12ef4244baaaed3551820a73820cdfb201d231999a71cc901",
+   "bytes": 283342,
+   "uploaded": "2026-10-07T03:25:44.837Z"
+  },
+  "g-people-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-people-640.avif",
+   "sha256": "d7d1728de2a7b721421d3783602b92f4f09a15b458e34a4f92e85736e6921caf",
+   "bytes": 28953,
+   "uploaded": "2026-10-07T03:25:51.045Z"
+  },
+  "g-people-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-people-640.webp",
+   "sha256": "48e1a7dd1da73e5acee6ba23955b941fe469c94d6fc2162e1e409487b8936b56",
+   "bytes": 43498,
+   "uploaded": "2026-10-07T03:25:51.303Z"
+  },
+  "g-rory-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-rory-1280.avif",
+   "sha256": "8d69a52c7aeb6dde972ab5f4be41b6ccd889c4e2426df5ded6010c2806ad4d89",
+   "bytes": 84562,
+   "uploaded": "2026-10-07T03:25:57.055Z"
+  },
+  "g-rory-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-rory-1280.webp",
+   "sha256": "4117303b229c9d17014f5390dc5a2ed91b5c08092f5fbc2c2ef73fd9b442dc14",
+   "bytes": 128926,
+   "uploaded": "2026-10-07T03:25:57.201Z"
+  },
+  "g-rory-1920.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-rory-1920.avif",
+   "sha256": "a8777ab634b84a17d1b63755a588a1895a313371595c99d4686892ea76ea80b1",
+   "bytes": 160453,
+   "uploaded": "2026-10-07T03:26:03.185Z"
+  },
+  "g-rory-1920.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-rory-1920.webp",
+   "sha256": "91bb4360cd3bd5c6bd52513ef88e4fcd5f0f084aec8af29a6b55a264cae37f5e",
+   "bytes": 240774,
+   "uploaded": "2026-10-07T03:26:03.436Z"
+  },
+  "g-rory-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-rory-640.avif",
+   "sha256": "e1e6c43532a049f87ba0c9bcf9a1b748b852be89252bd8c91888831a81bf6ab6",
+   "bytes": 24281,
+   "uploaded": "2026-10-07T03:26:09.987Z"
+  },
+  "g-rory-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-rory-640.webp",
+   "sha256": "620772be0255b70e06b8c563861c49457ea215ebc3b0b45359e0e2ffc48e8af3",
+   "bytes": 36866,
+   "uploaded": "2026-10-07T03:26:10.319Z"
+  },
+  "g-ultrawide-1920.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-ultrawide-1920.avif",
+   "sha256": "a6b994941b7bfc5e0388b0f1de36b9aa191fd9f92feb42ce238af69cbd3e4dd5",
+   "bytes": 109187,
+   "uploaded": "2026-10-07T03:26:16.391Z"
+  },
+  "g-ultrawide-1920.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-ultrawide-1920.webp",
+   "sha256": "aac6adaa02718d6c3c1ddd97e00e3a26ed0e12a387fb6665a4ddfe94611eb1f9",
+   "bytes": 151932,
+   "uploaded": "2026-10-07T03:26:16.695Z"
+  },
+  "g-ultrawide-2880.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-ultrawide-2880.avif",
+   "sha256": "f6b3ad0eb583e98136072b14bb4c32bb153d6be4edc7829afa34eca764b3016b",
+   "bytes": 228126,
+   "uploaded": "2026-10-07T03:26:23.000Z"
+  },
+  "g-ultrawide-2880.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-ultrawide-2880.webp",
+   "sha256": "f3000edaa27eedc5a8591affcff7e0e99583a5454d8b05fafb99433936d01574",
+   "bytes": 310946,
+   "uploaded": "2026-10-07T03:26:23.253Z"
+  },
+  "g-ultrawide-3840.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-ultrawide-3840.avif",
+   "sha256": "a5ed3e984f5f97bd03465e9b0f3f91d3456c13e27c36e8a6f7bf927443e6a97e",
+   "bytes": 374646,
+   "uploaded": "2026-10-07T03:26:29.189Z"
+  },
+  "g-ultrawide-3840.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-ultrawide-3840.webp",
+   "sha256": "96deeb0592caf8344b91c8c405960c9d6b66b58b7316ba97731e14f57e73bbce",
+   "bytes": 498164,
+   "uploaded": "2026-10-07T03:26:29.474Z"
+  },
+  "g-ultrawide-960.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-ultrawide-960.avif",
+   "sha256": "07c8f7fd1253a8f73e9cf725d5dc4c494d63352b477a73e0381e4f3999024835",
+   "bytes": 29714,
+   "uploaded": "2026-10-07T03:26:35.171Z"
+  },
+  "g-ultrawide-960.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/g-ultrawide-960.webp",
+   "sha256": "dd4c79b10924c7f57d1262a7d6622d9433f6a581132d89a823f06de2e3e45857",
+   "bytes": 42446,
+   "uploaded": "2026-10-07T03:26:35.681Z"
+  },
+  "hero-loop-poster-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/hero-loop-poster-1280.avif",
+   "sha256": "2853bb701f954ae21ae6f8963ad82be7454135bd55fb6d74287e1312aa0c4bd4",
+   "bytes": 101967,
+   "uploaded": "2026-10-07T07:40:33.856Z"
+  },
+  "hero-loop-poster-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/hero-loop-poster-1280.webp",
+   "sha256": "dadc529d31bbe6677f988e061c4ac4f1b519ff09d30fce579bfd0891d8243c59",
+   "bytes": 145972,
+   "uploaded": "2026-10-07T07:40:33.953Z"
+  },
+  "hero-loop-poster-1600.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/hero-loop-poster-1600.avif",
+   "sha256": "71d9fa6bb13e0db015447e660a2aba0f40b04fdab4f522b39ae2fb958f9bfb30",
+   "bytes": 142620,
+   "uploaded": "2026-10-07T03:26:41.240Z"
+  },
+  "hero-loop-poster-1600.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/hero-loop-poster-1600.webp",
+   "sha256": "af6165be3eb873daf429cedc6663c3fc0bb60bce6ce48f9416522cdbd8034777",
+   "bytes": 200876,
+   "uploaded": "2026-10-07T03:26:41.596Z"
+  },
+  "hero-loop-poster-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/hero-loop-poster-640.avif",
+   "sha256": "2360c67b1a290c238f26f427a0559ceb057ed3c159aa57c5ac353c14a9e650eb",
+   "bytes": 31274,
+   "uploaded": "2026-10-07T03:26:47.582Z"
+  },
+  "hero-loop-poster-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/hero-loop-poster-640.webp",
+   "sha256": "9b0df076283c16ea01b52bce472d3f997edbaa26a7bad7aaf66fb70824271cce",
+   "bytes": 46578,
+   "uploaded": "2026-10-07T03:26:47.918Z"
+  },
+  "hero-loop.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/hero-loop.av1.mp4",
+   "sha256": "69323bfbdbe55fe9bcd55d3af498b3a6d729ab94583b9496483ddf37127c0f7c",
+   "bytes": 2419697,
+   "uploaded": "2026-10-07T03:26:54.609Z"
+  },
+  "hero-loop.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/hero-loop.h264.mp4",
+   "sha256": "4d5a10f4794b07d8484e136ab02423aa9f1d45f1b4904e0094ba94cfc3f2195b",
+   "bytes": 3078567,
+   "uploaded": "2026-10-07T03:26:55.163Z"
+  },
+  "hero-m-400.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/hero-m-400.avif",
+   "sha256": "f821b4b469892d0ee7277ccd3104e1bfc753d922929f1bfd20d51dcfb4a9118c",
+   "bytes": 29471,
+   "uploaded": "2026-10-07T07:40:44.553Z"
+  },
+  "hero-m-400.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/hero-m-400.webp",
+   "sha256": "2681a31ac644da808f6d0870156097e915e0afd6baf6ed0c51b4d57b5bde7c35",
+   "bytes": 37194,
+   "uploaded": "2026-10-07T07:40:45.499Z"
+  },
+  "hero-m-600.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/hero-m-600.avif",
+   "sha256": "06700bd4420960543a1a9b42310b51d5a4369ca10eda21504eb2d83357c6034a",
+   "bytes": 57903,
+   "uploaded": "2026-10-07T07:40:52.882Z"
+  },
+  "hero-m-600.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/hero-m-600.webp",
+   "sha256": "440e43ab3ee059e1aef37b0ee1bea9bab65bb064739f7a123da0304128ebb4c1",
+   "bytes": 70304,
+   "uploaded": "2026-10-07T07:40:53.192Z"
+  },
+  "livelink-overlay-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/livelink-overlay-1280.avif",
+   "sha256": "a579f617842424923ac2c0577dac76cecca49eb14df1f9e8f2358eb45ae061d4",
+   "bytes": 103796,
+   "uploaded": "2026-10-07T03:27:00.724Z"
+  },
+  "livelink-overlay-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/livelink-overlay-1280.webp",
+   "sha256": "5bf0e8d338962f0b4801c72ac212fb3c63b4a2830428bc3f578382400d7e5875",
+   "bytes": 149072,
+   "uploaded": "2026-10-07T03:27:01.398Z"
+  },
+  "livelink-overlay-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/livelink-overlay-640.avif",
+   "sha256": "f8126d3ed8e9cbac2daa8e8fe7700582394ff03154fa8b77716181c3e51c29f6",
+   "bytes": 28966,
+   "uploaded": "2026-10-07T03:27:07.179Z"
+  },
+  "livelink-overlay-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/livelink-overlay-640.webp",
+   "sha256": "fc11902a00e093e1061915c755a6f47199d60633f1cbc728c2f985e9f777bca6",
+   "bytes": 42036,
+   "uploaded": "2026-10-07T03:27:08.100Z"
+  },
+  "loop-editor-park-poster-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/loop-editor-park-poster-1280.avif",
+   "sha256": "692233019a4e5fc1be3a9ec769f855b5c0d8dc67de20cf97ea3a0a58b2b3ea35",
+   "bytes": 95640,
+   "uploaded": "2026-10-07T03:27:13.951Z"
+  },
+  "loop-editor-park-poster-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/loop-editor-park-poster-1280.webp",
+   "sha256": "53a06cfb30eafc5f8ab7325732062fef7ea39d2bdc6cabaad8a17c129ce10f20",
+   "bytes": 133284,
+   "uploaded": "2026-10-07T03:27:14.433Z"
+  },
+  "loop-editor-park-poster-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/loop-editor-park-poster-640.avif",
+   "sha256": "0433b811ecd0d6d776405e2a802522650bbe5c9e15c13d6fa36194bd0030703f",
+   "bytes": 25479,
+   "uploaded": "2026-10-07T03:27:20.019Z"
+  },
+  "loop-editor-park-poster-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/loop-editor-park-poster-640.webp",
+   "sha256": "c119e3da102b70524b7011ba1da591e5f17c78c56e5407e985cb9225eb9c1dcb",
+   "bytes": 36446,
+   "uploaded": "2026-10-07T03:27:20.366Z"
+  },
+  "loop-editor-park.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/loop-editor-park.av1.mp4",
+   "sha256": "742bf766457766a16d0704282c0e18414ef0ea990576a12816e7bf35102a7ea8",
+   "bytes": 940675,
+   "uploaded": "2026-10-07T03:27:26.870Z"
+  },
+  "loop-editor-park.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/loop-editor-park.h264.mp4",
+   "sha256": "cdf386e471419bedb133d1b6e405274f30eed52dfe11b77b0b09bff62bd2b312",
+   "bytes": 1222524,
+   "uploaded": "2026-10-07T03:27:27.304Z"
+  },
+  "loop-editor-park.m.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/loop-editor-park.m.av1.mp4",
+   "sha256": "5ea52c6a7c45d100a5989e19e86fd925a5869988e216d3f0b5ca91e6181eb2a2",
+   "bytes": 294332,
+   "uploaded": "2026-10-07T07:41:00.834Z"
+  },
+  "loop-editor-park.m.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/loop-editor-park.m.h264.mp4",
+   "sha256": "097176d9bc5ce6ff48122e076abfff8f58913bae6132e098cd060dbe0e59acef",
+   "bytes": 362191,
+   "uploaded": "2026-10-07T07:41:01.226Z"
+  },
+  "lua-speech-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/lua-speech-1280.avif",
+   "sha256": "201132b8336ac3774c70ecd9fb90862dac086629b12aedf08d2925afcba4f700",
+   "bytes": 114527,
+   "uploaded": "2026-10-07T03:27:33.674Z"
+  },
+  "lua-speech-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/lua-speech-1280.webp",
+   "sha256": "ea20c0df2d797afc7b3eb1ee351452e8c02cfa28fcd98a9af365cf135c43bcb7",
+   "bytes": 168108,
+   "uploaded": "2026-10-07T03:27:34.146Z"
+  },
+  "lua-speech-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/lua-speech-640.avif",
+   "sha256": "e95911e1649ac8fefe1dc63742c68a963f41563ac6a9057be661ce9fac61173c",
+   "bytes": 33231,
+   "uploaded": "2026-10-07T03:27:39.819Z"
+  },
+  "lua-speech-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/lua-speech-640.webp",
+   "sha256": "301ed0693642e6aef1c88baf192260afcc513a5726415abc102151d0098bf759",
+   "bytes": 52030,
+   "uploaded": "2026-10-07T03:27:40.230Z"
+  },
+  "og-1200.jpg": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/og-1200.jpg",
+   "sha256": "b6fc9a03d5751db083c78eef7a2cd8e350ddd51486679e43813dc5c1fc176c79",
+   "bytes": 113389,
+   "uploaded": "2026-10-07T03:27:46.249Z"
+  },
+  "peds-pro-line-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/peds-pro-line-1280.avif",
+   "sha256": "69189d93101a1eae0bbe935bfec613d3a0459375a617eb3ecca7b69c7439beed",
+   "bytes": 87035,
+   "uploaded": "2026-10-07T03:27:46.285Z"
+  },
+  "peds-pro-line-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/peds-pro-line-1280.webp",
+   "sha256": "7a1d0405e517880c1e47e5b36f1630664f54d85406533acbec58e7715c708524",
+   "bytes": 125660,
+   "uploaded": "2026-10-07T03:27:52.116Z"
+  },
+  "peds-pro-line-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/peds-pro-line-640.avif",
+   "sha256": "9bba1e2a63cfe4e682dc812c5ccf66e5ed40a316ff4ba6315c20d3a52483e5ec",
+   "bytes": 27156,
+   "uploaded": "2026-10-07T03:27:52.272Z"
+  },
+  "peds-pro-line-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/peds-pro-line-640.webp",
+   "sha256": "32e84a901e219ca79efe9ed521f9d631ff547b2edcb539ec26cf7f39147abf73",
+   "bytes": 40506,
+   "uploaded": "2026-10-07T03:27:57.835Z"
+  },
+  "quest-race-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/quest-race-1280.avif",
+   "sha256": "d74164ea05ce0e283abdbcf7b293174535b19d34e3dd055f572f801465d3e7ca",
+   "bytes": 76718,
+   "uploaded": "2026-10-07T03:27:58.091Z"
+  },
+  "quest-race-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/quest-race-1280.webp",
+   "sha256": "76c09cb8b2ff06c7be0a415aae78148498a4fed0f2b4d173b20202cabc73f1dd",
+   "bytes": 106210,
+   "uploaded": "2026-10-07T03:28:03.335Z"
+  },
+  "quest-race-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/quest-race-640.avif",
+   "sha256": "3edee5408fd71e415953c9efac3f1c57ae98144be8848cc78fa81664e6ce5b97",
+   "bytes": 23491,
+   "uploaded": "2026-10-07T03:28:03.555Z"
+  },
+  "quest-race-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/quest-race-640.webp",
+   "sha256": "c3c4335cdef0a0ffd4aff4a8a67c21c16ef0159aaebf85b54dd8af66865edd9c",
+   "bytes": 34982,
+   "uploaded": "2026-10-07T03:28:09.410Z"
+  },
+  "trailer-poster-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/trailer-poster-1280.avif",
+   "sha256": "d0c1f9deee8cb001f4847da0ced76c9ea5f250465c5f005c46cb57647c277558",
+   "bytes": 49282,
+   "uploaded": "2026-10-07T03:28:09.488Z"
+  },
+  "trailer-poster-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/trailer-poster-1280.webp",
+   "sha256": "0f86a551fe8bf37e70b407a586d615e6c1493002cb5a5222964f80a1e4be3668",
+   "bytes": 62188,
+   "uploaded": "2026-10-07T03:28:15.826Z"
+  },
+  "trailer-poster-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/trailer-poster-640.avif",
+   "sha256": "02c678c45956f5f9d8ef2f13fb8793e9c152e44b2746afbe08262b90219891cf",
+   "bytes": 16964,
+   "uploaded": "2026-10-07T03:28:15.850Z"
+  },
+  "trailer-poster-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/trailer-poster-640.webp",
+   "sha256": "7e8b549bcd1b88ce1e5d74ca7ac7923ac023c81000e23687924ad74dba30e4ab",
+   "bytes": 23208,
+   "uploaded": "2026-10-07T03:28:23.684Z"
+  },
+  "trailer.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/trailer.av1.mp4",
+   "sha256": "cbe1baed9924c6ed61e3be92f5b0445baaa4974aa121c397ed249148186152ec",
+   "bytes": 18407928,
+   "uploaded": "2026-10-07T03:28:27.961Z"
+  },
+  "trailer.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/trailer.h264.mp4",
+   "sha256": "9ee770576a8454cf3e7ff49b53b46371cf73dd067529f0837783c9a9a99a5761",
+   "bytes": 19875481,
+   "uploaded": "2026-10-07T03:28:33.791Z"
+  },
+  "trailer.m.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/trailer.m.av1.mp4",
+   "sha256": "16ed1ea8bb2ca5088c95718528f771ccd7fb6619f65a18c288f3be0eba1c34dc",
+   "bytes": 6076748,
+   "uploaded": "2026-10-07T07:41:11.668Z"
+  },
+  "trailer.m.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/trailer.m.h264.mp4",
+   "sha256": "661d185d9c467d8c5bd3d43427bf6fdcc441c9c0437fb743af4df07c2b9fe8cb",
+   "bytes": 8149041,
+   "uploaded": "2026-10-07T07:41:13.466Z"
+  },
+  "ui-draw-rail-poster-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-draw-rail-poster-1280.avif",
+   "sha256": "3cc91295272e1a169c5b1eb9c5cfc11b573248df9e2edffe86e41b4643a07ed9",
+   "bytes": 63272,
+   "uploaded": "2026-10-07T03:28:33.999Z"
+  },
+  "ui-draw-rail-poster-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-draw-rail-poster-1280.webp",
+   "sha256": "af5102feed862aae6a63b91e0f5b2b5394039be71ea86d96e30b51bed12c2a1c",
+   "bytes": 82998,
+   "uploaded": "2026-10-07T03:28:40.815Z"
+  },
+  "ui-draw-rail-poster-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-draw-rail-poster-640.avif",
+   "sha256": "faa7aece807705ab7f289278788e3842b4d6a0fa356c0323c57d2abc6b7d6df1",
+   "bytes": 20014,
+   "uploaded": "2026-10-07T03:28:40.844Z"
+  },
+  "ui-draw-rail-poster-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-draw-rail-poster-640.webp",
+   "sha256": "93231a3f1b31645cac3ab072094d5439d0fe0f176cf7caa1281ec345ef074417",
+   "bytes": 25520,
+   "uploaded": "2026-10-07T03:28:46.934Z"
+  },
+  "ui-draw-rail.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-draw-rail.av1.mp4",
+   "sha256": "5065c33595bdbe9b986f46bb02c4b52060573d267792d5cdce75e509be2cf426",
+   "bytes": 391324,
+   "uploaded": "2026-10-07T03:28:47.103Z"
+  },
+  "ui-draw-rail.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-draw-rail.h264.mp4",
+   "sha256": "574c27bb2eaf456e2b3cefeecb6b2c3c89e733bca94cfbe1d2cecdb165b1dd8c",
+   "bytes": 436198,
+   "uploaded": "2026-10-07T03:28:53.297Z"
+  },
+  "ui-draw-rail.m.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-draw-rail.m.av1.mp4",
+   "sha256": "c08a5b4a7aae449c91e1c08f85779ceb7c56f0e315c9957043dd4fc626d4b6dc",
+   "bytes": 143199,
+   "uploaded": "2026-10-07T07:41:21.746Z"
+  },
+  "ui-draw-rail.m.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-draw-rail.m.h264.mp4",
+   "sha256": "8489c5b75056d4b72ed791a347830c92f56e44ae9ea54af3e41b3d872c5b6dc5",
+   "bytes": 114474,
+   "uploaded": "2026-10-07T07:41:22.844Z"
+  },
+  "ui-editor-street-1720.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-editor-street-1720.avif",
+   "sha256": "f73b160716b1a76620d0264236763456d3a8ac541abdeed18fb65c71b30a83be",
+   "bytes": 91887,
+   "uploaded": "2026-10-07T03:28:53.177Z"
+  },
+  "ui-editor-street-1720.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-editor-street-1720.webp",
+   "sha256": "c467b2bf84491fa769fec56bb13869b0f09fdb9de8aab4366f13edc85b2daf49",
+   "bytes": 140256,
+   "uploaded": "2026-10-07T03:28:59.408Z"
+  },
+  "ui-editor-street-860.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-editor-street-860.avif",
+   "sha256": "453a9d29f6edb632c1404c0ddc078861a7923286b07e1926db5617659de93c8c",
+   "bytes": 33064,
+   "uploaded": "2026-10-07T03:28:59.575Z"
+  },
+  "ui-editor-street-860.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-editor-street-860.webp",
+   "sha256": "f54680ced2e8e54fbd1b1fd1a17c5b0607b27acb7ade30caa98116cde6740ed0",
+   "bytes": 43034,
+   "uploaded": "2026-10-07T03:29:05.746Z"
+  },
+  "ui-goal-poster-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-goal-poster-1280.avif",
+   "sha256": "0ee8a740635a71f5b2a271ff6d92d65903e424bcbb047cd1fe776efb0cb71050",
+   "bytes": 57236,
+   "uploaded": "2026-10-07T03:29:05.723Z"
+  },
+  "ui-goal-poster-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-goal-poster-1280.webp",
+   "sha256": "2642cae1fbb94cd22672e2916ed75ffeceddf0f186f4f2ccb0098a13c842d33e",
+   "bytes": 74954,
+   "uploaded": "2026-10-07T03:29:11.432Z"
+  },
+  "ui-goal-poster-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-goal-poster-640.avif",
+   "sha256": "c1f8a4468f002f87f7351717d290cb26e5bef8d40431a9417af78fb26211b833",
+   "bytes": 19456,
+   "uploaded": "2026-10-07T03:29:11.350Z"
+  },
+  "ui-goal-poster-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-goal-poster-640.webp",
+   "sha256": "89d08811f1c92974811d8ffbff9cec049a9e900791ebd2b2ec0a64c06031d057",
+   "bytes": 23926,
+   "uploaded": "2026-10-07T03:29:18.482Z"
+  },
+  "ui-goal.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-goal.av1.mp4",
+   "sha256": "d3cf1499bb6e604e1f39f807c46a974969660f5f3c684c5088f29d780e88fd45",
+   "bytes": 725283,
+   "uploaded": "2026-10-07T03:29:18.679Z"
+  },
+  "ui-goal.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-goal.h264.mp4",
+   "sha256": "cd4b52416b58cd1c463c1e3b822cd7cdcb229c271e01677eb9a399528812906f",
+   "bytes": 1077175,
+   "uploaded": "2026-10-07T03:29:25.286Z"
+  },
+  "ui-goal.m.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-goal.m.av1.mp4",
+   "sha256": "9b8a6afc098f33e7e2af87d80d53159973af6a2abf6e89324ab24121d69caaef",
+   "bytes": 225937,
+   "uploaded": "2026-10-07T07:41:29.687Z"
+  },
+  "ui-goal.m.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-goal.m.h264.mp4",
+   "sha256": "6d1518395651d7785016fa395b38f64b3270124fc2245e6a96d0bf2174b31de6",
+   "bytes": 219394,
+   "uploaded": "2026-10-07T07:41:30.857Z"
+  },
+  "ui-launcher-mods-1600.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-mods-1600.avif",
+   "sha256": "ddc92a65d018d49cd2f900d404040b31fd37d403fa9ceb15f32d08e2deeda63e",
+   "bytes": 20922,
+   "uploaded": "2026-10-07T03:29:25.142Z"
+  },
+  "ui-launcher-mods-1600.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-mods-1600.webp",
+   "sha256": "da6cc5bfefc96b49bf9411ae58d5ec0abca9eab95789951891c95a253b59eac8",
+   "bytes": 36814,
+   "uploaded": "2026-10-07T03:29:31.667Z"
+  },
+  "ui-launcher-mods-800.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-mods-800.avif",
+   "sha256": "921fe2db6e1213d095fcf806a9fa85fef19034e88a66671ebfe1ebd7dfa2bc20",
+   "bytes": 9998,
+   "uploaded": "2026-10-07T03:29:31.688Z"
+  },
+  "ui-launcher-mods-800.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-mods-800.webp",
+   "sha256": "0a770370418e7287344ddc6985bbe8532f30a3c1876c3ecf13ee72c37aad11ff",
+   "bytes": 12936,
+   "uploaded": "2026-10-07T03:29:38.688Z"
+  },
+  "ui-launcher-play-1600.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-play-1600.avif",
+   "sha256": "5f44ce47a0963d4814e67e12564f908dd5f6f593dd864aa771db1fbd230f5193",
+   "bytes": 23702,
+   "uploaded": "2026-10-07T03:29:38.799Z"
+  },
+  "ui-launcher-play-1600.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-play-1600.webp",
+   "sha256": "b73da1e7f8bf3591d5453a9d63c5e896c4093c2d3738475133223966f95eb498",
+   "bytes": 40402,
+   "uploaded": "2026-10-07T03:29:44.694Z"
+  },
+  "ui-launcher-play-800.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-play-800.avif",
+   "sha256": "c20e37e4ce7a218a825741a9bc23efe4541b878dba1c959cfebcefbcfe5069fa",
+   "bytes": 11600,
+   "uploaded": "2026-10-07T03:29:44.751Z"
+  },
+  "ui-launcher-play-800.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-play-800.webp",
+   "sha256": "fb2fe4a4eff31f3c6a8e9377bd8d4e8c53787321fa17edb717ee0afcb0b018b3",
+   "bytes": 15982,
+   "uploaded": "2026-10-07T03:29:50.557Z"
+  },
+  "ui-launcher-settings-1600.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-settings-1600.avif",
+   "sha256": "02a5331cb430cf4d4983b4f472579c0bca4633da45038d0759eb26b503a27124",
+   "bytes": 25225,
+   "uploaded": "2026-10-07T03:29:50.533Z"
+  },
+  "ui-launcher-settings-1600.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-settings-1600.webp",
+   "sha256": "51713cc06fcf440c0920ae63cd85ae1e7c85f9ebb38b6cdb69ee02aa4d406eb9",
+   "bytes": 46864,
+   "uploaded": "2026-10-07T03:29:56.420Z"
+  },
+  "ui-launcher-settings-800.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-settings-800.avif",
+   "sha256": "3a0b0131ca21c7fd67a61093e5f7ba6ebdcbe92a30bbb70e544fe9878f0843e8",
+   "bytes": 13784,
+   "uploaded": "2026-10-07T03:29:56.360Z"
+  },
+  "ui-launcher-settings-800.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-settings-800.webp",
+   "sha256": "4c9879850f39433b970b4537a7b3ae58d75e9ef0f41a07841b4a53ee8726eab7",
+   "bytes": 15740,
+   "uploaded": "2026-10-07T03:30:02.677Z"
+  },
+  "ui-launcher-textures-1600.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-textures-1600.avif",
+   "sha256": "04043ccc34db8f6e9480bc715ecd98bc5cb0faccf8131a8fde9bb5a81f8238b5",
+   "bytes": 52950,
+   "uploaded": "2026-10-07T03:30:02.828Z"
+  },
+  "ui-launcher-textures-1600.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-textures-1600.webp",
+   "sha256": "e2c81bbf5fd78df47b44da1282050448c00b4ab5d60a3913195df6dcf68827c8",
+   "bytes": 76982,
+   "uploaded": "2026-10-07T03:30:10.027Z"
+  },
+  "ui-launcher-textures-800.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-textures-800.avif",
+   "sha256": "463b55bb65ca62e1cca628b72cd49a6390159dfe56a559c5754d9daff8b0dc15",
+   "bytes": 21582,
+   "uploaded": "2026-10-07T03:30:10.709Z"
+  },
+  "ui-launcher-textures-800.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-textures-800.webp",
+   "sha256": "5e1a145d14ae5d37d72aa3514c07ecb6520ec261d302dfab8c1a7807bdc14279",
+   "bytes": 28390,
+   "uploaded": "2026-10-07T03:30:16.095Z"
+  },
+  "ui-launcher-tour-poster-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-tour-poster-1280.avif",
+   "sha256": "47b3f994d63c23b29d5316b78d09af99e650405ac3740ed017ac0d568b09db11",
+   "bytes": 17524,
+   "uploaded": "2026-10-07T03:30:16.786Z"
+  },
+  "ui-launcher-tour-poster-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-tour-poster-1280.webp",
+   "sha256": "5c7cbfb4445b557c7cbab227f3ef4274c163783416a6d81ea97a5af93db690bb",
+   "bytes": 21650,
+   "uploaded": "2026-10-07T03:30:22.794Z"
+  },
+  "ui-launcher-tour-poster-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-tour-poster-640.avif",
+   "sha256": "9784bf18366c73b1164baf6c821812973eebeb48f44fd1feb0cf04738280433f",
+   "bytes": 6574,
+   "uploaded": "2026-10-07T03:30:23.537Z"
+  },
+  "ui-launcher-tour-poster-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-tour-poster-640.webp",
+   "sha256": "6f5d735196a216e7694c821945be26e85a4ab63b92f2a6bc0975b5bd6119b04a",
+   "bytes": 8008,
+   "uploaded": "2026-10-07T03:30:30.533Z"
+  },
+  "ui-launcher-tour.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-tour.av1.mp4",
+   "sha256": "a750b929e463ab6dc784f0f509ffa855dc731784ca16842ee1b13b8f279eccd1",
+   "bytes": 297850,
+   "uploaded": "2026-10-07T03:30:31.185Z"
+  },
+  "ui-launcher-tour.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-tour.h264.mp4",
+   "sha256": "b9add5fcde1589b812a5e7cb74d4321dcd9d5e0e57f6f2dc6622539d506c22be",
+   "bytes": 333339,
+   "uploaded": "2026-10-07T03:30:37.971Z"
+  },
+  "ui-launcher-tour.m.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-tour.m.av1.mp4",
+   "sha256": "d749c2eff9115f9d43d92960d68e67339cebd7490ef7e5997ed80f961b429885",
+   "bytes": 100629,
+   "uploaded": "2026-10-07T07:41:37.757Z"
+  },
+  "ui-launcher-tour.m.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-launcher-tour.m.h264.mp4",
+   "sha256": "7d4f0fc30fc7ebf8ea05307ca502f4910c75bd5e6967199e2347edf7fb641c83",
+   "bytes": 103605,
+   "uploaded": "2026-10-07T07:41:39.283Z"
+  },
+  "ui-live-edit-poster-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-live-edit-poster-1280.avif",
+   "sha256": "f93b2bc3093daf445bc2e205b276a02e70a1e06693abb30cdc64c9f631fe6241",
+   "bytes": 61634,
+   "uploaded": "2026-10-07T03:30:38.578Z"
+  },
+  "ui-live-edit-poster-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-live-edit-poster-1280.webp",
+   "sha256": "3f749a2757737f16173d7b3961750e36b81c07c978c707293bd32352df71b6a6",
+   "bytes": 79988,
+   "uploaded": "2026-10-07T03:30:45.102Z"
+  },
+  "ui-live-edit-poster-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-live-edit-poster-640.avif",
+   "sha256": "42c2e3efeaf3061dadba18673e671d30c980bb27a3c8fe5b9434fa1211d1c4ef",
+   "bytes": 20014,
+   "uploaded": "2026-10-07T03:30:45.526Z"
+  },
+  "ui-live-edit-poster-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-live-edit-poster-640.webp",
+   "sha256": "f7c1926bcfb703c5992fcd6090edc866d797f50fbc787d7ecab89d11a9e83d25",
+   "bytes": 25284,
+   "uploaded": "2026-10-07T03:30:52.418Z"
+  },
+  "ui-live-edit.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-live-edit.av1.mp4",
+   "sha256": "4ed4ffd0997ebd3f6e4396be8bfa30f4b4cfae59b443f599576faf148d49c041",
+   "bytes": 301647,
+   "uploaded": "2026-10-07T03:30:53.118Z"
+  },
+  "ui-live-edit.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-live-edit.h264.mp4",
+   "sha256": "c2b19e6a3537121c8919703a35c8a0d1231671dd8aaa45c34ca2ec8fd465cb0f",
+   "bytes": 323242,
+   "uploaded": "2026-10-07T03:30:58.994Z"
+  },
+  "ui-live-edit.m.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-live-edit.m.av1.mp4",
+   "sha256": "ac8bb1a69c8cf26d74f4c1538e97d5494a1de6f392f1b55d5858a3608850927f",
+   "bytes": 108279,
+   "uploaded": "2026-10-07T07:41:47.061Z"
+  },
+  "ui-live-edit.m.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-live-edit.m.h264.mp4",
+   "sha256": "53db7eecb32644f9fbc482cebc406def91162ae59b1eebf1cdc99a6fdb6c2b28",
+   "bytes": 88460,
+   "uploaded": "2026-10-07T07:41:48.256Z"
+  },
+  "ui-lua-poster-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-lua-poster-1280.avif",
+   "sha256": "80f32e9a59692eab39267b9e8333984d18c4c9e94fa1447495c50af3ed5d185e",
+   "bytes": 56470,
+   "uploaded": "2026-10-07T03:30:59.187Z"
+  },
+  "ui-lua-poster-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-lua-poster-1280.webp",
+   "sha256": "374e7a6fb3b9756c719dfb30169bdf40a20216afd0b9ccc96fa782442b938147",
+   "bytes": 77212,
+   "uploaded": "2026-10-07T03:31:05.117Z"
+  },
+  "ui-lua-poster-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-lua-poster-640.avif",
+   "sha256": "fd932a8b1457f5fa2a0806a6e7447e40d66c487f9cb7227aea5e70ee5039c2b1",
+   "bytes": 18941,
+   "uploaded": "2026-10-07T03:31:05.072Z"
+  },
+  "ui-lua-poster-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-lua-poster-640.webp",
+   "sha256": "f71e33dfafb61963917119d483db1956c5016e02f8b13d06e023c1d430dcae9e",
+   "bytes": 25508,
+   "uploaded": "2026-10-07T03:31:10.973Z"
+  },
+  "ui-lua.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-lua.av1.mp4",
+   "sha256": "4ccd71a60b68c5cf0344e6b62dcfcba4bf385b412fa73b0834086345495f6cf6",
+   "bytes": 490867,
+   "uploaded": "2026-10-07T03:31:11.175Z"
+  },
+  "ui-lua.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-lua.h264.mp4",
+   "sha256": "08b3b04cc8e1dfaa206829a297be4ccfb823b0d826b3e63141afe9399b92d5a6",
+   "bytes": 510173,
+   "uploaded": "2026-10-07T03:31:17.207Z"
+  },
+  "ui-lua.m.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-lua.m.av1.mp4",
+   "sha256": "4d1dbfb171dad4d9f1f6432f1d1929c1dd973d503f721fa0ec7f6df450fe7f56",
+   "bytes": 185550,
+   "uploaded": "2026-10-07T07:41:55.744Z"
+  },
+  "ui-lua.m.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-lua.m.h264.mp4",
+   "sha256": "df2e966be6add2374d65ca1eed6cb3b4d8d45ffc62f30dcc536f7907cb07e07d",
+   "bytes": 151925,
+   "uploaded": "2026-10-07T07:41:56.876Z"
+  },
+  "ui-mods-install-poster-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-mods-install-poster-1280.avif",
+   "sha256": "2f154c0f6ee5a77452fa359d49de6e3152d226b535aa82976e5b06ab44ecacf9",
+   "bytes": 23216,
+   "uploaded": "2026-10-07T03:31:17.010Z"
+  },
+  "ui-mods-install-poster-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-mods-install-poster-1280.webp",
+   "sha256": "1cc765f9e049f1fcba1f570fb47db3d91961b375f7e93877d756ef0fbeac4738",
+   "bytes": 29292,
+   "uploaded": "2026-10-07T03:31:23.267Z"
+  },
+  "ui-mods-install-poster-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-mods-install-poster-640.avif",
+   "sha256": "e8445c62805a470475c68d311cde6248a087c30f43056d9eb9df108c68a4adb0",
+   "bytes": 8533,
+   "uploaded": "2026-10-07T03:31:23.224Z"
+  },
+  "ui-mods-install-poster-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-mods-install-poster-640.webp",
+   "sha256": "68289db9e7d7ad7a2d158cd55350428a27bd9276384765e2a627596319f54c69",
+   "bytes": 9812,
+   "uploaded": "2026-10-07T03:31:28.581Z"
+  },
+  "ui-mods-install.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-mods-install.av1.mp4",
+   "sha256": "420aa16bfdc0827aab3a921c25ebc95a67d477d1f1bf2016204c26ff86a0965a",
+   "bytes": 128255,
+   "uploaded": "2026-10-07T03:31:28.808Z"
+  },
+  "ui-mods-install.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-mods-install.h264.mp4",
+   "sha256": "c11a3884ade1ef131bbc586ccaa34ec499b310e5bec0a6358a6d60dbe5b5cf08",
+   "bytes": 184287,
+   "uploaded": "2026-10-07T03:31:35.125Z"
+  },
+  "ui-mods-install.m.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-mods-install.m.av1.mp4",
+   "sha256": "3ebfe2ee9d89bd9437264e011b244eca9934f8df1e2fd0e2816f9ade2c4ee497",
+   "bytes": 48751,
+   "uploaded": "2026-10-07T07:42:05.286Z"
+  },
+  "ui-mods-install.m.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-mods-install.m.h264.mp4",
+   "sha256": "2ea17c090a8dfa6eaa7829f7575ba1506484da6c26ca887c4cebb8218e3f1a6e",
+   "bytes": 58226,
+   "uploaded": "2026-10-07T07:42:06.791Z"
+  },
+  "ui-park-scratch-poster-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-park-scratch-poster-1280.avif",
+   "sha256": "1ecb2d4db5b8652831322ad922c479192531ba45f5d8927dee5b4b2ef1c12d18",
+   "bytes": 32508,
+   "uploaded": "2026-10-07T03:31:35.082Z"
+  },
+  "ui-park-scratch-poster-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-park-scratch-poster-1280.webp",
+   "sha256": "3d6ec778f93e831a23740e1db981d7691dd9a73870a08985e17dc4a699e96380",
+   "bytes": 40532,
+   "uploaded": "2026-10-07T03:31:41.844Z"
+  },
+  "ui-park-scratch-poster-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-park-scratch-poster-640.avif",
+   "sha256": "45ac9206ec113015a0e6e234af04ee96247b13e5ada995e29c5ad8db627152ac",
+   "bytes": 12065,
+   "uploaded": "2026-10-07T03:31:41.681Z"
+  },
+  "ui-park-scratch-poster-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-park-scratch-poster-640.webp",
+   "sha256": "79d3e309ef50b6ee5a1f00251ceaa830ebffc57c347c5a1f786daa695c384a27",
+   "bytes": 14604,
+   "uploaded": "2026-10-07T03:31:47.520Z"
+  },
+  "ui-park-scratch.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-park-scratch.av1.mp4",
+   "sha256": "d09997986b5b48931bb12781d230bd2a395f29920c0433e9bfd9b7b7d9607855",
+   "bytes": 287803,
+   "uploaded": "2026-10-07T03:31:47.917Z"
+  },
+  "ui-park-scratch.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-park-scratch.h264.mp4",
+   "sha256": "19e69ba539093675e178b3f405569921735cedd21d080f92ddb60e70fab2c7c7",
+   "bytes": 363688,
+   "uploaded": "2026-10-07T03:31:53.018Z"
+  },
+  "ui-park-scratch.m.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-park-scratch.m.av1.mp4",
+   "sha256": "bf0ec146fa292aa76a32659137a231a1b33067396abf592785c6c45d88609721",
+   "bytes": 106253,
+   "uploaded": "2026-10-07T07:42:13.880Z"
+  },
+  "ui-park-scratch.m.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-park-scratch.m.h264.mp4",
+   "sha256": "fa720c37dbded13d70c39919baf2e1fc8268ed732c245cbdec5000c225dea759",
+   "bytes": 101195,
+   "uploaded": "2026-10-07T07:42:15.393Z"
+  },
+  "ui-place-qp-poster-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-place-qp-poster-1280.avif",
+   "sha256": "fa2d632459670204a7127fb5a9756c81b6a6370904a5c4bf80af1ac33dcbc32f",
+   "bytes": 58905,
+   "uploaded": "2026-10-07T03:31:53.234Z"
+  },
+  "ui-place-qp-poster-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-place-qp-poster-1280.webp",
+   "sha256": "12585d0c222794127cda148ecb460e394279e95ca3f97cb3763667b18f6e8767",
+   "bytes": 77056,
+   "uploaded": "2026-10-07T03:31:58.489Z"
+  },
+  "ui-place-qp-poster-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-place-qp-poster-640.avif",
+   "sha256": "4237ac0faba94c48c9d3a6fe27f58ad930adeb3792b27e0b93c12327f3af23b3",
+   "bytes": 19240,
+   "uploaded": "2026-10-07T03:31:58.807Z"
+  },
+  "ui-place-qp-poster-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-place-qp-poster-640.webp",
+   "sha256": "7f0f0b4f068fe6b2374fb21a86a3fe2930692a4872058ef86e2ebadef03b4da4",
+   "bytes": 24360,
+   "uploaded": "2026-10-07T03:32:04.431Z"
+  },
+  "ui-place-qp.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-place-qp.av1.mp4",
+   "sha256": "0a34b568f7d12fd1f1a6ee89b8ed4414314e396da1ddadc521490e6b72f4a007",
+   "bytes": 741711,
+   "uploaded": "2026-10-07T03:32:05.260Z"
+  },
+  "ui-place-qp.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-place-qp.h264.mp4",
+   "sha256": "4a82026bfa0ae64fae8e04d3c92ee4602b84b329763154f68f1bdc2fb4ad9486",
+   "bytes": 1009955,
+   "uploaded": "2026-10-07T03:32:11.791Z"
+  },
+  "ui-place-qp.m.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-place-qp.m.av1.mp4",
+   "sha256": "3ae0c6854fdda79726a88550abbdae1f444ebdc75cee2f5dbba87b05a0b91c22",
+   "bytes": 235515,
+   "uploaded": "2026-10-07T07:42:22.444Z"
+  },
+  "ui-place-qp.m.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-place-qp.m.h264.mp4",
+   "sha256": "cffaebf43a22f8081c60d8f1fe3abc74ac73efb568a1f652836a87837e49d7b3",
+   "bytes": 213366,
+   "uploaded": "2026-10-07T07:42:23.460Z"
+  },
+  "ui-story-cutscene-1720.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-cutscene-1720.avif",
+   "sha256": "4dcadf092ed70575330a531d769e2b3cf6fbc9c08d9b397324d6981f3a86fb7a",
+   "bytes": 51762,
+   "uploaded": "2026-10-07T03:32:11.506Z"
+  },
+  "ui-story-cutscene-1720.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-cutscene-1720.webp",
+   "sha256": "5f90796e619b1e066459cca4374d0e7c12efab1cab26f4b4ba845419ad7a8de5",
+   "bytes": 93170,
+   "uploaded": "2026-10-07T03:32:17.794Z"
+  },
+  "ui-story-cutscene-860.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-cutscene-860.avif",
+   "sha256": "dd0a17be49f45e56b3f7a999904c2488c8ef726ccacbfb8fd1007be3cf2aa38c",
+   "bytes": 24211,
+   "uploaded": "2026-10-07T03:32:18.035Z"
+  },
+  "ui-story-cutscene-860.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-cutscene-860.webp",
+   "sha256": "3ee3410d72d15ed22eb5fa6d518d027e2433740ef62aecc4ae155d4bdb248d1c",
+   "bytes": 32468,
+   "uploaded": "2026-10-07T03:32:25.074Z"
+  },
+  "ui-story-dialogue-1720.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-dialogue-1720.avif",
+   "sha256": "afb7ae20d27979e15f825f580966ae2248b3b6338e0f519b6aa6685129154aea",
+   "bytes": 56657,
+   "uploaded": "2026-10-07T03:32:25.312Z"
+  },
+  "ui-story-dialogue-1720.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-dialogue-1720.webp",
+   "sha256": "7d4924c575ad853f954605c565e03d3cf8f5ad38ea22a8b8f989504b97eeaa73",
+   "bytes": 93598,
+   "uploaded": "2026-10-07T03:32:30.544Z"
+  },
+  "ui-story-dialogue-860.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-dialogue-860.avif",
+   "sha256": "ba2297e217fb654772f5bd59b2f58719dffa48dddd596f6cb9515e4f4bf4d0d8",
+   "bytes": 23933,
+   "uploaded": "2026-10-07T03:32:30.775Z"
+  },
+  "ui-story-dialogue-860.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-dialogue-860.webp",
+   "sha256": "84576722a8bfe1ebc380b7fc7a432933712e47d3501353dcc8943050e02bc50c",
+   "bytes": 31888,
+   "uploaded": "2026-10-07T03:32:35.802Z"
+  },
+  "ui-story-flow-1720.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-flow-1720.avif",
+   "sha256": "fccfa89766058112661c8edbc1759c752f69b36fec3cb216131b6dfc177a49e7",
+   "bytes": 58492,
+   "uploaded": "2026-10-07T03:32:36.159Z"
+  },
+  "ui-story-flow-1720.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-flow-1720.webp",
+   "sha256": "fd120589277a31f3d548581a13668cfe1fb8c9c3b96c66803dda9f843b0e6414",
+   "bytes": 97820,
+   "uploaded": "2026-10-07T03:32:41.964Z"
+  },
+  "ui-story-flow-860.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-flow-860.avif",
+   "sha256": "e9dbc8fabdb89ea836fbc3d18dca4638cfef701bf5eae94ceb5da13f88c3e168",
+   "bytes": 24876,
+   "uploaded": "2026-10-07T03:32:42.287Z"
+  },
+  "ui-story-flow-860.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-flow-860.webp",
+   "sha256": "6cf78eba086c50089c171791125009bf2b7aff5d5396c1e64aafbde6528ff959",
+   "bytes": 33466,
+   "uploaded": "2026-10-07T03:32:47.698Z"
+  },
+  "ui-story-poster-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-poster-1280.avif",
+   "sha256": "40910ee56869c88391ba1877a35e1c4d7d040e2586541b5786411c192200ecd3",
+   "bytes": 52337,
+   "uploaded": "2026-10-07T03:32:48.009Z"
+  },
+  "ui-story-poster-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-poster-1280.webp",
+   "sha256": "453b7c2b06e02ea83aaf3d42e919ecef069862b71fe1b91fc1027ee8bc246020",
+   "bytes": 70288,
+   "uploaded": "2026-10-07T03:32:53.825Z"
+  },
+  "ui-story-poster-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-poster-640.avif",
+   "sha256": "6a627811bc2e562d64559548f5973fa6d9fcf74405743c6a6d6b3bcc765b3cfc",
+   "bytes": 16964,
+   "uploaded": "2026-10-07T03:32:53.946Z"
+  },
+  "ui-story-poster-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story-poster-640.webp",
+   "sha256": "70085b67b099d8151ef71301123b5a1b9e303fbdf5b6813dc3cf40014775aae8",
+   "bytes": 23114,
+   "uploaded": "2026-10-07T03:32:59.224Z"
+  },
+  "ui-story.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story.av1.mp4",
+   "sha256": "01ad7e1c0222863f5b413179f30f3f3bae5ddd5bccb7ae33c54bf699d77d705b",
+   "bytes": 647878,
+   "uploaded": "2026-10-07T03:32:59.502Z"
+  },
+  "ui-story.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story.h264.mp4",
+   "sha256": "464350f01589eff44d5c6b2b3aacbacb8768f710eedf76b6a99adb4c4d9043cd",
+   "bytes": 903247,
+   "uploaded": "2026-10-07T03:33:05.211Z"
+  },
+  "ui-story.m.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story.m.av1.mp4",
+   "sha256": "9a9bd3b56741b33ea70a7a97fefbec5ac48c095e6b1c4a9a850f4ac203502630",
+   "bytes": 201318,
+   "uploaded": "2026-10-07T07:42:29.869Z"
+  },
+  "ui-story.m.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-story.m.h264.mp4",
+   "sha256": "4dde230ec85c4ebd4407957e03b4894c2409a22545c1889ae5bc5dd0d9e89aae",
+   "bytes": 180326,
+   "uploaded": "2026-10-07T07:42:30.723Z"
+  },
+  "ui-tex-recolour-poster-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-tex-recolour-poster-1280.avif",
+   "sha256": "0e61b823e572a0d47e369dcda48a3c043902f6f93c8f884269d75ea7ccccc3c1",
+   "bytes": 38729,
+   "uploaded": "2026-10-07T03:33:05.327Z"
+  },
+  "ui-tex-recolour-poster-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-tex-recolour-poster-1280.webp",
+   "sha256": "b309ebf70c3dffe32135db7cc8a3798bf15bec5c51f663212088e61b31f64a22",
+   "bytes": 49974,
+   "uploaded": "2026-10-07T03:33:11.103Z"
+  },
+  "ui-tex-recolour-poster-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-tex-recolour-poster-640.avif",
+   "sha256": "fe5a571df4053ad7bb93b7f7c4e412772a7c522023c49edbe727b2a7ba136970",
+   "bytes": 14495,
+   "uploaded": "2026-10-07T03:33:11.163Z"
+  },
+  "ui-tex-recolour-poster-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-tex-recolour-poster-640.webp",
+   "sha256": "efacd75f2194485c68fa80d024f30c2cf7b875f6d44216aece370a6d690e65fd",
+   "bytes": 18844,
+   "uploaded": "2026-10-07T03:33:16.701Z"
+  },
+  "ui-tex-recolour.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-tex-recolour.av1.mp4",
+   "sha256": "b8ad5336d425f241f076499fa7bfc5785c5e1fee4a33a060acae4c0a7820e1d1",
+   "bytes": 366512,
+   "uploaded": "2026-10-07T03:33:17.111Z"
+  },
+  "ui-tex-recolour.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-tex-recolour.h264.mp4",
+   "sha256": "b62a4a4dda331cd3019644414ea371e52f57ae038afcec93c97744dcd5ec1fb9",
+   "bytes": 438206,
+   "uploaded": "2026-10-07T03:33:22.336Z"
+  },
+  "ui-tex-recolour.m.av1.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-tex-recolour.m.av1.mp4",
+   "sha256": "71d7da3ce72765aa55fa86d572658e78e7575755f1971ad5337b70dbf1d2ff8a",
+   "bytes": 144454,
+   "uploaded": "2026-10-07T07:42:38.935Z"
+  },
+  "ui-tex-recolour.m.h264.mp4": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/ui-tex-recolour.m.h264.mp4",
+   "sha256": "0baa56aa6948d543555889f4b11d579fad47d633364a81321e6c64217bca0c41",
+   "bytes": 139652,
+   "uploaded": "2026-10-07T07:42:39.994Z"
+  },
+  "xbox-helpbar-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/xbox-helpbar-1280.avif",
+   "sha256": "18832e1a6f7c9468168756c7316c2d6020ccf70806e1410c3b65fce7f884cb29",
+   "bytes": 15420,
+   "uploaded": "2026-10-07T03:33:22.536Z"
+  },
+  "xbox-helpbar-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/xbox-helpbar-1280.webp",
+   "sha256": "057c0573277e3e40331fb79b2e006acc87002de5aa9bf0aead0b75dc646be1fb",
+   "bytes": 20458,
+   "uploaded": "2026-10-07T03:33:28.895Z"
+  },
+  "xbox-helpbar-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/xbox-helpbar-640.avif",
+   "sha256": "4ad1698bb9ebe6ea21573f2381caf298e4773e9ab2ec2e3956efae374cc041c1",
+   "bytes": 7899,
+   "uploaded": "2026-10-07T03:33:28.923Z"
+  },
+  "xbox-helpbar-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/xbox-helpbar-640.webp",
+   "sha256": "5412ab0aca6b3925500fbadaf088032ae8ac164e4f70df1224ff9c3972f7a590",
+   "bytes": 10106,
+   "uploaded": "2026-10-07T03:33:34.845Z"
+  },
+  "xbox-pause-ps3-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/xbox-pause-ps3-1280.avif",
+   "sha256": "2128499384531f8a36574992cfb0790a0cca092b2efd09d43b645f4dd71c4e80",
+   "bytes": 72376,
+   "uploaded": "2026-10-07T03:33:34.920Z"
+  },
+  "xbox-pause-ps3-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/xbox-pause-ps3-1280.webp",
+   "sha256": "795278fdca79c4b1ead912d1dc7a7ac63c84318179017e4467e65a7f663a11da",
+   "bytes": 94744,
+   "uploaded": "2026-10-07T03:33:40.578Z"
+  },
+  "xbox-pause-ps3-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/xbox-pause-ps3-640.avif",
+   "sha256": "ce5d77cc387f7ee6b38dccc2504c5eead6a93845641fa73c1da00723d338aef9",
+   "bytes": 22743,
+   "uploaded": "2026-10-07T03:33:40.625Z"
+  },
+  "xbox-pause-ps3-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/xbox-pause-ps3-640.webp",
+   "sha256": "383e9e3c0692621e754bbbae4f09eb09fc1ee72cc88bcda33b8e62081ca9a123",
+   "bytes": 32994,
+   "uploaded": "2026-10-07T03:33:45.730Z"
+  },
+  "xbox-pause-xbox-1280.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/xbox-pause-xbox-1280.avif",
+   "sha256": "477b45a496232ea71271f78887c3012959581c1201ed55ce5582ad021b407890",
+   "bytes": 71974,
+   "uploaded": "2026-10-07T03:33:45.825Z"
+  },
+  "xbox-pause-xbox-1280.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/xbox-pause-xbox-1280.webp",
+   "sha256": "6b4aced3ad5cf987d46ebef582d5c64c9445a99b2fc73ce7a6c032325892da0e",
+   "bytes": 95708,
+   "uploaded": "2026-10-07T03:33:52.972Z"
+  },
+  "xbox-pause-xbox-640.avif": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/xbox-pause-xbox-640.avif",
+   "sha256": "8bd25240a0a76aa5297624389568c2dff754dd275e25f47592042601a8db32a6",
+   "bytes": 22694,
+   "uploaded": "2026-10-07T03:33:52.945Z"
+  },
+  "xbox-pause-xbox-640.webp": {
+   "url": "https://tddeuevmbjbaaeoi.public.blob.vercel-storage.com/project8plus/xbox-pause-xbox-640.webp",
+   "sha256": "1bce7dffa1064f0f63a0d0347a920f2f7836ee40c0628f67a2a3154f92b017de",
+   "bytes": 33154,
+   "uploaded": "2026-10-07T03:33:59.928Z"
+  }
+ }
+}

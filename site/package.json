@@ -1,0 +1,43 @@
+{
+  "name": "project8plus-site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Project 8 Plus: the one-page site and wiki (static Next.js export). Renders ../docs at build time.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "python -m http.server 3108 --directory out",
+    "media": "python scripts/media.py",
+    "typecheck": "tsc --noEmit",
+    "deploy": "node scripts/deploy.mjs --prod",
+    "deploy:preview": "node scripts/deploy.mjs",
+    "output": "node scripts/vercel-output.mjs"
+  },
+  "engines": {
+    "node": ">=20.9"
+  },
+  "dependencies": {
+    "@shikijs/rehype": "^4.5.0",
+    "github-slugger": "^2.0.0",
+    "hast-util-to-string": "^3.0.1",
+    "lucide-react": "^1.52.0",
+    "next": "^16.4.3",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "rehype-stringify": "^10.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "shiki": "^4.5.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/hast": "^3.0.5",
+    "@types/node": "^24",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^5"
+  }
+}
