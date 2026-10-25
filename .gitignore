@@ -1,0 +1,78 @@
+# toolkit checkout (pinned commit recorded in docs/progress.txt; local patches in patches/)
+ps3recomp/
+# build trees
+build*/
+# game-derived data (never commit/distribute)
+game/
+vfs/
+analysis/
+imports.json
+src/recomp/
+src/recomp_hooks/
+src/gen/
+src/spu_gen/*/
+spu_miss/
+*.bin
+*.elf
+*.map
+# logs / scratch
+logs/
+scratch/
+*.log
+__pycache__/
+work/**/*.bin
+work/run/
+work/spu/raw/
+work/spu/images/
+work/spu/syntaxcheck_logs/
+work/lifter/recomp_*/
+work/**/recomp*/
+work/hooks/lift_orig/
+work/hooks/lift_new/
+dist/
+mods_p8plus/plugins/*.dll
+/builder_settings.json
+/dist-release/
+!/builder/
+# ---- never committed (publish/scrub.py refuses these in the public tree anyway) ----
+# disc and console files, decrypted binaries
+PS3_GAME/
+PS3_UPDATE/
+PS3_DISC.SFB
+PARAM.SFO
+EBOOT.*
+*.self
+*.sprx
+*.sdat
+*.edat
+*.rap
+*.pkg
+*.pup
+*.iso
+*.CHK
+*.chk
+*.pak
+*.bik
+*.fsb
+*.at3
+decrypted/
+hdd0/
+hdd0_user/
+# generated from the game by the lift
+src/recomp*/
+src/spu_gen/
+.build/
+# native build output and analysis dumps
+*.exe
+*.pdb
+*.obj
+*.ilk
+*.exp
+*.lib
+*.pkl
+/publish/private_terms.local.txt
+# machine-specific paths for tools/relift_spu.sh (tools/local.env.example)
+tools/local.env
+!patches/*.log
+imgui.ini
+t.ini

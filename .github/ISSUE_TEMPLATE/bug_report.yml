@@ -1,0 +1,86 @@
+name: Bug report
+description: The builder or the game does not work as it should
+labels: [needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not attach game files, decrypted files, `thp8.exe`, `thp8_mods.exe`
+        or generated sources**, and do not ask where to get the game. All of those
+        are derived from the game; such issues are closed without an answer.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where
+      options:
+        - "Builder: checking the game folder"
+        - "Builder: decrypting with RPCS3"
+        - "Builder: downloading the compiler"
+        - "Builder: translating or compiling"
+        - "Builder: add-ons"
+        - "The game: starting"
+        - "The game: graphics"
+        - "The game: sound"
+        - "The game: controls"
+        - "The game: saving or loading"
+        - "The game: crash or freeze"
+        - Something else
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Builder version
+      placeholder: "e.g. 0.9.0, or a commit hash if you built from source"
+    validations:
+      required: true
+
+  - type: input
+    id: system
+    attributes:
+      label: Windows version, CPU, GPU, RAM
+      placeholder: "e.g. Windows 11 24H2, Ryzen 5 5600X, Radeon RX 6700 XT, 16 GB"
+    validations:
+      required: true
+
+  - type: input
+    id: addons
+    attributes:
+      label: Add-ons and launcher
+      placeholder: "e.g. none / play.cmd, or Project 8 Plus + HD textures / play_p8plus.cmd"
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, what happened instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        How to collect them:
+        1. Open the install folder you chose in Setup.
+        2. Open its `logs` folder.
+        3. Attach (drag into this box) the file for your problem:
+           - `builder.log`: anything during Setup / the build;
+           - the newest `play_*.log` (the last 5 game starts are kept): crashes, freezes, graphics, sound, controls;
+           - `hd_textures.log`: HD textures (download, progress, errors).
+        Or paste the relevant part here. Edit your user name out of paths if you like.
+        Never attach anything else from the install folder (game files, thp8.exe, generated sources).
+      render: text
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirm
+      options:
+        - label: I have read docs/KNOWN_ISSUES.md.
+          required: true
+        - label: This report contains no game files, decrypted files, game executables or generated sources.
+          required: true

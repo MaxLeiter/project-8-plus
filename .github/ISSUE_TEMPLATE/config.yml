@@ -1,0 +1,12 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Where do I get the game?
+    url: "https://github.com/MaxLeiter/thp8-native/blob/main/docs/SETUP.md"
+    about: >
+      Nowhere we will tell you. You need your own copy of Tony Hawk's Project 8
+      for PS3; such issues are closed without an answer.
+  - name: Which releases are supported?
+    url: "https://github.com/MaxLeiter/thp8-native/blob/main/docs/SETUP.md#the-other-releases"
+    about: >
+      BLUS30011, disc version 01.02. For another release, use the release report
+      and send its fingerprint, never the files.

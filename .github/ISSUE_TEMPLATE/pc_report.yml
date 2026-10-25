@@ -1,0 +1,59 @@
+name: Report from your PC (working or not)
+description: The port has been tested on one PC. Tell us how it went on yours, good or bad.
+title: "[PC report] "
+labels: [pc-report]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        "It built and played fine" is as useful to us as a crash: it tells us
+        which hardware works. **Do not attach game files, decrypted files,
+        `thp8.exe` or generated sources.**
+
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: How far did it get?
+      options:
+        - It built and the game played fine
+        - It built; the game runs but something is wrong
+        - It built; the game does not start or crashes
+        - The build failed
+        - The builder did not start
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Builder version
+      placeholder: "e.g. 0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: system
+    attributes:
+      label: Windows version, CPU, GPU, RAM
+      placeholder: "e.g. Windows 10 22H2, Core i5-9600K, GeForce GTX 1660, 16 GB"
+    validations:
+      required: true
+
+  - type: input
+    id: build
+    attributes:
+      label: Build time and options
+      placeholder: "e.g. 24 min, hard links, low priority off, add-ons: Project 8 Plus"
+
+  - type: input
+    id: performance
+    attributes:
+      label: Performance, if the game ran
+      description: The window title shows the frame rate. A rough number for menus and for skating is enough.
+      placeholder: "e.g. menus 60 fps, free skate 40-60 fps"
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: What went wrong or looked odd, and logs\builder.log / logs\play_*.log if something failed.

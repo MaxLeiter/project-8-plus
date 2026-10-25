@@ -1,0 +1,55 @@
+name: Another release of the game (fingerprint only)
+description: You own a release the builder does not accept (Europe, Japan, another disc version). Send its fingerprint, never the files.
+title: "[Release] "
+labels: [release-report]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The builder accepts one release today: **BLUS30011, disc version 01.02**.
+        Adding another starts with the fingerprint of its executable, taken from a
+        copy someone actually owns. That is all we need from you.
+
+        From the builder's folder, run:
+
+        ```
+        "THP8 Launcher.cmd" --identify "D:\path\to\your game folder"
+        ```
+
+        It reads only `PARAM.SFO` and `EBOOT.BIN` and prints their facts.
+
+        **Never attach or link the files themselves**, or anything else from the
+        disc. Issues that do are deleted.
+
+  - type: textarea
+    id: identify
+    attributes:
+      label: Output of --identify
+      description: Paste everything it printed (status, title_id, title, version, app_ver, category, eboot_kind, eboot_size, eboot_sha1).
+      render: text
+    validations:
+      required: true
+
+  - type: input
+    id: region
+    attributes:
+      label: Region and serial printed on your disc or case
+      placeholder: "e.g. PAL, BLES-00014"
+    validations:
+      required: true
+
+  - type: input
+    id: dumped
+    attributes:
+      label: How the folder was made
+      placeholder: "e.g. dumped from my disc with a PS3 and multiMAN; or with a compatible Blu-ray drive"
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirm
+      options:
+        - label: The folder is a dump of a game I own.
+          required: true
+        - label: This report contains only the printed fingerprint, no game files.
+          required: true
