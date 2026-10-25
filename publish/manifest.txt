@@ -163,6 +163,7 @@ patches/ps3recomp-thp8.patch    lifted  30 ppu_lifter/ppu_codegen_opt source: C+
 NOTICE                          privacy 60 third-party licence texts carry their authors' e-mail addresses
 NOTICE_linux                    privacy 60 third-party licence texts carry their authors' e-mail addresses
 builder/p8ui/assets/fonts/*.ttf binary  1  upstream font files of the launcher (Inter, Barlow Condensed, JetBrains Mono: SIL OFL 1.1; Lucide: ISC), licences in NOTICE section 4, versions in builder/p8ui/assets/VERSIONS.txt
+site/src/fonts/*.woff         binary  1  the website's web fonts (Inter, Barlow Condensed, JetBrains Mono: SIL OFL 1.1), licences in site/src/fonts/LICENSES.md
 src/title/thp8_pm_native.c      lifted  30  declarations and calls of the lifted SPU job-manager functions BY NAME (our native transliteration; the lifted bodies are not in this file)
 tools/spu_title_patch.py        lifted  15  the patcher quotes the names of the lifted thp8pm functions it hooks (anchors and a docstring; our code)
 builder/tests/test_pm_native.py lifted  4   one test edits a lifted function header by name (our code)
