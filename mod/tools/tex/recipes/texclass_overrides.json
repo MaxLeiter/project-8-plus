@@ -1,0 +1,13 @@
+{
+ "_doc": "Reviewed per-texture scale decisions for the native replacement pack (texclass.decide): manifest id or sha1 -> {k: 1|2|4, why}. k=1 = no replacement. Found in the 2026-10-05 review grids (work/tex/preview4x/classes/explore).",
+ "ZONES/6FCBF791.CHK@a0#430": {"k": 4, "why": "street sign text (GEIGER ST / BACK ST)"},
+ "ZONES/0EFB0500.CHK@80#268": {"k": 4, "why": "sign text (Auto Shop)"},
+ "ZONES/C7BC69A3.CHK@80#66": {"k": 4, "why": "diamond tread plate (pattern)"},
+ "ZONES/6C2F2410.CHK@80#107": {"k": 4, "why": "tree rings (wood grain)"},
+ "ZONES/EC68B48D.CHK@80#136": {"k": 4, "why": "tree rings (wood grain)"},
+ "ZONES/5415C43F.CHK@3a0#4": {"k": 4, "why": "wood grain"},
+ "ZONES/6D738AF4.CHK@3a0#8": {"k": 4, "why": "wood grain swirl"},
+ "ZONES/5F122686.CHK@80#203": {"k": 4, "why": "brick wall (pattern)"},
+ "ZONES/0EFB0500.CHK@80#373": {"k": 4, "why": "tiled wall (pattern)"},
+ "ZONES/5F122686.CHK@80#386": {"k": 4, "why": "building facade windows"}
+}

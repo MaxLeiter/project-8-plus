@@ -1,0 +1,189 @@
+================================================================================
+NOTICE
+================================================================================
+
+Project 8 Plus's own code, patches, artwork and documentation are under the MIT
+licence in LICENSE. This file lists everything else the project uses, and what
+reaches a player's PC in which way.
+
+Nothing here is game content. The repository and its downloads contain no disc
+image, executable, decrypted binary, extracted asset or text copied from Tony
+Hawk's Project 8. Tony Hawk's Project 8 and all associated marks belong to
+their respective owners, who are not affiliated with this project and have not
+endorsed it.
+
+
+================================================================================
+1. The AI upscaling model (referenced and downloaded, not distributed)
+================================================================================
+
+"4xTextureDAT2_otf" by Philip Hofmann (Phhofm)
+  https://github.com/Phhofm/models
+  https://openmodeldb.info/models/4x-TextureDAT2-otf
+Licensed under the Creative Commons Attribution 4.0 International licence
+(CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
+
+The HD texture tool does not include the model. The player downloads it from
+the author's release page (tools/tex/INSTALL_HD.txt gives the URL and its
+SHA-256), and it is used unmodified, on the player's PC, to upscale textures
+from the player's own copy of the game. Neither the model nor the upscaled
+textures are distributed by this project.
+
+
+================================================================================
+2. Python packages (installed by the player from PyPI, not distributed)
+================================================================================
+
+The tools are Python scripts. They use these packages, which the player
+installs with pip and which carry their own licence files:
+
+  NumPy              BSD-3-Clause (and the bundled components it lists)
+  Pillow             MIT-CMU (HPND)
+  SciPy              BSD-3-Clause
+  quicktex           Apache-2.0
+  PyTorch            BSD-3-Clause; its CUDA wheels include NVIDIA CUDA/cuDNN
+                     libraries under NVIDIA's own licence terms (HD textures)
+  spandrel           MIT (HD textures)
+  safetensors        Apache-2.0 (HD textures)
+  capstone           BSD-3-Clause (developer tools: disassembly)
+  PyYAML             MIT (developer tools)
+  trimesh            MIT (developer tools: models)
+  moderngl           MIT (developer tools: model renders)
+
+
+================================================================================
+3. The native port plugin (native/p8plus_plugin)
+================================================================================
+
+The plugin is built against include/ps3mod.h, the plugin interface of
+ps3recomp (https://github.com/sp00nznet/ps3recomp). The header declares the
+interface only; no ps3recomp code is compiled into the plugin. ps3recomp is
+under the MIT licence:
+
+  MIT License
+
+  Copyright (c) 2026 Ned Heller / sp00nznet
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+
+A compiled plugin DLL statically links the C runtime of the compiler that built
+it (with MSVC: the static CRT, under the Visual Studio redistribution terms;
+with zig/MinGW: the mingw-w64 runtime and compiler support routines, whose
+notices ship with the native port's NOTICE). A release that ships the DLL
+carries the matching notice.
+
+
+================================================================================
+4. Lua 5.4.7 (native/modapi_plugin/lua, compiled into thp8_mod_modapi.dll)
+================================================================================
+
+The script-mod host plugin embeds the Lua 5.4.7 interpreter, unmodified source
+from https://www.lua.org/ftp/lua-5.4.7.tar.gz (SHA-256
+9fbf5e28ef86c69858f6d3d34eccc32e911c1a28b4120ff3e84aaa70cfbf1e30, as published
+on lua.org; the stand-alone lua.c / luac.c are left out). Lua is distributed
+under the MIT licence:
+
+  Copyright (C) 1994-2024 Lua.org, PUC-Rio.
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+
+
+================================================================================
+4a. stb_vorbis v1.22 (native/p8audio/third_party, compiled into p8audio.exe)
+================================================================================
+
+The soundtrack converter p8audio.exe (native/p8audio, used by the modding kit's
+music operations) embeds stb_vorbis.c by Sean Barrett, unmodified, from
+https://raw.githubusercontent.com/nothings/stb/master/stb_vorbis.c (fetched
+2026-10-07; SHA-256 4c7cb2ff1f7011e9d67950446b7eb9ca044f2e464d76bfbb0b84dd2e23e65636,
+git blob 3e5c2504c08f76b9d04e4adfbce80818631e835e). It is available under two
+licences, MIT or public domain (Unlicense); this project uses it under either:
+
+  This software is available under 2 licenses -- choose whichever you prefer.
+  ------------------------------------------------------------------------------
+  ALTERNATIVE A - MIT License
+  Copyright (c) 2017 Sean Barrett
+  Permission is hereby granted, free of charge, to any person obtaining a copy of
+  this software and associated documentation files (the "Software"), to deal in
+  the Software without restriction, including without limitation the rights to
+  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+  of the Software, and to permit persons to whom the Software is furnished to do
+  so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+  ------------------------------------------------------------------------------
+  ALTERNATIVE B - Public Domain (www.unlicense.org)
+  This is free and unencumbered software released into the public domain.
+  Anyone is free to copy, modify, publish, use, compile, sell, or distribute this
+  software, either in source code form or as a compiled binary, for any purpose,
+  commercial or non-commercial, and by any means.
+  In jurisdictions that recognize copyright laws, the author or authors of this
+  software dedicate any and all copyright interest in the software to the public
+  domain. We make this dedication for the benefit of the public at large and to
+  the detriment of our heirs and successors. We intend this dedication to be an
+  overt act of relinquishment in perpetuity of all present and future rights to
+  this software under copyright law.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+  ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+p8audio.exe otherwise uses only Windows Media Foundation (part of Windows).
+
+
+================================================================================
+5. Used, but neither distributed nor linked
+================================================================================
+
+RPCS3 (GPL-2.0, https://rpcs3.net). The developer tools read import-function
+names from the developer's own rpcs3.exe at run time (tools/imports.py; the
+cache is git-ignored), and developers use rpcs3.exe to decrypt their own
+executable. The retired RPCS3 version of the project (a patch file in RPCS3's
+patch format and a PINE IPC client, both in the git history) used RPCS3 the
+same way. No RPCS3 code is included.
+
+Font. The overlay artwork in tools/boot/assets contains text rasterised in
+Bahnschrift, a font that ships with Windows. Only the developer command
+`bootscreen.py render-overlay`, which regenerates those images, loads the font
+(from the Windows fonts folder). The font file is not distributed.

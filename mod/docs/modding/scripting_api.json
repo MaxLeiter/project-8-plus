@@ -1,0 +1,1002 @@
+{
+ "format": 1,
+ "api": 1,
+ "host": "thp8_mod_modapi.dll 0.1",
+ "doc": "Lua 5.4 scripting API of the Project 8 Plus script-mod host. docs/modding/scripting.md explains it; this file drives the editor's autocomplete and reference pane.",
+ "entries": [
+  {
+   "name": "qb",
+   "kind": "table",
+   "signature": "qb",
+   "doc": "THP8's QB script VM: call scripts / CFunctions / member functions, read and set globals, define QB functions in Lua.",
+   "example": "local r, ok = qb.call(\"GetCurrentLevel\")"
+  },
+  {
+   "name": "qb.call",
+   "kind": "function",
+   "signature": "qb.call(name, params?, object?) -> results, ok",
+   "doc": "Runs a QB script, CFunction or (with object) member function on the game thread, like the game's own SpawnScriptNow. params: table (array part = unnamed params in order, named keys = name = value, true = a bare flag). Returns the params the callee returned (table) and its boolean result. If the callee waits over frames: inside a task the task waits for it, outside it returns nil, false, \"pending\".",
+   "example": "local res, ok = qb.call(\"GMan_HasWonGoal\", {goal = qb.key(\"my_goal\")})"
+  },
+  {
+   "name": "qb.call_on",
+   "kind": "function",
+   "signature": "qb.call_on(object, name, params?) -> results, ok",
+   "doc": "qb.call on an object: object:Name params. object = a name (\"Skater\", a ped's id) or qb.key.",
+   "example": "qb.call_on(\"Skater\", \"Obj_SetPosition\", {position = qb.vec(0, 2, 0)})"
+  },
+  {
+   "name": "qb.spawn",
+   "kind": "function",
+   "signature": "qb.spawn(name, params?, object?) -> handle",
+   "doc": "Starts a script and returns at once. handle.done, handle.result, handle.ok; handle:wait() inside a task waits until it ends.",
+   "example": "local h = qb.spawn(\"goal_dialog_box\", {title = qb.wstr(\"Hi\"), text = qb.wstr(\"...\")})"
+  },
+  {
+   "name": "qb.register",
+   "kind": "function",
+   "signature": "qb.register(name, fn(params, ctx) -> results?|ok?)",
+   "doc": "Defines a new QB CFunction whose body is Lua. QB code (scripts, pad_choose_script, callbacks) can call it by name. fn gets the call's params as a table and ctx = {name, script, object_addr, call(name, params)} (ctx:call runs a member function on the calling object). Return nothing (= true), a boolean, a table of values added to the caller's params, or table, boolean.",
+   "example": "qb.register(\"MyMod_Hello\", function(p, ctx) return {answer = 42} end)"
+  },
+  {
+   "name": "qb.override",
+   "kind": "function",
+   "signature": "qb.override(name, fn)",
+   "doc": "Like qb.register, but replaces an existing script / CFunction of the game; the original comes back when the mod is unloaded. Use for global scripts only (not ones a level file defines).",
+   "example": "qb.override(\"some_script\", function(p) log.info(\"intercepted\") end)"
+  },
+  {
+   "name": "qb.script",
+   "kind": "function",
+   "signature": "qb.script(name, steps)",
+   "doc": "Defines a real QB script made of calls: steps = list of \"Name\" or {\"Name\", params, object?}. The game runs it like its own scripts (spawned, as a callback, or as a camera ControlScript on the camera object). Redefining replaces it.",
+   "example": "qb.script(\"my_cam_ctl\", { {\"CCam_DoMorph\", {Pos = p, LookAt = qb.key(\"Skater\"), FOV = 60}}, \"CCam_WaitMorph\" })"
+  },
+  {
+   "name": "qb.key",
+   "kind": "function",
+   "signature": "qb.key(name|number|\"0x...\") -> key",
+   "doc": "A QB checksum (name). Keys compare with ==, print as their name when known. Strings \"#name\" in params are also checksums.",
+   "example": "qb.key(\"z_houses\")"
+  },
+  {
+   "name": "qb.is",
+   "kind": "function",
+   "signature": "qb.is(a, b) -> bool",
+   "doc": "True if two names / keys are the same checksum (case-insensitive).",
+   "example": "if qb.is(e.state, \"uistate_pausemenu\") then ... end"
+  },
+  {
+   "name": "qb.vec",
+   "kind": "function",
+   "signature": "qb.vec(x, y, z) -> vec",
+   "doc": "A 3D vector (QB vector). Supports + - * (number), :len(), :dist(v), :dot(v), :unpack().",
+   "example": "local d = skater.pos():dist(qb.vec(-61, 2.4, -64.5))"
+  },
+  {
+   "name": "qb.pair",
+   "kind": "function",
+   "signature": "qb.pair(x, y) -> pair",
+   "doc": "A QB pair (2D), e.g. screen positions (640x480 space) and scales.",
+   "example": "hud.message(\"hi\", {pos = qb.pair(320, 100)})"
+  },
+  {
+   "name": "qb.float",
+   "kind": "function",
+   "signature": "qb.float(x) -> value",
+   "doc": "Forces a float parameter (Lua integers are sent as QB integers).",
+   "example": "{time = qb.float(2)}"
+  },
+  {
+   "name": "qb.wstr",
+   "kind": "function",
+   "signature": "qb.wstr(text) -> value",
+   "doc": "A wide (UTF-16) string, which the game's UI text expects.",
+   "example": "{text = qb.wstr(\"Hello\")}"
+  },
+  {
+   "name": "qb.global",
+   "kind": "function",
+   "signature": "qb.global(name) -> value",
+   "doc": "A reference to a QB global ($name) in params: the game resolves it when the call runs, so the callee gets the real struct or array (e.g. trick animation data) instead of a Lua copy. Always use it for trick data (AnimData): qb.call checks GrabTrick / fliptrick / InvertTrick / manual params and refuses incomplete ones, which would hang the game.",
+   "example": "qb.call(\"MakeSkaterGoto\", {qb.key(\"GrabTrick\"), params = {AnimData = qb.global(\"ChristianAir_Data\")}})"
+  },
+  {
+   "name": "qb.exists",
+   "kind": "function",
+   "signature": "qb.exists(name) -> type|nil",
+   "doc": "The type of a global symbol: \"script\", \"cfunc\", \"int\", \"float\", \"string\", \"struct\", \"array\", \"name\", ... or nil.",
+   "example": "if qb.exists(\"p8q_goal_start\") then ... end"
+  },
+  {
+   "name": "qb.get_global",
+   "kind": "function",
+   "signature": "qb.get_global(name) -> value",
+   "doc": "Reads a QB global (int, float, string, name, struct, array).",
+   "example": "qb.get_global(\"render_lock_framerate\")"
+  },
+  {
+   "name": "qb.set_global",
+   "kind": "function",
+   "signature": "qb.set_global(name, value)",
+   "doc": "Sets an existing int / float / name global in place.",
+   "example": "qb.set_global(\"some_int_global\", 3)"
+  },
+  {
+   "name": "qb.get_field",
+   "kind": "function",
+   "signature": "qb.get_field(struct_global, member) -> value",
+   "doc": "Reads one member of a global struct.",
+   "example": "qb.get_field(\"skater_physics\", \"Physics_Air_Gravity\")"
+  },
+  {
+   "name": "qb.set_field",
+   "kind": "function",
+   "signature": "qb.set_field(struct_global, member, value)",
+   "doc": "Sets an int / float / name member of a global struct in place. Most tuning structs are read live by the game.",
+   "example": "qb.set_field(\"skater_physics\", \"Physics_Air_Gravity\", -10)"
+  },
+  {
+   "name": "events",
+   "kind": "table",
+   "signature": "events",
+   "doc": "Game and mod events. Handlers run on the game thread; an error in one handler is logged and does not stop the others.",
+   "example": "events.on(\"trick_landed\", function(c) log.info(c.score) end)"
+  },
+  {
+   "name": "events.on",
+   "kind": "function",
+   "signature": "events.on(name, fn(payload)) -> handle",
+   "doc": "Subscribes to an event: a named game event, \"frame\", \"script:<QB script>\", \"cfunc:<CFunction>\", \"event:<game event>\" or a mod event (events.emit).",
+   "example": "events.on(\"script:Fsm_Set\", function(e) log.info(tostring(e.params.state)) end)"
+  },
+  {
+   "name": "events.once",
+   "kind": "function",
+   "signature": "events.once(name, fn) -> handle",
+   "doc": "Like events.on, for the next occurrence only.",
+   "example": "events.once(\"level_ready\", function() hud.message(\"welcome\") end)"
+  },
+  {
+   "name": "events.off",
+   "kind": "function",
+   "signature": "events.off(handle) -> bool",
+   "doc": "Removes a handler.",
+   "example": "events.off(h)"
+  },
+  {
+   "name": "events.emit",
+   "kind": "function",
+   "signature": "events.emit(name, payload)",
+   "doc": "Delivers an event to this mod's own handlers and wait_event waiters.",
+   "example": "events.emit(\"my_mod.phase\", {n = 2})"
+  },
+  {
+   "name": "events.define",
+   "kind": "function",
+   "signature": "events.define(name, sources, fn(payload, source) -> payload|nil)",
+   "doc": "Defines a derived event: while someone listens to name, every source event is passed through fn (nil = skip). The built-in named events are made this way.",
+   "example": "events.define(\"big_air\", \"air_end\", function(e) if e.time > 2 then return e end end)"
+  },
+  {
+   "name": "task",
+   "kind": "function",
+   "signature": "task(fn, ...) -> task",
+   "doc": "Runs fn as a coroutine on the game thread; it can wait without blocking the game.",
+   "example": "task(function() wait(2); hud.message(\"two seconds later\") end)"
+  },
+  {
+   "name": "wait",
+   "kind": "function",
+   "signature": "wait(seconds)",
+   "doc": "Inside a task: waits (host seconds).",
+   "example": "wait(1.5)"
+  },
+  {
+   "name": "wait_frames",
+   "kind": "function",
+   "signature": "wait_frames(n)",
+   "doc": "Inside a task: waits n game frames.",
+   "example": "wait_frames(1)"
+  },
+  {
+   "name": "wait_until",
+   "kind": "function",
+   "signature": "wait_until(fn, timeout?) -> true|nil",
+   "doc": "Inside a task: waits until fn() is true (checked each frame); nil on timeout.",
+   "example": "wait_until(function() return skater.speed() > 10 end, 30)"
+  },
+  {
+   "name": "wait_event",
+   "kind": "function",
+   "signature": "wait_event(name, filter?, timeout?) -> payload|nil",
+   "doc": "Inside a task: waits for an event (optional filter(payload) -> bool); nil on timeout.",
+   "example": "local c = wait_event(\"trick_landed\", function(c) return c.score > 1000 end, 60)"
+  },
+  {
+   "name": "skater",
+   "kind": "table",
+   "signature": "skater",
+   "doc": "The local skater.",
+   "example": "local p = skater.pos()"
+  },
+  {
+   "name": "skater.exists",
+   "kind": "function",
+   "signature": "skater.exists() -> bool",
+   "doc": "True while a local skater exists (in a level).",
+   "example": "if skater.exists() then ... end"
+  },
+  {
+   "name": "skater.pos",
+   "kind": "function",
+   "signature": "skater.pos() -> vec|nil",
+   "doc": "World position.",
+   "example": "skater.pos()"
+  },
+  {
+   "name": "skater.vel",
+   "kind": "function",
+   "signature": "skater.vel() -> vec|nil",
+   "doc": "Velocity (world units per second).",
+   "example": "skater.vel()"
+  },
+  {
+   "name": "skater.speed",
+   "kind": "function",
+   "signature": "skater.speed() -> number",
+   "doc": "Length of the velocity.",
+   "example": "skater.speed()"
+  },
+  {
+   "name": "skater.id",
+   "kind": "function",
+   "signature": "skater.id() -> key|nil",
+   "doc": "The skater object's id (the source of its events).",
+   "example": "skater.id()"
+  },
+  {
+   "name": "skater.object",
+   "kind": "function",
+   "signature": "skater.object() -> address",
+   "doc": "Guest address of the skater object (for mem.*).",
+   "example": "mem.vec(skater.object() + 0x70)"
+  },
+  {
+   "name": "skater.score",
+   "kind": "function",
+   "signature": "skater.score() -> {total, base, mult, combo, last, special}|nil",
+   "doc": "The run's score: total, the current combo (base x mult = combo), the last score landed, the special meter.",
+   "example": "skater.score().total"
+  },
+  {
+   "name": "skater.set_score",
+   "kind": "function",
+   "signature": "skater.set_score(total)",
+   "doc": "Sets the run's total score.",
+   "example": "skater.set_score(0)"
+  },
+  {
+   "name": "skater.add_score",
+   "kind": "function",
+   "signature": "skater.add_score(points)",
+   "doc": "Awards points to the run's total.",
+   "example": "skater.add_score(5000)"
+  },
+  {
+   "name": "skater.teleport",
+   "kind": "function",
+   "signature": "skater.teleport(vec)",
+   "doc": "Moves the skater (Skater:Obj_SetPosition).",
+   "example": "skater.teleport(qb.vec(-63.17, 2.39, -66.64))"
+  },
+  {
+   "name": "skater.to_node",
+   "kind": "function",
+   "signature": "skater.to_node(node)",
+   "doc": "Moves the skater to a level node (TeleportSkaterToNode).",
+   "example": "skater.to_node(\"Z_Houses_TRG_Restart_Default\")"
+  },
+  {
+   "name": "skater.physics.get",
+   "kind": "function",
+   "signature": "skater.physics.get(name) -> number",
+   "doc": "A member of the skater_physics tuning struct.",
+   "example": "skater.physics.get(\"Physics_Air_Gravity\")"
+  },
+  {
+   "name": "skater.physics.set",
+   "kind": "function",
+   "signature": "skater.physics.set(name, value)",
+   "doc": "Sets a skater_physics member (read live by the game).",
+   "example": "skater.physics.set(\"Physics_Air_Gravity\", -10)"
+  },
+  {
+   "name": "hud",
+   "kind": "table",
+   "signature": "hud",
+   "doc": "On-screen text and dialogs in the game's own UI.",
+   "example": "hud.message(\"Hello\")"
+  },
+  {
+   "name": "hud.message",
+   "kind": "function",
+   "signature": "hud.message(text, {time, pos, scale, rgba, id, style}?)",
+   "doc": "A panel message (create_panel_message). time in ms; pos = qb.pair in 640x480 space; id = reuse to replace the previous one.",
+   "example": "hud.message(\"Nice!\", {time = 2000, pos = qb.pair(320, 100)})"
+  },
+  {
+   "name": "hud.dialog",
+   "kind": "function",
+   "signature": "hud.dialog{title, text, buttons = {{text, fn}, ...}}",
+   "doc": "The game's dialog box; a button runs its fn and closes the dialog.",
+   "example": "hud.dialog{title = \"Done\", text = \"You did it\", buttons = {{text = \"OK\"}}}"
+  },
+  {
+   "name": "hud.close_dialog",
+   "kind": "function",
+   "signature": "hud.close_dialog()",
+   "doc": "Closes the dialog box.",
+   "example": "hud.close_dialog()"
+  },
+  {
+   "name": "hud.speech",
+   "kind": "function",
+   "signature": "hud.speech(text, {anchor}?)",
+   "doc": "The game's speech box (NPC talk bubble).",
+   "example": "hud.speech(\"Hey!\")"
+  },
+  {
+   "name": "hud.close_speech",
+   "kind": "function",
+   "signature": "hud.close_speech()",
+   "doc": "Closes the speech box.",
+   "example": "hud.close_speech()"
+  },
+  {
+   "name": "sound.play",
+   "kind": "function",
+   "signature": "sound.play(name, {vol, pitch}?)",
+   "doc": "Plays a loaded sound by name (PlaySound).",
+   "example": "sound.play(\"HUD_jumpgap\")"
+  },
+  {
+   "name": "sound.stop",
+   "kind": "function",
+   "signature": "sound.stop(name)",
+   "doc": "Stops a sound (StopSound).",
+   "example": "sound.stop(\"HUD_jumpgap\")"
+  },
+  {
+   "name": "sound.music_volume",
+   "kind": "function",
+   "signature": "sound.music_volume(v)",
+   "doc": "Music volume (SetMusicVolume).",
+   "example": "sound.music_volume(50)"
+  },
+  {
+   "name": "sound.skip_track",
+   "kind": "function",
+   "signature": "sound.skip_track()",
+   "doc": "Next music track.",
+   "example": "sound.skip_track()"
+  },
+  {
+   "name": "goals.start",
+   "kind": "function",
+   "signature": "goals.start(id)",
+   "doc": "Starts a goal: a modding-kit goal through p8q_goal_start, a stock goal through GMan_ActivateGoal.",
+   "example": "goals.start(\"kicker_combo\")"
+  },
+  {
+   "name": "goals.stop",
+   "kind": "function",
+   "signature": "goals.stop(id)",
+   "doc": "Deactivates a goal.",
+   "example": "goals.stop(\"kicker_combo\")"
+  },
+  {
+   "name": "goals.won",
+   "kind": "function",
+   "signature": "goals.won(id) -> bool",
+   "doc": "True if the goal was won.",
+   "example": "goals.won(\"kicker_combo\")"
+  },
+  {
+   "name": "goals.active",
+   "kind": "function",
+   "signature": "goals.active(id?) -> bool | key",
+   "doc": "Whether a goal is active, or (no id) the active goal's id.",
+   "example": "goals.active()"
+  },
+  {
+   "name": "goals.exists",
+   "kind": "function",
+   "signature": "goals.exists(id) -> bool",
+   "doc": "True if the goal manager knows the goal.",
+   "example": "goals.exists(\"kicker_combo\")"
+  },
+  {
+   "name": "goals.unlock",
+   "kind": "function",
+   "signature": "goals.unlock(id)",
+   "doc": "Unlocks a goal.",
+   "example": "goals.unlock(\"kicker_combo\")"
+  },
+  {
+   "name": "goals.lock",
+   "kind": "function",
+   "signature": "goals.lock(id)",
+   "doc": "Locks a modding-kit goal.",
+   "example": "goals.lock(\"kicker_combo\")"
+  },
+  {
+   "name": "goals.list",
+   "kind": "function",
+   "signature": "goals.list() -> {key...}",
+   "doc": "Ids of the modding-kit goals installed.",
+   "example": "for _, g in ipairs(goals.list()) do log.info(tostring(g)) end"
+  },
+  {
+   "name": "goals.config",
+   "kind": "function",
+   "signature": "goals.config(id) -> table",
+   "doc": "A modding-kit goal's settings (p8q_goal_cfg).",
+   "example": "goals.config(\"kicker_combo\").title"
+  },
+  {
+   "name": "goals.last_result",
+   "kind": "function",
+   "signature": "goals.last_result() -> {goal, result, serial}",
+   "doc": "The last modding-kit goal that ended and how (won / failed / quit).",
+   "example": "goals.last_result().result"
+  },
+  {
+   "name": "camera.play",
+   "kind": "function",
+   "signature": "camera.play(name, params?) -> handle",
+   "doc": "Plays an in-game camera animation (PlayIGCCam).",
+   "example": "camera.play(\"my_cam\", {play_hold = true})"
+  },
+  {
+   "name": "camera.stop",
+   "kind": "function",
+   "signature": "camera.stop(name)",
+   "doc": "Stops a camera animation (KillSkaterCamAnim).",
+   "example": "camera.stop(\"my_cam\")"
+  },
+  {
+   "name": "input.held",
+   "kind": "function",
+   "signature": "input.held(button) -> bool",
+   "doc": "The local skater's pad button is down. X Square Circle Triangle L1 R1 L2 R2 Up Down Left Right.",
+   "example": "if input.held(\"L2\") then ... end"
+  },
+  {
+   "name": "input.watch",
+   "kind": "function",
+   "signature": "input.watch{buttons}",
+   "doc": "Polls these buttons each frame and sends \"button\" events {button, down}.",
+   "example": "input.watch{\"L2\", \"R2\"}"
+  },
+  {
+   "name": "game.frame",
+   "kind": "function",
+   "signature": "game.frame() -> int",
+   "doc": "Game frame counter.",
+   "example": "game.frame()"
+  },
+  {
+   "name": "game.time",
+   "kind": "function",
+   "signature": "game.time() -> seconds",
+   "doc": "Host clock (seconds).",
+   "example": "game.time()"
+  },
+  {
+   "name": "game.delta",
+   "kind": "function",
+   "signature": "game.delta() -> seconds",
+   "doc": "The game's own frame delta (with slow motion).",
+   "example": "game.delta()"
+  },
+  {
+   "name": "game.level",
+   "kind": "function",
+   "signature": "game.level() -> key, structure",
+   "doc": "The current level (GetCurrentLevel: its load script checksum and level structure).",
+   "example": "tostring(game.level())"
+  },
+  {
+   "name": "game.paused",
+   "kind": "function",
+   "signature": "game.paused() -> bool",
+   "doc": "True while the game is paused.",
+   "example": "if not game.paused() then ... end"
+  },
+  {
+   "name": "save.get",
+   "kind": "function",
+   "signature": "save.get(key, default?) -> value",
+   "doc": "This mod's own save data (JSON in <mods>/_modsave/<mod id>/save.json, never the game's saves).",
+   "example": "local best = save.get(\"best\", 0)"
+  },
+  {
+   "name": "save.set",
+   "kind": "function",
+   "signature": "save.set(key, value)",
+   "doc": "Stores a JSON-compatible value; written within 10 s, at reload / exit, or with save.flush().",
+   "example": "save.set(\"best\", 12000)"
+  },
+  {
+   "name": "save.data",
+   "kind": "function",
+   "signature": "save.data() -> table",
+   "doc": "The whole save table (edit in place).",
+   "example": "save.data().runs = (save.data().runs or 0) + 1"
+  },
+  {
+   "name": "save.flush",
+   "kind": "function",
+   "signature": "save.flush()",
+   "doc": "Writes the save data now.",
+   "example": "save.flush()"
+  },
+  {
+   "name": "mod.id",
+   "kind": "const",
+   "signature": "mod.id",
+   "doc": "This mod's id (mod.json).",
+   "example": "log.info(mod.id)"
+  },
+  {
+   "name": "mod.info",
+   "kind": "const",
+   "signature": "mod.info",
+   "doc": "This mod's mod.json as a table (mod.info.config = its settings).",
+   "example": "local cfg = mod.info.config or {}"
+  },
+  {
+   "name": "mod.read",
+   "kind": "function",
+   "signature": "mod.read(path) -> string|nil, err",
+   "doc": "Reads a file of the mod folder (relative path).",
+   "example": "mod.read(\"data/lines.txt\")"
+  },
+  {
+   "name": "mod.json",
+   "kind": "function",
+   "signature": "mod.json(path) -> table|nil, err",
+   "doc": "Reads and decodes a JSON file of the mod folder.",
+   "example": "mod.json(\"data/lines.json\")"
+  },
+  {
+   "name": "mod.list",
+   "kind": "function",
+   "signature": "mod.list(dir?) -> {names}",
+   "doc": "Lists a folder of the mod (folders end in /).",
+   "example": "mod.list(\"data\")"
+  },
+  {
+   "name": "mod.export",
+   "kind": "function",
+   "signature": "mod.export(name, fn)",
+   "doc": "Makes fn callable from the live link / editor (mod.call) and native plugins.",
+   "example": "mod.export(\"reset\", function() save.set(\"best\", 0) end)"
+  },
+  {
+   "name": "require",
+   "kind": "function",
+   "signature": "require(name) -> module",
+   "doc": "Loads scripts/<name with . as />.lua of this mod, else a built-in library (peds, ...).",
+   "example": "local util = require(\"util.math\")"
+  },
+  {
+   "name": "json.encode",
+   "kind": "function",
+   "signature": "json.encode(value, pretty?) -> string",
+   "doc": "Value to JSON.",
+   "example": "json.encode({a = 1})"
+  },
+  {
+   "name": "json.decode",
+   "kind": "function",
+   "signature": "json.decode(text) -> value|nil, err",
+   "doc": "JSON to value.",
+   "example": "json.decode(\"[1,2]\")"
+  },
+  {
+   "name": "log.info",
+   "kind": "function",
+   "signature": "log.info(...)",
+   "doc": "Writes to the game log (and the editor console) with file:line. print() does the same.",
+   "example": "log.info(\"score\", 100)"
+  },
+  {
+   "name": "log.warn",
+   "kind": "function",
+   "signature": "log.warn(...)",
+   "doc": "Warning line.",
+   "example": "log.warn(\"odd\")"
+  },
+  {
+   "name": "log.error",
+   "kind": "function",
+   "signature": "log.error(...)",
+   "doc": "Error line.",
+   "example": "log.error(\"broken\")"
+  },
+  {
+   "name": "livelink.emit",
+   "kind": "function",
+   "signature": "livelink.emit(name, table)",
+   "doc": "Sends an event to connected live-link clients (the editor).",
+   "example": "livelink.emit(\"progress\", {done = 3})"
+  },
+  {
+   "name": "livelink.active",
+   "kind": "function",
+   "signature": "livelink.active() -> bool",
+   "doc": "True if a live-link client is connected.",
+   "example": "if livelink.active() then ... end"
+  },
+  {
+   "name": "mem.u8",
+   "kind": "function",
+   "signature": "mem.u8(addr) (also u16 u32 s32 f32 f64 vec cstr)",
+   "doc": "Typed reads of guest memory (big-endian handled).",
+   "example": "mem.f32(skater.object() + 0x70)"
+  },
+  {
+   "name": "mem.write_u32",
+   "kind": "function",
+   "signature": "mem.write_u8/u16/u32/f32/vec(addr, value)",
+   "doc": "Typed writes, only to game data and heaps (not code, stacks or device memory).",
+   "example": "mem.write_f32(addr, 1.5)"
+  },
+  {
+   "name": "frame",
+   "kind": "event",
+   "signature": "frame {dt, frame, time, game_dt}",
+   "doc": "Every game frame.",
+   "example": "events.on(\"frame\", function(f) end)"
+  },
+  {
+   "name": "trick",
+   "kind": "event",
+   "signature": "trick {name, points, mult, base, combo}",
+   "doc": "A trick was shown in the trick text (trick started).",
+   "example": "events.on(\"trick\", function(t) log.info(t.name, t.points) end)"
+  },
+  {
+   "name": "trick_landed",
+   "kind": "event",
+   "signature": "trick_landed {score, base, mult, tricks = {{name, points}}, total, last, pos}",
+   "doc": "A combo was landed (banked).",
+   "example": "events.on(\"trick_landed\", function(c) log.info(c.score) end)"
+  },
+  {
+   "name": "combo",
+   "kind": "event",
+   "signature": "combo {score, base, mult, landed, tricks, total, last, pos}",
+   "doc": "A combo ended, landed or bailed.",
+   "example": "events.on(\"combo\", function(c) end)"
+  },
+  {
+   "name": "combo_end",
+   "kind": "event",
+   "signature": "combo_end {score, base, mult, landed, total, last}",
+   "doc": "Raw combo end (no trick list).",
+   "example": "events.on(\"combo_end\", function(c) end)"
+  },
+  {
+   "name": "combo_start",
+   "kind": "event",
+   "signature": "combo_start {}",
+   "doc": "A combo started (first trick).",
+   "example": "events.on(\"combo_start\", function() end)"
+  },
+  {
+   "name": "bail",
+   "kind": "event",
+   "signature": "bail {pos}",
+   "doc": "The skater bailed.",
+   "example": "events.on(\"bail\", function() end)"
+  },
+  {
+   "name": "landed",
+   "kind": "event",
+   "signature": "landed {pos}",
+   "doc": "The skater landed (every landing, also without tricks).",
+   "example": "events.on(\"landed\", function() end)"
+  },
+  {
+   "name": "grind_start",
+   "kind": "event",
+   "signature": "grind_start {pos} / grind_end",
+   "doc": "Rail grind state entered / left.",
+   "example": "events.on(\"grind_start\", function() end)"
+  },
+  {
+   "name": "manual_start",
+   "kind": "event",
+   "signature": "manual_start {pos} / manual_end",
+   "doc": "Manual entered / left.",
+   "example": "events.on(\"manual_start\", function() end)"
+  },
+  {
+   "name": "lip_start",
+   "kind": "event",
+   "signature": "lip_start {pos} / lip_end",
+   "doc": "Lip trick state entered / left.",
+   "example": "events.on(\"lip_start\", function() end)"
+  },
+  {
+   "name": "air_start",
+   "kind": "event",
+   "signature": "air_start {pos} / air_end",
+   "doc": "Left the ground / came back down (also wall_start/_end, ground_start/_end).",
+   "example": "events.on(\"air_start\", function(e) end)"
+  },
+  {
+   "name": "gap",
+   "kind": "event",
+   "signature": "gap {id, GapID, text, score, ...}",
+   "doc": "A gap was hit (EndGap).",
+   "example": "events.on(\"gap\", function(g) log.info(g.text, g.score) end)"
+  },
+  {
+   "name": "gap_first",
+   "kind": "event",
+   "signature": "gap_first {gap_text, ...}",
+   "doc": "A gap was found for the first time (career).",
+   "example": "events.on(\"gap_first\", function(g) end)"
+  },
+  {
+   "name": "secret_spot",
+   "kind": "event",
+   "signature": "secret_spot {spot, ...}",
+   "doc": "A secret spot was found.",
+   "example": "events.on(\"secret_spot\", function(s) end)"
+  },
+  {
+   "name": "goal_started",
+   "kind": "event",
+   "signature": "goal_started {goal, params}",
+   "doc": "A goal was activated.",
+   "example": "events.on(\"goal_started\", function(g) log.info(tostring(g.goal)) end)"
+  },
+  {
+   "name": "goal_completed",
+   "kind": "event",
+   "signature": "goal_completed {goal, params, kit?}",
+   "doc": "A goal was won (stock or modding-kit goal).",
+   "example": "events.on(\"goal_completed\", function(g) end)"
+  },
+  {
+   "name": "goal_failed",
+   "kind": "event",
+   "signature": "goal_failed {goal, params, kit?}",
+   "doc": "A goal was failed.",
+   "example": "events.on(\"goal_failed\", function(g) end)"
+  },
+  {
+   "name": "goal_quit",
+   "kind": "event",
+   "signature": "goal_quit {goal}",
+   "doc": "A modding-kit goal was quit.",
+   "example": "events.on(\"goal_quit\", function(g) end)"
+  },
+  {
+   "name": "goal_ended",
+   "kind": "event",
+   "signature": "goal_ended {goal, won, params}",
+   "doc": "A goal was deactivated (after a win, a loss or quitting).",
+   "example": "events.on(\"goal_ended\", function(g) end)"
+  },
+  {
+   "name": "level_loading",
+   "kind": "event",
+   "signature": "level_loading {level, name, structure, params}",
+   "doc": "A level starts loading (load_level).",
+   "example": "events.on(\"level_loading\", function(l) log.info(l.level) end)"
+  },
+  {
+   "name": "level_ready",
+   "kind": "event",
+   "signature": "level_ready {}",
+   "doc": "The level is playable (GameFlow_PlayRun; also at the start of each run).",
+   "example": "events.on(\"level_ready\", function() end)"
+  },
+  {
+   "name": "level_unload",
+   "kind": "event",
+   "signature": "level_unload {}",
+   "doc": "The level is about to be left (cleanup_before_changing_level).",
+   "example": "events.on(\"level_unload\", function() end)"
+  },
+  {
+   "name": "zone_loaded",
+   "kind": "event",
+   "signature": "zone_loaded {zone, pak}",
+   "doc": "A streamed zone came in (Zones_PakMan_Init).",
+   "example": "events.on(\"zone_loaded\", function(z) log.info(z.zone) end)"
+  },
+  {
+   "name": "zone_unloaded",
+   "kind": "event",
+   "signature": "zone_unloaded {params}",
+   "doc": "A streamed zone went out.",
+   "example": "events.on(\"zone_unloaded\", function(z) end)"
+  },
+  {
+   "name": "pause",
+   "kind": "event",
+   "signature": "pause {} / unpause {}",
+   "doc": "The game was paused / unpaused (also by menus that pause).",
+   "example": "events.on(\"pause\", function() end)"
+  },
+  {
+   "name": "menu",
+   "kind": "event",
+   "signature": "menu {state}",
+   "doc": "The UI state changed (Fsm_Set: uistate_pausemenu, uistate_gameplay, ...).",
+   "example": "events.on(\"menu\", function(m) log.info(tostring(m.state)) end)"
+  },
+  {
+   "name": "ped_near",
+   "kind": "event",
+   "signature": "ped_near {ped_id, display_name, ...}",
+   "doc": "The skater came near a ped who can talk (talk prompt).",
+   "example": "events.on(\"ped_near\", function(p) end)"
+  },
+  {
+   "name": "ped_talk",
+   "kind": "event",
+   "signature": "ped_talk {...}",
+   "doc": "The player started a ped conversation.",
+   "example": "events.on(\"ped_talk\", function(p) end)"
+  },
+  {
+   "name": "speech_box",
+   "kind": "event",
+   "signature": "speech_box {text, ...}",
+   "doc": "A speech box opened.",
+   "example": "events.on(\"speech_box\", function(s) end)"
+  },
+  {
+   "name": "career",
+   "kind": "event",
+   "signature": "career {func, params, result}",
+   "doc": "Career progress changed (CareerFunc: AddGoalPoints, FoundSecretSpot, ...).",
+   "example": "events.on(\"career\", function(c) log.info(tostring(c.func)) end)"
+  },
+  {
+   "name": "rank_up",
+   "kind": "event",
+   "signature": "rank_up {new_rank, old_rank}",
+   "doc": "Career rank went up.",
+   "example": "events.on(\"rank_up\", function(r) end)"
+  },
+  {
+   "name": "game_saved",
+   "kind": "event",
+   "signature": "game_saved {ok, params}",
+   "doc": "The game saved (SaveToMemoryCard).",
+   "example": "events.on(\"game_saved\", function(s) end)"
+  },
+  {
+   "name": "game_loaded",
+   "kind": "event",
+   "signature": "game_loaded {ok, params}",
+   "doc": "A save was loaded (LoadFromMemoryCard).",
+   "example": "events.on(\"game_loaded\", function(s) end)"
+  },
+  {
+   "name": "button",
+   "kind": "event",
+   "signature": "button {button, down}",
+   "doc": "A watched pad button changed (input.watch).",
+   "example": "events.on(\"button\", function(b) end)"
+  },
+  {
+   "name": "unload",
+   "kind": "event",
+   "signature": "unload {}",
+   "doc": "This mod is about to be unloaded (reload / exit): undo changes to the game here.",
+   "example": "events.on(\"unload\", function() end)"
+  },
+  {
+   "name": "shutdown",
+   "kind": "event",
+   "signature": "shutdown {}",
+   "doc": "The game is exiting.",
+   "example": "events.on(\"shutdown\", function() end)"
+  },
+  {
+   "name": "script:<name>",
+   "kind": "event",
+   "signature": "script:<name> {name, params, object, script}",
+   "doc": "Any QB script starts (spawned, goto, run from C or called from another script).",
+   "example": "events.on(\"script:create_pause_menu\", function(e) end)"
+  },
+  {
+   "name": "cfunc:<name>",
+   "kind": "event",
+   "signature": "cfunc:<name> {name, params, object, script, result}",
+   "doc": "Any QB CFunction returned.",
+   "example": "events.on(\"cfunc:PlaySound\", function(e) end)"
+  },
+  {
+   "name": "event:<name>",
+   "kind": "event",
+   "signature": "event:<name> {name, source, target, data, broadcast}",
+   "doc": "Any game event (LaunchEvent / BroadcastEvent / exceptions).",
+   "example": "events.on(\"event:SkaterTrickDisplayed\", function(e) end)"
+  },
+  {
+   "name": "skater.state",
+   "kind": "function",
+   "signature": "skater.state() -> {state, code, walking, doing_trick}|nil",
+   "doc": "The skater's movement state: \"ground\", \"air\", \"wall\", \"lip\", \"rail\", \"wallplant\", \"stall\" or \"tiretap\" (SkaterState component), walking (off the board), doing_trick.",
+   "example": "if skater.state().state == \"rail\" then ... end"
+  },
+  {
+   "name": "skater.trick",
+   "kind": "function",
+   "signature": "skater.trick() -> name, points | nil",
+   "doc": "The trick last shown in the trick text and its points.",
+   "example": "local name, pts = skater.trick()"
+  },
+  {
+   "name": "skater.stance",
+   "kind": "function",
+   "signature": "skater.stance() -> \"regular\"|\"goofy\"",
+   "doc": "The current stance (switch-aware: Skater:flipped).",
+   "example": "skater.stance()"
+  },
+  {
+   "name": "world.create",
+   "kind": "function",
+   "signature": "world.create(node)",
+   "doc": "Creates a level object from its node (the game's Create).",
+   "example": "world.create(\"Z_Houses_GO_Car01\")"
+  },
+  {
+   "name": "world.kill",
+   "kind": "function",
+   "signature": "world.kill(node)",
+   "doc": "Removes a level object (Kill).",
+   "example": "world.kill(\"Z_Houses_GO_Car01\")"
+  },
+  {
+   "name": "world.exists",
+   "kind": "function",
+   "signature": "world.exists(id) -> bool",
+   "doc": "True if an object with this id exists (ObjectExists).",
+   "example": "world.exists(\"talking_spot_ped\")"
+  },
+  {
+   "name": "world.node_flag",
+   "kind": "function",
+   "signature": "world.node_flag(flag, on)",
+   "doc": "Turns a node flag (a group of level objects) on or off (ChangeNodeFlag).",
+   "example": "world.node_flag(\"NODEFLAG_Z_HOUSES_CHALK\", true)"
+  },
+  {
+   "name": "world.global_flag",
+   "kind": "function",
+   "signature": "world.global_flag(flag, on?) -> bool",
+   "doc": "Reads (no second argument) or sets a global flag (GetGlobalFlag / SetGlobalFlag / UnSetGlobalFlag).",
+   "example": "world.global_flag(\"SOME_FLAG\", true)"
+  },
+  {
+   "name": "camera.look",
+   "kind": "function",
+   "signature": "camera.look{pos, at = \"Skater\", fov = 72, name = \"modapi_cam\", time, hold = true}",
+   "doc": "A held in-game camera at pos looking at an object (morphs over time, default at once); camera.stop(name) returns to gameplay. Its control script is a qb.script the game runs on the camera object.",
+   "example": "camera.look{pos = skater.pos() + qb.vec(3, 2, 3), at = \"Skater\"}"
+  }
+ ]
+}

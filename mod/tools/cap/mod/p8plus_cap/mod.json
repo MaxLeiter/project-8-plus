@@ -1,0 +1,16 @@
+{
+  "id": "p8plus_cap",
+  "name": "Create-a-Park",
+  "version": "0.1.0",
+  "author": "Project 8 Plus",
+  "description": "Build skate parks in the game with the pad: in free skate hold L1 + R1 and press Triangle. Needs the Creator tools add-on (Setup); the P8Plus launcher starts the Create-a-Park companion with the game. Parks are saved in Documents\\P8Plus Mods; the park build the game plays (mods\\zz_cap) is removed at the next normal start.",
+  "main": "scripts/main.lua",
+  "api": 1,
+  "config": {
+    "chord": [
+      "L1",
+      "R1",
+      "Triangle"
+    ]
+  }
+}

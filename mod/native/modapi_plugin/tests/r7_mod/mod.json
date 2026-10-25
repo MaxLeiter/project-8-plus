@@ -1,0 +1,1 @@
+{ "id": "modapi_r7test", "name": "modapi r7: GrabTrick via qb.global, watchdog, camera.look", "version": "1", "main": "scripts/main.lua", "api": 1 }

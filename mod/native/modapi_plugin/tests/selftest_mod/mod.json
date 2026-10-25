@@ -1,0 +1,8 @@
+{
+  "id": "modapi_selftest",
+  "name": "modapi self test",
+  "version": "0.1",
+  "author": "Project 8 Plus",
+  "main": "scripts/main.lua",
+  "api": 1
+}
