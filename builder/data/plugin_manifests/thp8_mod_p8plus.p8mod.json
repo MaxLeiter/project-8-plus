@@ -1,0 +1,463 @@
+{
+ "p8mod": 1,
+ "id": "p8plus.thp8_mod_p8plus",
+ "name": "Project 8 Plus",
+ "version": "1.0.0-native",
+ "type": "plugin",
+ "author": "Project 8 Plus",
+ "description": "60 fps, ultrawide (Hor+) with a 16:9 HUD, the picture options, keyboard play and button prompts, CAS+ (looks, items, colours). Its settings are on the launcher's Settings page.",
+ "license": "see LICENSE / NOTICE",
+ "game": {
+  "title_id": "BLUS30011"
+ },
+ "platform": {
+  "abi": ">=1.2"
+ },
+ "plugin": {
+  "dll": "plugins/thp8_mod_p8plus.dll",
+  "ini": "plugins/thp8_mod_p8plus.ini",
+  "hooks": [
+   "sub_346554",
+   "sub_34657C",
+   "sub_35C988",
+   "sub_35CA40",
+   "sub_35E210",
+   "sub_38C300",
+   "sub_41D5B8",
+   "sub_442E6C",
+   "sub_443A78",
+   "sub_4456B4",
+   "sub_446148",
+   "sub_44909C",
+   "sub_4492C0",
+   "sub_44CB14",
+   "sub_4D1E24",
+   "sub_4D2064",
+   "sub_4DB844",
+   "sub_4DB8F8",
+   "sub_4DB9A8",
+   "sub_4DBA00",
+   "sub_4DBAB8",
+   "sub_500E14",
+   "sub_500E2C",
+   "sub_567810",
+   "sub_56A0F4",
+   "sub_589D88",
+   "sub_589ECC",
+   "sub_589FAC",
+   "sub_58A088",
+   "sub_5C3AD0",
+   "sub_5CA1B0",
+   "sub_5CA61C",
+   "sub_613A5C",
+   "sub_6E7A40",
+   "sub_6E94D4",
+   "sub_6EBBF8",
+   "sub_90D860",
+   "sub_92C5B0",
+   "sub_92C970",
+   "sub_A03C60"
+  ]
+ },
+ "x_p8plus": {
+  "generated_by": "native/p8plus_plugin/tools/make_p8mod.py",
+  "features": {
+   "bloom_scale": {
+    "keys": [
+     "bloom"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_58A088",
+      "mode": "wrap",
+      "what": "Bloom 50% / Bloom 25%"
+     }
+    ]
+   },
+   "camera": {
+    "keys": [
+     "camera_invert_x",
+     "camera_invert_y"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_6E7A40",
+      "mode": "wrap",
+      "what": "camera_invert_x / camera_invert_y (native only)"
+     },
+     {
+      "fn": "sub_6E94D4",
+      "mode": "wrap",
+      "what": "camera_invert_x (native only)"
+     },
+     {
+      "fn": "sub_6EBBF8",
+      "mode": "wrap",
+      "what": "camera_invert_y (native only)"
+     }
+    ]
+   },
+   "cas_plus": {
+    "keys": [
+     "cas_plus",
+     "cas_items",
+     "cas_color_all"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_4456B4",
+      "mode": "wrap",
+      "what": "cas_plus (native only)"
+     },
+     {
+      "fn": "sub_41D5B8",
+      "mode": "wrap",
+      "what": "cas_plus (native only)"
+     },
+     {
+      "fn": "sub_4D2064",
+      "mode": "wrap",
+      "what": "cas_plus (native only)"
+     },
+     {
+      "fn": "sub_4D1E24",
+      "mode": "wrap",
+      "what": "cas_plus (native only)"
+     },
+     {
+      "fn": "sub_35CA40",
+      "mode": "wrap",
+      "what": "cas_plus (native only)"
+     }
+    ]
+   },
+   "cas_preview": {
+    "keys": [
+     "cas_preview_on_focus"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_4456B4",
+      "mode": "wrap",
+      "what": "cas_preview_on_focus (native only)"
+     },
+     {
+      "fn": "sub_92C970",
+      "mode": "wrap",
+      "what": "cas_preview_on_focus: rebuild timing (diagnostics)"
+     },
+     {
+      "fn": "sub_92C5B0",
+      "mode": "wrap",
+      "what": "cas_preview_on_focus: rebuild timing (diagnostics)"
+     }
+    ]
+   },
+   "cutscenes60": {
+    "keys": [
+     "cutscenes60"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_4492C0",
+      "mode": "wrap",
+      "what": "60 FPS Cutscenes (experimental)"
+     }
+    ]
+   },
+   "draw_dist": {
+    "keys": [
+     "draw_distance"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_442E6C",
+      "mode": "wrap",
+      "what": "Ped/Object Draw Distance x2 / x4 (lod_dist)"
+     },
+     {
+      "fn": "sub_446148",
+      "mode": "wrap",
+      "what": "Ped/Object Draw Distance x2 / x4 (SuspendDistance, default)"
+     }
+    ]
+   },
+   "first_launch": {
+    "keys": [
+     "first_launch_screen"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_35E210",
+      "mode": "wrap",
+      "what": "first_launch_screen (native only)"
+     },
+     {
+      "fn": "sub_35C988",
+      "mode": "wrap",
+      "what": "first_launch_screen (native only)"
+     }
+    ]
+   },
+   "fps": {
+    "keys": [
+     "fps"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_44CB14",
+      "mode": "wrap",
+      "what": "60 FPS / Unlocked FPS"
+     },
+     {
+      "fn": "sub_613A5C",
+      "mode": "wrap",
+      "what": "60 FPS / Unlocked FPS (frame-rate independent lerps)"
+     }
+    ]
+   },
+   "haze": {
+    "keys": [
+     "haze"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_442E6C",
+      "mode": "wrap",
+      "what": "(native) Haze: atmosphere strength"
+     },
+     {
+      "fn": "sub_589D88",
+      "mode": "wrap",
+      "what": "(native) Haze: Fog screen effect"
+     }
+    ]
+   },
+   "horplus": {
+    "keys": [
+     "hor_plus"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_500E14",
+      "mode": "wrap",
+      "what": "Ultrawide 21:9 (2560x1080) / 21:9 (3440x1440) / Super Ultrawide 32:9 / Triple Monitor 48:9"
+     },
+     {
+      "fn": "sub_A03C60",
+      "mode": "wrap",
+      "what": "Ultrawide (all variants)"
+     }
+    ]
+   },
+   "hud169": {
+    "keys": [
+     "hud169"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_5CA1B0",
+      "mode": "wrap",
+      "what": "16:9 HUD for <aspect> (HUD_TEXT)"
+     },
+     {
+      "fn": "sub_500E2C",
+      "mode": "wrap",
+      "what": "16:9 HUD for <aspect> (POS3D)"
+     }
+    ]
+   },
+   "intro": {
+    "keys": [
+     "straight_to_menu"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_346554",
+      "mode": "wrap",
+      "what": "intro movies (native only)"
+     },
+     {
+      "fn": "sub_34657C",
+      "mode": "wrap",
+      "what": "intro movies (native only)"
+     },
+     {
+      "fn": "sub_90D860",
+      "mode": "wrap",
+      "what": "intro movies (native only)"
+     },
+     {
+      "fn": "sub_442E6C",
+      "mode": "wrap",
+      "what": "intro movies (native only)"
+     }
+    ]
+   },
+   "menus60": {
+    "keys": [
+     "menus60"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_443A78",
+      "mode": "wrap",
+      "what": "60 FPS Menus"
+     }
+    ]
+   },
+   "neutral_grading": {
+    "keys": [
+     "neutral_grading"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_589ECC",
+      "mode": "wrap",
+      "what": "Neutral Colour Grading"
+     }
+    ]
+   },
+   "nolod": {
+    "keys": [
+     "nolod"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_44909C",
+      "mode": "wrap",
+      "what": "No LOD (debug nolod)"
+     }
+    ]
+   },
+   "no_bloom": {
+    "keys": [
+     "bloom"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_4DB844",
+      "mode": "replace",
+      "what": "No Bloom"
+     }
+    ]
+   },
+   "no_blur": {
+    "keys": [
+     "screen_blur"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_4DBAB8",
+      "mode": "replace",
+      "what": "No Screen Blur"
+     }
+    ]
+   },
+   "no_dof": {
+    "keys": [
+     "dof"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_4DB8F8",
+      "mode": "replace",
+      "what": "No Depth of Field"
+     },
+     {
+      "fn": "sub_4DBA00",
+      "mode": "replace",
+      "what": "No Depth of Field"
+     }
+    ]
+   },
+   "no_grain": {
+    "keys": [
+     "film_grain"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_4DB9A8",
+      "mode": "replace",
+      "what": "No Film Grain"
+     }
+    ]
+   },
+   "no_radial_blur": {
+    "keys": [
+     "screen_blur"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_589FAC",
+      "mode": "wrap",
+      "what": "No Radial Blur (keep tints)"
+     }
+    ]
+   },
+   "pillarbox": {
+    "keys": [
+     "pillarbox"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_38C300",
+      "mode": "wrap",
+      "what": "(native) Pillarbox Bink movies"
+     },
+     {
+      "fn": "sub_56A0F4",
+      "mode": "wrap",
+      "what": "(native) Pillarbox the loading screen"
+     },
+     {
+      "fn": "sub_5CA61C",
+      "mode": "wrap",
+      "what": "(native) Pillarbox the loading screen (meshes)"
+     },
+     {
+      "fn": "sub_567810",
+      "mode": "wrap",
+      "what": "(native) Pillarbox the loading screen (wheel spin)"
+     }
+    ]
+   },
+   "render_guard": {
+    "keys": [
+     "render_list_guard"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_5C3AD0",
+      "mode": "wrap",
+      "what": "Render list guard (native)"
+     }
+    ]
+   },
+   "shadow_dist": {
+    "keys": [
+     "shadow_distance"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_442E6C",
+      "mode": "wrap",
+      "what": "Shadow Distance x2 (experimental)"
+     }
+    ]
+   },
+   "splat_fade": {
+    "keys": [
+     "splat_fade"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_613A5C",
+      "mode": "wrap",
+      "what": "Blood splats fade (native)"
+     }
+    ]
+   }
+  }
+ }
+}

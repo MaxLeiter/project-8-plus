@@ -1,0 +1,27 @@
+{
+ "comment": "Pinned compiler. The builder downloads exactly this file and refuses any other bytes. zig is MIT-licensed (https://ziglang.org); it bundles clang/lld (Apache-2.0 WITH LLVM-exception), libc++ and mingw-w64. Mirrors carry the same file; the SHA-256 is what is trusted, not the server. zig_linux: the same zig for a Linux host (the builder on Linux / Steam Deck); it cross-compiles the same Windows exe and the native Linux ELF.",
+ "zig": {
+  "version": "0.16.0",
+  "file": "zig-x86_64-windows-0.16.0.zip",
+  "size": 97217739,
+  "sha256": "68659eb5f1e4eb1437a722f1dd889c5a322c9954607f5edcf337bc3684a75a7e",
+  "urls": [
+   "https://ziglang.org/download/0.16.0/zig-x86_64-windows-0.16.0.zip",
+   "https://pkg.machengine.org/zig/0.16.0/zig-x86_64-windows-0.16.0.zip",
+   "https://zigmirror.hryx.net/zig/0.16.0/zig-x86_64-windows-0.16.0.zip",
+   "https://zig.linus.dev/zig/0.16.0/zig-x86_64-windows-0.16.0.zip"
+  ]
+ },
+ "zig_linux": {
+  "version": "0.16.0",
+  "file": "zig-x86_64-linux-0.16.0.tar.xz",
+  "size": 55478392,
+  "sha256": "70e49664a74374b48b51e6f3fdfbf437f6395d42509050588bd49abe52ba3d00",
+  "urls": [
+   "https://ziglang.org/download/0.16.0/zig-x86_64-linux-0.16.0.tar.xz",
+   "https://pkg.machengine.org/zig/0.16.0/zig-x86_64-linux-0.16.0.tar.xz",
+   "https://zigmirror.hryx.net/zig/0.16.0/zig-x86_64-linux-0.16.0.tar.xz",
+   "https://zig.linus.dev/zig/0.16.0/zig-x86_64-linux-0.16.0.tar.xz"
+  ]
+ }
+}

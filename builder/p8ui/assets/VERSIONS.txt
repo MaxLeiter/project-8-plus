@@ -1,0 +1,4 @@
+Inter 4.1 (rsms/inter release zip), subset
+Barlow Condensed (google/fonts ofl/barlowcondensed), subset
+JetBrains Mono 2.304 (JetBrains/JetBrainsMono release zip), subset
+Lucide icon font, lucide-static 1.52.0, unmodified

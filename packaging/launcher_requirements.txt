@@ -1,0 +1,22 @@
+# Python packages of the launcher window (Dear ImGui, OpenGL helper, image tools, texture keys), installed by
+# packaging/make_release.py into the bundle's python\Lib\site-packages: the first window needs them, so they are part
+# of the download (about 110 MB unpacked). Pinned with SHA-256 (pip refuses any other bytes), 64-bit CPython 3.13 on
+# Windows, from PyPI, binary wheels only. Licences: imgui-bundle MIT (it ships Dear ImGui, GLFW and other MIT/zlib
+# libraries), moderngl MIT, glcontext MIT, numpy BSD-3, pillow HPND, quicktex MIT, xxhash BSD-2,
+# onnxruntime-directml MIT (it carries Microsoft's DirectML.dll redistributable; it goes into the HD pack, not
+# the main download: make_release.py moves it there, thp8_builder/hdpack.py).
+#     python -m pip install --target <bundle>\python\Lib\site-packages --only-binary=:all: --no-deps --require-hashes -r launcher_requirements.txt
+# xxhash: the texture replacement key of the game's renderer is XXH3-64; Python has no XXH3 in its standard library.
+# onnxruntime-directml: the HD-texture add-on's AI upscaler (ONNX Runtime with DirectML: any DirectX 12 GPU, else the CPU;
+#   25.1 MB wheel, 64 MB installed before make_release.py prunes its python-only tool packages). --no-deps: of its
+#   declared dependencies (flatbuffers, packaging, protobuf, sympy) none is imported by `import onnxruntime` + inference;
+#   numpy comes from the line above. Its three big binaries are pinned in make_release.py PINNED_BINARIES_HD.
+imgui-bundle==1.92.900 --hash=sha256:914c348555cb3b2f1bf11c1d4d6b94d88a3b7136dc31271edf284e06430ddb3e
+moderngl==5.12.0 --hash=sha256:e34d1cd38f7998258f76a08bb5e87f351ec653b7ea1928b2711f8719c10cefd1
+glcontext==3.0.0 --hash=sha256:18aa4b1df50e8c8ea39bd0f775f39bcc987521f92c4ed019ec7d70078471354d
+numpy==2.5.3 --hash=sha256:71cad2b2a7451ab79d8f5e71b453485b6775963d5cf794179144a7463fe6e8ec
+pillow==12.3.0 --hash=sha256:1cca606cd25738df4ed873d5ad46bbdb3d83b5cbca291f6b4ff13a4df6b0bbe8
+quicktex==0.3.1 --hash=sha256:fe9356f7625def69bf58c0dd6ee67bba7155d80e39eeb36cac0d79021d3d729e
+# (click, quicktex's command-line dependency, is not installed: nothing here runs quicktex's CLI)
+xxhash==4.0.1 --hash=sha256:97b94fb29abf21f5f0bde15f7dbdd3a4aa2dc59f37026adc7b4bee8563b84375
+onnxruntime-directml==1.24.4 --hash=sha256:2f1031cb2281e5b27cca9efe0b9399317c7286e4d226f7a79d4ab79bbd94d19e

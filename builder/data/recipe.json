@@ -1,0 +1,194 @@
+{
+ "comment": "How the builder compiles and links thp8.exe with the pinned zig (x86_64-windows-gnu = clang + mingw-w64 + libc++). Mirrors thp8-native CMakeLists.txt. {lift} = <install>/.build/lift, {ps3recomp} / {title} = folders of this builder package. Notes (toolchain study 2026-10-05): zig maps -O1/-O2/-O3 to clang -O2, so '-O2 -Xclang -O3' gives the cc1 -O3 that clang-cl /O2 uses; zig defaults to -g -gcodeview and -fno-omit-frame-pointer; -fno-auto-import avoids a .refptr indirection on every extern (vm_base) access; each TU also gets -Xclang -object-file-name=<stable name> so objects are deterministic; PS3RECOMP_NO_NPDRM_KEYS keeps platform keys out of every build. THP8_RUNTIME_SPU_DEFAULTS=1 mirrors the CMake option (default ON since ps3recomp thp8-next3: the runtime has the spucheck SPU defaults, so the title stops setting them). 'options' mirror THP8_LIFT_FMA (-mfma on the lifted tree + -DTHP8_LIFT_FMA=1 everywhere; chosen per player CPU by the builder) and THP8_LIFT_MEMV (default on; off = -DPPU_MEMV= on the lifted tree: a compile flag only, no relift). -Wno-everything + -Werror=unknown-attributes (not -w: -w also hides this error): clang for MinGW silently IGNORES __declspec(thread), turning thread-local variables into shared globals; an 'unknown attribute ignored' must stop the build.",
+ "common": [
+  "-target",
+  "x86_64-windows-gnu",
+  "-O2",
+  "-Xclang",
+  "-O3",
+  "-g0",
+  "-fomit-frame-pointer",
+  "-Wno-everything",
+  "-Werror=unknown-attributes",
+  "-fno-sanitize=undefined",
+  "-fno-strict-aliasing",
+  "-ffp-contract=off",
+  "-msse4.1",
+  "-fno-auto-import",
+  "-DNDEBUG",
+  "-DPS3RECOMP_NO_NPDRM_KEYS",
+  "-DTHP8_RUNTIME_SPU_DEFAULTS=1",
+  "-ffile-prefix-map={lift}=lift",
+  "-ffile-prefix-map={ps3recomp}=ps3recomp",
+  "-ffile-prefix-map={title}=title"
+ ],
+ "classes": {
+  "lifted": {
+   "driver": [
+    "c++"
+   ],
+   "flags": [
+    "-std=gnu++20"
+   ],
+   "includes": [
+    "{title}/src/compat",
+    "{lift}/src/recomp",
+    "{ps3recomp}/runtime/ppu",
+    "{ps3recomp}/runtime/spu",
+    "{ps3recomp}/runtime/prx",
+    "{ps3recomp}/runtime/memory",
+    "{ps3recomp}/runtime/syscalls",
+    "{ps3recomp}/runtime/platform",
+    "{ps3recomp}/include",
+    "{ps3recomp}/libs/*"
+   ]
+  },
+  "host": {
+   "driver": [
+    "c++"
+   ],
+   "flags": [
+    "-std=gnu++20"
+   ],
+   "includes": [
+    "{title}/src/compat",
+    "{lift}/src/recomp",
+    "{ps3recomp}/runtime/ppu",
+    "{ps3recomp}/runtime/spu",
+    "{ps3recomp}/runtime/prx",
+    "{ps3recomp}/runtime/memory",
+    "{ps3recomp}/runtime/syscalls",
+    "{ps3recomp}/runtime/platform",
+    "{ps3recomp}/include",
+    "{ps3recomp}/libs/*"
+   ]
+  },
+  "hostc": {
+   "driver": [
+    "cc"
+   ],
+   "flags": [
+    "-std=gnu17"
+   ],
+   "includes": [
+    "{title}/src/compat",
+    "{lift}/src/title_gen",
+    "{lift}/src/recomp",
+    "{ps3recomp}/runtime/ppu",
+    "{ps3recomp}/runtime/spu",
+    "{ps3recomp}/runtime/prx",
+    "{ps3recomp}/runtime/memory",
+    "{ps3recomp}/runtime/syscalls",
+    "{ps3recomp}/runtime/platform",
+    "{ps3recomp}/include",
+    "{ps3recomp}/libs/*"
+   ]
+  },
+  "spu": {
+   "driver": [
+    "cc"
+   ],
+   "flags": [
+    "-std=gnu17"
+   ],
+   "includes": [
+    "{title}/src/compat",
+    "{lift}/src/recomp",
+    "{ps3recomp}/runtime/ppu",
+    "{ps3recomp}/runtime/spu",
+    "{ps3recomp}/runtime/prx",
+    "{ps3recomp}/runtime/memory",
+    "{ps3recomp}/runtime/syscalls",
+    "{ps3recomp}/runtime/platform",
+    "{ps3recomp}/include",
+    "{ps3recomp}/libs/*"
+   ]
+  }
+ },
+ "host_sources": [
+  "{ps3recomp}/runtime/ppu/tests/boot_main.cpp",
+  "{ps3recomp}/runtime/ppu/ppu_loader.cpp",
+  "{ps3recomp}/runtime/ppu/ppu_hle.cpp",
+  "{ps3recomp}/runtime/ppu/ppu_sysprx.cpp",
+  "{ps3recomp}/runtime/ppu/ppu_fs.cpp",
+  "{ps3recomp}/gen/ppu_hle_nids.cpp",
+  "{title}/src/title/thp8_hacks.cpp",
+  "{title}/src/title/thp8_kick.cpp"
+ ],
+ "host_c_sources": [
+  "{title}/src/title/thp8_pm_native.c",
+  "{title}/src/title/thp8_skin_native.c"
+ ],
+ "variants": {
+  "vanilla": {
+   "defines": []
+  },
+  "mods": {
+   "defines": [
+    "PPU_MOD_HOOKS"
+   ],
+   "extra_sources": [
+    "{ps3recomp}/runtime/ppu/ppu_mod_hooks.cpp",
+    "{ps3recomp}/runtime/ppu/ppu_mod_loader.cpp"
+   ]
+  }
+ },
+ "options": {
+  "fma": {
+   "lifted_flags": [
+    "-mfma"
+   ],
+   "spu_flags": [
+    "-mfma"
+   ],
+   "defines": [
+    "THP8_LIFT_FMA=1"
+   ]
+  },
+  "lift_memv": {
+   "default": true,
+   "off_lifted_flags": [
+    "-DPPU_MEMV="
+   ]
+  },
+  "pgo": {
+   "default": true,
+   "lifted_flags": [
+    "-fprofile-instr-use={title}/pgo/thp8.profdata"
+   ],
+   "profile": "pgo/thp8.profdata",
+   "sha256": "3b2919839fe6871df8a3624afb810f43ebc7af09fc866f0c6ace13f530059808"
+  }
+ },
+ "link": {
+  "driver": [
+   "c++"
+  ],
+  "flags": [
+   "-target",
+   "x86_64-windows-gnu",
+   "-O2",
+   "-g0",
+   "-Wl,--stack,268435456"
+  ],
+  "inputs": [
+   "{runtime_lib}"
+  ],
+  "libs": [
+   "ws2_32",
+   "bcrypt",
+   "xinput1_4",
+   "ole32",
+   "d3d12",
+   "dxgi",
+   "dxguid",
+   "d3dcompiler_47",
+   "winmm",
+   "dbghelp",
+   "user32",
+   "gdi32",
+   "uuid"
+  ],
+  "no_common": true
+ }
+}

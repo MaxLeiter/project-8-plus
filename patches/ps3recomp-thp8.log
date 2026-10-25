@@ -1,0 +1,560 @@
+36e0e068 2026-10-04 thp8: HLE gaps (341/342 containers, sys_net offline, pad sensor, spurs exc handler, atrac stream, console_write, fs syscall renumber), VFS (CELL_FS_O_* flags, PS3_APP_HOME, strict hdd0, cellGame layout, savedata root), SPU (orbi/xorhi/xorbi decode, group-start image by content), lifter (3rd TOC, --chunk-lines)
+68efb786 2026-10-04 thp8: RSX TC8/TC9 interpolants (FP/VP decompilers); lifter comment
+b3c743a0 2026-10-04 thp8: opt-in GCM_SETFLIP_IN_FIFO (cellGcmSetFlip queued in FIFO)
+9cd0228f 2026-10-04 thp8: MinGW/zig build of the PPU scaffold (getenv slot MSVC-only, _ReturnAddress, ppu_loader SEH/ppu_resv_break)
+ae5c15ef 2026-10-04 thp8: MinGW getenv cache via IAT patch (boot_main)
+243ae7f5 2026-10-04 thp8: PS3_DEBUG_PRIO=1 raises debug console thread priority (harness)
+c47a5a07 2026-10-04 lv2: route SPU send_event through per-thread connect_event ports
+04049a9c 2026-10-04 spu_lifter: lift in-function jump tables (compiled switch) as gotos
+d2c98a98 2026-10-04 spu: interpreter fallback nests calls into lifted code; microstep re-queues dispatch
+8028d615 2026-10-04 spu: SPU_CALLHIST=<img> diagnostic (lifted call-site histogram)
+460a54ee 2026-10-04 spu: per-worker CPU cost diagnostics (SPU_CPUSTAT, SPU_PROF_IMG)
+73292095 2026-10-04 spu: pshufb quadword byte rotates/shifts and shufb control generators
+267fbecf 2026-10-04 spu: SPU_PUTDUMP=<ea>:<file> appends every SPU PUT to that EA
+4f9ac1af 2026-10-04 spu_coherency: TTAS + pause + yield lock-line spinlock on non-MSVC builds too
+3ee9b1ca 2026-10-04 thp8: RSX depth-compare sampling + Y16_X16/DEPTH16 zeta views (live draw)
+54667810 2026-10-04 vfs: loose-file mods overlay (PS3_MODS_ROOT / <exe>/mods), read-side opens+stat, HDD-cache aware
+f4ce4322 2026-10-04 thp8-perf: cap SPURS PM lanes to nSpus; park idle GETLLAR spins and idle PM polls
+526f06f7 2026-10-04 vfs mods overlay: static review fixes (not compiled yet: light mode)
+0db6cbfd 2026-10-04 vfs mods overlay: review fixes (compile blocker, reset default, reset retry, EDAT order)
+f8915330 2026-10-04 thp8: zeta views - resolve only sampled units, keep the written zeta, PCF anchor
+91684d5c 2026-10-04 ppu: guest callbacks get per-thread stacks out of RSX local memory
+06e17614 2026-10-04 vm: move the HLE inject window to 0x7F000000, out of the mmapper path
+9deacfe9 2026-10-04 ppu_lifter: opt-in PPU_FN_ENTRY mod-hook marker + runtime dispatcher
+c02d7812 2026-10-04 include/ps3mod.h: public C plugin ABI for mod DLLs (v1.0)
+c2216fff 2026-10-04 thp8: opt-in PS3_EQ_SUBMS_WAIT (real ~1ms wait for sub-ms event_queue_receive) and PS3_SPU_PRIO_ABOVE (lifted SPU workers ABOVE_NORMAL)
+39a03e8d 2026-10-04 ps3mod.h: clarify discovery order, size conventions, ctx==NULL guest calls (comments only)
+dfe2db7a 2026-10-04 ppu_mod_loader: plugin (mod DLL) loader + host API for ps3mod.h
+218fcc60 2026-10-04 ppu_mod_loader: absolute mods root for LoadLibraryExW; log disabled DLLs only
+8d1d1d35 2026-10-04 ps3mod.h: fix comment terminated early (get_display/on_event block did not compile)
+88991636 2026-10-04 cellGcmSys: title default for in-FIFO cellGcmSetFlip (THP8 Bink movie flicker)
+9c170b82 2026-10-04 tools/ppucheck: differential PPU semantics harness (framework + integer reference)
+68b1854a 2026-10-04 cellPad: idle ports report centred sticks (0x80), not 0 = hard up-left
+92495516 2026-10-05 ppucheck: FP + VMX reference models, harness fixes
+a8457708 2026-10-05 spu: SPU floating-point semantics (round toward zero, no denormals, extended range)
+d4b9557e 2026-10-05 spu runtime: default-safe channel blocking + DMA guard, SNR register, dispatch fast paths, run capture/replay hooks
+3903baeb 2026-10-05 spu lifter: direct tail calls for cross-function transfers; tools/spucheck replay + variants
+68a03408 2026-10-05 spu: per-instruction differential harness (tests/spucheck)
+5d8a0808 2026-10-05 live draw: a self-read of the render target uses the feedback copy, not a same-address alias
+02a42c18 2026-10-05 spu_interp: ilh splats the halfword, not a zero-extended word
+30c02749 2026-10-05 spu_interp: rchcnt writes the count to the preferred word only
+9e5c0f45 2026-10-05 spu_interp: mfspr / fscrrd write zero to rt instead of leaving it
+4041ba56 2026-10-05 diag: PS3_HLE_ARGLOG=<k> logs the first k calls of every import and syscall
+caaf43ea 2026-10-05 cellPad/cellAudio: SDK data lengths, v1 GetInfo table, device-loss reopen, error values
+10ee0117 2026-10-05 cellGcmSys: opt-in GCM interrupt thread, SetWaitFlip self-pump, SetZcull stack args, ctx end, recycle lap
+e11a49b2 2026-10-05 cellRtc/cellSysutil/cellSaveData/cellVideoOut: THP8 save dates, license area, recreate mode
+52eadf8f 2026-10-05 boot_main: window close posts REQUEST_EXITGAME instead of leaving the guest running headless
+461e3825 2026-10-05 fs: sys_fs open flags/paths/strict, fd-table locks, EIO value, 64-bit lseek, stat times, readdir dots
+9188bd5a 2026-10-05 sysPrxForUser heap / cellSysmodule: delete_heap, heap bounds, unload refcount
+90a099d7 2026-10-05 sync primitives: mutex trylock EDEADLK, destroy-under-owner/waiters, QPC cond timeouts, rwlock, lwmutex/spinlock
+3dd33817 2026-10-05 lv2 events/threads: queue destroy modes, thread join/exit race, TLS reuse, main prio, timed receive
+f13fbf5b 2026-10-05 sys_tty_read: CELL_EIO on retail; sys_process_is_stack: 0xD region
+3ace8d90 2026-10-05 SPU syscalls / cellSpurs: group_destroy UAF, write_snr register, error returns, SPURS codes
+127a2fe1 2026-10-05 sys_cond: comment fix (timeout overshoot numbers)
+72ea1d28 2026-10-05 spu_interp: mpyhha is RR form -- accumulate into rt, not into "rc"
+44792483 2026-10-05 spu channels: no lost wakeups for blocking channel reads
+886959ae 2026-10-05 spu atomics: GETLLAR/PUTLLC/PUTLLUC use a 128-byte aligned LSA
+02516bd0 2026-10-05 spu channels: decrementer keeps its rate past 231 s
+2a0c89d8 2026-10-05 spu channels: RdEventStat = pending & enabled, RdMachStat = interrupt enable, SRR0 word address
+7d6ca1d3 2026-10-05 spu_interp: implement the valid opcodes that trapped as "unimplemented"
+95478776 2026-10-05 spucheck: also compare the interpreter against the lifted code directly
+fea959ef 2026-10-05 spu_interp: bi family -- E/D interrupt bits, bisl reads its target first, bisled
+746d86ce 2026-10-05 lv2: sys_spu_thread_write_snr raises SPU_EVENT_S1/S2
+8e38a3d3 2026-10-05 player window options (PS3_WINDOW, PS3_FULLSCREEN[_ASPECT], F11, PS3_NO_ESC_QUIT); WASAPI: AUTOCONVERTPCM, follow default device / recover from invalidation, log device + mix format, MMCSS mixer thread, PS3_AUDIO_TEST beep
+f97751c0 2026-10-05 lifter: VMX float lanes with Cell semantics (NJ flush, NaN precedence, fused vmaddfp/vnmsubfp)
+108cb807 2026-10-05 spu lifter/interp: stopd reports 0x3FFF; bisl rt==ra reads the target first; bisled fixed
+388c236c 2026-10-05 spu tests: channel/MFC/atomic/event semantics + lv2 SPU events/signals
+f887c0c9 2026-10-05 spu: input-repeat poll detector (WIP, first cut)
+75eb7cd7 2026-10-05 ppucheck: count and mark failures on title encodings
+61c42dda 2026-10-05 WASAPI: list output endpoints, PS3_AUDIO_DEVICE=<name> override, skip a stale Steam Streaming virtual default (no live Sunshine session); null window fits the work area (keeps aspect) and is centred
+6d8c6ad4 2026-10-05 lifter: XER[OV]/[SO] for XO-form OE ops; lift mulld./divd./divdu. and missing OE forms
+cd644718 2026-10-05 lifter/disasm: lwaux and the string ops lswi/lswx/stswi/stswx
+9b8fa900 2026-10-05 cellRtc/cellSysutil/cellSaveData/cellVideoOut: THP8 save dates, license area, recreate mode
+61233f23 2026-10-05 boot_main: window close posts REQUEST_EXITGAME instead of leaving the guest running headless
+15c7b301 2026-10-05 spucheck: build against the merged runtime; run under spu_fp_enter; branch targets are pads or stubs
+13bb78e8 2026-10-05 spu_float: fi on the normalised 1.base value -- exact, no exponent-255/0 breakage
+c88caab3 2026-10-05 lifter: conditional branches from BO/BI; LR <- CIA+4 on bctrl/bcctrl/blrl/bclrl
+16e8bb5e 2026-10-05 lifter: rlwinm/rlwnm/rlwimi with a wrapping mask produce a 64-bit result
+14ef1e5e 2026-10-05 lifter: bit-exact lfs/stfs, single-rounded single-precision ops, PPC NaNs for fsqrt, HW estimate tables, FPSCR writes
+f1a91add 2026-10-05 ppu_disasm: decode the remaining VMX forms
+0d00aff5 2026-10-05 lifter: vcmpequb. / vcmpequh. set CR6
+4b096c90 2026-10-05 lifter: mulli/mulld multiply unsigned (no signed-overflow UB)
+3d115b4f 2026-10-05 lifter: VMX integer lanes in big-endian order, with VSCR[SAT]
+904e3a3f 2026-10-05 lifter: Cell unaligned vector stores stvlx/stvrx (+ stvlxl/stvrxl)
+51b95dbc 2026-10-05 lifter: vexptefp / vlogefp
+b271b532 2026-10-05 lifter: mfvscr / mtvscr
+088f8c7f 2026-10-05 ppucheck: compare VSCR[SAT] exactly in the VMX reference
+646a9d59 2026-10-05 spu: idle-poll detector v2 -- own lock writes are known content, GET-only evidence, race-free watch park
+fd8a594a 2026-10-05 spu_helpers: frest of a zero-exponent operand -- exponent 255 with the table fraction
+338524b4 2026-10-05 spu_float: fesd of a denormal single is a zero of the same sign
+838e6460 2026-10-05 tools/test_ppucheck.py: ppucheck as a regression gate (fixed seed, zero mismatches)
+a8b4e348 2026-10-05 cellGcmSys: ring-full callback stops waiting when the walker wrapped the ring itself
+56767c8b 2026-10-05 lifter: drop the double-rounding hazard path from fadds/fsubs/fmuls/fdivs/fsqrts
+9414a9d0 2026-10-05 ppucheck: audit fixes -- ISA-undefined single inputs, exact estimate bounds, edge-case coverage
+936653a7 2026-10-05 spu tests: bench_spu_mfc -- per-operation MFC/channel cost and the blocking SNR handoff
+353a9425 2026-10-05 spu mfc/channels: cut the per-operation overhead of the DMA and channel paths
+c57b44c0 2026-10-05 spu: SPURS PM idle park -- armed per-lane line watch (no lost wakes) + timeout backoff
+4a8096b8 2026-10-05 sys_spu_image_open: PS3_SELF_SIDECAR_DIR -- decrypted ELF for an encrypted SPU SELF from a separate dir (game tree stays the player's untouched dump)
+078538cd 2026-10-05 spu events: every event_status update is one atomic RMW; write_snr no longer takes the lock-line lock
+abbcb353 2026-10-05 ppucheck: VMX coverage -- vcmp all-true/near-equal operands, flush-to-zero results
+6f1f4b78 2026-10-05 spu atomics: PUTLLUC consumes only its own line's reservation, without a self-Lr
+4841f43f 2026-10-05 spu atomics: PUTQLLUC does not write MFC_RdAtomicStat
+ade02aad 2026-10-05 spu atomics: a PUTLLC that finds its reserved line changed raises Lr
+c6ccca96 2026-10-05 spu mfc: a DMA list's LS address ignores its low three bits
+d50c4b2f 2026-10-05 spu mfc: sdcrz zeroes memory; the cache-management commands are not lists
+35f38ba9 2026-10-05 spu mfc: barrier / eieio / sync no longer complete a tag whose list is parked
+990a07e3 2026-10-05 spu raw: an SNR write through the MMIO window is a register write, not a queue push
+3b9f9d59 2026-10-05 spu atomics: keep the PUTLLUC bookkeeping line as it was (merge with thp8-spucheck)
+4fd063fb 2026-10-05 PS3RECOMP_NO_NPDRM_KEYS: build without the platform NPDRM/EDAT/SDAT key tables
+84143a0e 2026-10-05 ppu_lifter: opt-in codegen passes (--opt-fast-mem/-trust-sp/-fast-icall/-musttail/-locals/-fp/-cr/-inline) + runtime support; xprof profiler
+a0e822dd 2026-10-05 tools/liftdiff: differential A/B harness for two lifts; opt-inline label fixes
+bb1afca1 2026-10-05 liftdiff NANFREE=1 seeds; ppu_lifter --opt-locals-no-vr
+a8e14b23 2026-10-05 liftdiff: startup grace (180 s) before a driver's first output line on a saturated machine
+7b9cfc1d 2026-10-05 cellGcmSys: "recycle lap" ordering of 10ee011 now opt-in (GCM_RECYCLE_LAP=1)
+8e3684f8 2026-10-05 spu channels: bounded adaptive spin before a channel wait sleeps; wait accounting
+d9aaddb3 2026-10-05 spu tests: MFC command forms, list details, atomics, signals/events coverage (282 pass, 0 fail, 12 notes)
+6f14ec14 2026-10-05 codegen: icall table only for --opt-fast-icall lifts; --opt-fp covers ppu_fmadds_core
+d5b5b179 2026-10-05 spu_replay: --prof sampling profiler, per-run thread-cycle median in --bench
+cfbcaa4a 2026-10-05 mods: run plugin shutdown (EV_SHUTDOWN, ps3mod_shutdown) and the PPU_HOOK_TRACE report before the window-close ExitProcess, which skips atexit (idempotent with the atexit path)
+6986dcdd 2026-10-05 lifter: cheaper lfs/stfs fast paths
+6185f643 2026-10-05 spu_coherency.h: declare the watch / armed-watch park API (c57b44c failed to compile in the runtime build: implicit spu_coh_arm)
+1cfa6bb7 2026-10-05 spu: declare spu_coh_arm in spu_coherency.h
+e3095052 2026-10-05 spu runtime: lifted variants validated over their whole code extent; GET invalidation; variant DLLs
+b3a5fd7f 2026-10-05 spucheck: operand shaping, SEQUENCE mode, strict by default
+4fe5b902 2026-10-05 cellGcmSys: never recycle a ring under a title whose callback is ours; recycle waits on walker progress
+7ddaa389 2026-10-05 spu channels: count a re-poll timeout only when the channel was already readable
+6a262af5 2026-10-05 cellGcmSys: never wrap a title's ring behind its back (FIFO desync: walker parsing data)
+a3d7751f 2026-10-05 spu variants: index variants by LS page so dropping verdicts costs O(variants on the dirty pages)
+30626806 2026-10-05 tools/spucheck: variant extents + hash, --dll builds a variant DLL; tests for SPU_VARIANT_DIR, extent rejection, GET invalidation, swapped overlays, bench
+8fb803af 2026-10-05 boot_main: ps3mod_host_shutdown calls under #ifdef PPU_MOD_HOOKS (vanilla build does not include the loader header) -- fixes cfbcaa4
+d25d68df 2026-10-05 lv2: lifted SPU workers run ABOVE_NORMAL by default (PS3_SPU_PRIO_ABOVE=0 opts out)
+03e727e4 2026-10-05 spu runtime: one LS-diagnostic gate per lifted load/store; guard-free TLS under clang-cl
+0137fb37 2026-10-05 spu lifter: no stack protector on lifted functions; opt-in per-block register caching
+a9da5bf6 2026-10-05 boot_main (MinGW): forward memcpy/memset/fma/libm to ucrtbase instead of zig's weak compiler_rt
+a4917edd 2026-10-05 cellGcmSys: in-FIFO flip with no room wraps like the ring-full callback; ring-wrap history at resyncs
+ec3aa3a4 2026-10-05 liftdiff harness: define ppu_icall_wanted (set by --opt-fast-icall chunks)
+a21fed1a 2026-10-05 gameplay perf: PSO key only for sampled units, no duplicate presents, cheaper per-frame texture lookup/hash and NV309E swizzle
+2ef5268e 2026-10-05 ppucheck: specs for b/bl, mftb/mftbu, sync/lwsync/eieio/isync, dcbf/dcbst/dcbt/dcbtst
+6fe1bb48 2026-10-05 test_spu_idle_poll: timing checks are soft on a starved host
+f7a442d2 2026-10-05 test_spu_lv2_events: write_snr to SNR3 returns CELL_EINVAL (hlefix 3ace8d9 returns the error code, not -1)
+fd2a8e80 2026-10-05 lifter: VMX float NaN lanes fixed up in-line (no out-of-line cliff)
+f612c0f6 2026-10-05 fast-mem: volatile inline guest accesses; GCM label/control page through the helpers
+f39296f1 2026-10-05 null backend: window close hides the window and keeps rendering until the title exits
+9971d5f2 2026-10-05 cellGcmSys: ring wraps by sequence -- the guest never overwrites ring bytes the walker has not read
+250cd3e0 2026-10-05 live draw: optional graphics upgrades (render scale, FXAA present pass, anisotropic filtering, shadow-map scale + PCF/PCSS)
+85f94ef8 2026-10-05 gfx: shadow filter radii in guest texels (scale with PS3_GFX_SHADOW_SCALE), spiral PCF for large kernels, PCSS penumbra in map widths, [loop] filters (fast compile)
+6b54033e 2026-10-05 host frame pacing: decoupled vblank / flip clocks, present mode, [pace] stats (high refresh)
+f1fee932 2026-10-05 gfx: PS3_GFX_AA=fxaa runs on the scene only (FXAA'd copy for a display buffer's first self-read composite per frame, so the HUD drawn after it stays crisp); fxaa_all = at present over everything; descriptor rings in the present module
+724a8762 2026-10-05 gfx: PS3_GFX_KICK=<draws> -- submit the open command list every N draws without waiting (GPU overlaps the rest of the frame's recording; the present's flush still waits for all). Off by default.
+bb68a034 2026-10-05 cellGcmSys: ring-wrap wait treats a busy walker as alive; the walker takes a posted wrap at its offset
+57d784e7 2026-10-05 gfx: PS3_GFX_STATS=1 (implied by PS3_GFX_LIVE) -- [gfx-perf] lines every 120 presents: present interval, render-thread GPU-fence wait, Present() time
+0a1a007c 2026-10-05 gfx: shadow maps follow PS3_GFX_SHADOW_SCALE only (stock resolution under a global render scale unless raised)
+81911428 2026-10-05 host_pacing: flip credit -- a late frame completes its flip at once instead of a whole period later
+55818742 2026-10-05 host_pacing: PS3_PACE_CTL credit=0|1 (flip credit A/B in one boot); config line shows it
+e3290d86 2026-10-05 live draw: depth compute shaders take their size as root constants (Proton/vkd3d-shader)
+2410ff43 2026-10-05 POSIX boot scaffold: THP8 boots natively on Linux to the main menu (headless)
+c60aa82a 2026-10-05 thp8: RSX fragment WPOS honours SET_SHADER_WINDOW (bottom origin) -- fixes the sky-blue ground patches
+16911bf1 2026-10-05 thp8: live-draw diagnostics -- re-armable per-draw dumps, zeta dumps, CSV zmm/clip/ucp/win columns
+244f650b 2026-10-05 thp8: D3D12 DepthClipEnable from NV4097_SET_ZMIN_MAX_CONTROL (RSX near/far clip) -- optional
+b3975485 2026-10-05 gfx: presets high/ultra include PS3_GFX_KICK=128 (ultra: pcss radius 2, the tested value); preset doc in the header
+3039f8bf 2026-10-05 live draw on Linux: the D3D12 renderer runs on vkd3d (PS3RECOMP_LIVE_DRAW_VKD3D, off by default)
+745fe629 2026-10-05 live draw on Linux: on-screen presentation (SDL2 window + Vulkan swapchain on vkd3d), SDL keyboard
+8eeac7ab 2026-10-05 cellGcmSys: ring wraps no longer wait for the walker -- libgcm-style segments (lowered context end)
+739ee505 2026-10-05 rsx live draw: host-side texture replacement from mods/<pack>/textures/<key>.dds
+313d11ef 2026-10-05 texrepl: 120-frame eviction window, quieter stats line, hash cost in the stats
+e25c9e24 2026-10-05 texrepl: 128 shifted-sampler slots, and a one-time warning when they run out
+824ef029 2026-10-05 texrepl: count keys found in more than one source in the startup line
+116a6d0c 2026-10-05 texrepl: match shifted samplers on the decoded filter and anisotropy as well
+5bb86261 2026-10-05 thp8: WPOS in guest window pixels under PS3_GFX_SCALE (fp_wpos slot)
+768ad651 2026-10-05 texrepl: key single-level LN DXT textures with the natural pitch (font atlases)
+784a9f48 2026-10-05 texrepl: PS3_TEXREPL_EXTRA_PACKS -- packs switched on by name (opt-in packs)
+6db4ab70 2026-10-05 cellPad: XInput button table + PS3_PAD_MAP remap; analog L2/R2 pressure kept
+3ae23c9c 2026-10-05 thp8: skip gfx's HLSL WPOS rewrite for buffered programs (rsx_wpos clash at S > 1)
+5e86ab5b 2026-10-05 host_pacing: the decoupled 60.000 Hz vblank clock is the default for every title (legacy 16 ms ticker = 62.5 Hz ran vblank-timed logic 4.2% fast); PS3_PACE=0 = legacy
+ae862b4d 2026-10-05 dev tools: no machine paths (liftdiff LIFTDIFF_DEVENV / LIFTDIFF_WORK env, xprof README placeholder) -- release scrub
+bb854a79 2026-10-05 sys_ppu_thread: PS3_PPU_BOOST_PRIO -- host ABOVE_NORMAL for guest prio < n (THP8 Bink audio dropouts / A/V sync)
+87a6cc46 2026-10-05 A/V sync probe: PS3_AVSYNC_LOG (cellAudio port audio + device clock, presented Bink luma signature), PS3_WAITSTAT
+20803ec6 2026-10-05 A/V probe: decide PS3_AVSYNC_LOG once at live-draw init (texture binds test a settled flag)
+af102525 2026-10-05 live draw: GPU vertex fetch (PS3_GPU_VFETCH, default on) -- the VS decodes raw guest vertex bytes
+cb6f2675 2026-10-05 texture dirty tracking via Windows write watch (PS3_TEXDIRTY, default on) -- untested WIP
+26d9a398 2026-10-05 live draw: [gpu-vfetch] / [texdirty] stats lines from rsx_live_draw_present (THP8 presents without sink_flip)
+b61deeb2 2026-10-05 nv3089_blit: 32-bit scene copies by row (one block store per row), NV309E pyramid in 4x4 destination tiles
+bc0fd89c 2026-10-05 tests: test_gpu_vfetch -- GPU vertex fetch decoder vs rsx_vertex_decode_element on the GPU (1M random vertices, 0 mismatches)
+e3e5e4e5 2026-10-05 nv3089_blit: [nv3089-sig] -- one line per distinct blit signature (src/dst EA, sizes, scale, swizzled), first 48
+d7c8a96c 2026-10-05 tests: test_gpu_vfetch header comment
+ab80d841 2026-10-05 plugin ABI 1.2: hook_add/hook_enable (hooks at any time, race-free on/off), guest heap (guest_alloc/guest_free, 0x7C000000..0x7F000000), plugin services (service_publish/service_get); live-link members mods_rescan / screenshot (+EV_SCREENSHOT, event result/path) / debug_lines declared, E_UNAVAILABLE until implemented
+f70afcac 2026-10-05 vfs_mods: live rescan (ps3_mods_rescan) -- index behind one published pointer, diff + retry mark
+4bbb8a0f 2026-10-05 plugin ABI 1.2: mods_rescan body (vfs overlay rescan; texrepl_rescan hook point, WIP stub)
+7df88ae9 2026-10-05 texrepl: live rescan (texrepl_rescan) -- stable record ids, changed/removed/added DDS, live-draw re-key epoch
+e606c9a5 2026-10-05 nv3089_blit: skip unchanged copies (PS3_NV3089_SKIP, default on with write watch) -- compare-and-copy + span write generations
+03cac71e 2026-10-05 live-draw overlay: debug lines over the presented frame + async frame captures (PNG/PPM); ABI 1.2 screenshot / debug_lines bodies
+561355ae 2026-10-05 texdirty: track only spans >= PS3_TEXDIRTY_MIN (default 32 KB) -- smaller textures are cheaper to hash
+6cb4ff16 2026-10-05 TLS: use GNU __thread unless _MSC_VER -- clang for MinGW (zig) IGNORES __declspec(thread), making the variable a shared global
+a7ec6819 2026-10-05 cellAudio: PS3_AUDIO_MUTE=1 mutes the WASAPI session (ISimpleAudioVolume::SetMute) -- device, stream and clock unchanged; for test runs on a PC in use
+00f63f8f 2026-10-05 null backend: PS3_WINDOW_NOACTIVATE=1 shows the game window without activating it (no focus steal)
+722da4ab 2026-10-06 texrepl: pack order = the VFS overlay's (ASCII upper-case compare, '_' after letters) so data and texture packs stack alike
+bec5779b 2026-10-06 live draw: async gpufetch VS compile, constant-block reuse, O(1) PSO lookup + word-hash VP key -- WIP, pool check pending
+5d6eba77 2026-10-06 live draw: PS3_PSO_OLD_FILE -- same-boot A/B of the old PSO key (byte FNV of the VP, twice) + linear PSO scan
+999911f4 2026-10-06 live draw: LD_SHADER_HARVEST=<dir> -- record VP/FP microcode + every HLSL-generation input per PSO variant (shader warm-up research; env-gated, PSO-miss path only)
+5faa1a7f 2026-10-06 FIFO walker fast path (PS3_FIFO_FAST, default on): one run per method header
+92ecad9a 2026-10-06 rsx_dispatch_method_run: keep gpuoff's const_epoch / dirty range (constant-block reuse) exact in the bulk constant path
+8701416f 2026-10-06 shader warm-up: thp8.exe --warm-shaders <key list> <DATA dir> [jobs] (rsx_shader_warm) + shared HLSL builders
+f169feaf 2026-10-06 gpufetch VS: one looped vf_fetch (no early returns) over the used attributes -- fxc 1.18 s -> 0.16 s per shader
+0706b653 2026-10-06 live draw: per-draw CPU fast paths (perf-draw) -- program caches, decode-once, descriptor-table reuse, command-list state shadow, PS constant block reuse
+c04c93bf 2026-10-06 live draw: perf-draw switches -- designated initializers (zig -Wmissing-field-initializers)
+3fff19ac 2026-10-06 live draw: perf-draw next -- one index-ring view + StartIndexLocation (PS3_DRAW_SHADOW), render-state key step memo (PS3_DRAW_ONCE)
+d9b27e5b 2026-10-06 FIFO fast path: batch consecutive method headers; dispatcher action table
+602ebdff 2026-10-06 live draw: PS3_DRAW_SAMPLED -- resolve only the texture units the FP samples; FP-cache rewrite counter
+8bee4e68 2026-10-06 live draw: FP cache compares instruction slots only and re-reads in-place-patched constants (PS3_DRAW_PCACHE); rsx_fp_constant_slots
+94531127 2026-10-06 FIFO fast path: batch 2D-engine headers (subchannels 2-6) too -- inline transfers / NV3089 blits
+71fd045c 2026-10-06 live draw: frames in flight (PS3_FIF) -- the present submits without the GPU-idle wait; two sets of allocator / upload arena / vertex, index, constant, PS-constant, vertex-fetch rings / shader-visible SRV + sampler heaps / retired textures, swapped at the present after waiting only for the other set's previous frame
+99e82f4d 2026-10-06 live draw: VP cache hit on an unchanged dispatcher vp_epoch (RSX_DSP_HAS_VP_EPOCH, perf-fifo's dispatcher side)
+3cddae04 2026-10-06 rsx_dispatch: vp_epoch -- bumped only when a transform-program word changes (for perf-draw's VP cache)
+a28952e3 2026-10-06 rsx_dispatch: vp_epoch -- bumped only when a transform-program word changes (for perf-draw's VP cache)
+5b02f45e 2026-10-06 live draw: PS3_DCL -- deferred command list: every g.list call recorded through ldl_* wrappers into a ring, replayed by a recorder thread (submit sequence included); drains before direct recorders, RTV/DSV rewrites and Present
+cb5e6700 2026-10-06 live draw: PS3_DRAW_TEXIDX -- complete hash index of the texture cache keys (verify vs scan); a010 flag checks as plain loads
+acc55ef8 2026-10-06 live draw: kill-switch poll at most once per frame, inline path for the rest of the frame
+7c2dca6a 2026-10-06 cellGcmSys: GCM_WAITFLIP_WALKER -- SetWaitFlip keeps the title within one queued flip of the FIFO walker (THP8 CAS/skater-select vertex tearing)
+85e1ba6a 2026-10-06 boot: PS3_TICKER_CORE -- the vblank_ticker (FIFO walk + translation + present, the frame-rate limit) gets a physical core of its own via CPU sets (other game threads kept off both logical processors of that core) and ABOVE_NORMAL priority (PS3_TICKER_PRIO); PS3_TICKER_CORE=0 / live PS3_TICKER_CORE_OFF_FILE
+0ed57316 2026-10-06 perf-game: fast user-space lwmutex, one-branch barrier_watch_hit, cached prof resolver, hot getenvs read once
+fe8d50b3 2026-10-06 perf-game: exact vector SPU cflts/cfltu/cuflt, lane-wise float slow paths, gcm pump early-out
+191194ea 2026-10-06 perf-game: PS3_GAME_STATS=<s> diagnostics (SPURS PM lane polls/parks/wakes, armed-watch hits by PPU vs SPU, PPU cellSyncMutexLock calls/contention/spin)
+cfe00d2f 2026-10-06 perf-game: HLE dispatch cache (ps3_hle_call: NID -> handler slot, no linear table scans per import)
+131e8eb0 2026-10-06 perf-game: PS3_GAME_STATS also samples how many SPURS lanes are parked while a PPU spins in cellSyncMutexLock
+82a8eb32 2026-10-06 perf-game: PS3_GAME_STATS also reports MFC GET/PUT volume (and PUT bytes copied under the lock-line lock)
+413b6e4c 2026-10-06 perf-game: PPU poll wait experiment in cellSyncMutexLock (off unless PS3_SYNC_POLLWAIT=1; live A/B via PS3_SYNC_POLLWAIT_OFF_FILE)
+b2287895 2026-10-06 perf-game: poll-wait PS3_SYNC_POLLWAIT_ALT=<s> diagnostic alternation (compile-time defaults overridable)
+e03a7834 2026-10-06 perf-game: DMA PUT spans with reserved lines lock per line, not the whole copy (PS3_SPU_PUT_LINELOCK=0 / _OFF_FILE)
+9fb71547 2026-10-06 perf-game: poll wait only for a thread that came straight back (unlock -> lock gap <= PS3_SYNC_POLLWAIT_GAP_US, 2)
+e53ca11f 2026-10-06 perf-game: SPURS PM wake-one experiment (PS3_PM_WAKE_ONE=1, live _OFF_FILE): PPU writes wake one armed lane, a lane starting a job kicks its peers
+a548c09e 2026-10-06 perf-game: DMA PUT skip-same experiment (PS3_SPU_PUT_SKIPSAME=1, live _OFF_FILE): large lock-free PUTs write only the 64-byte blocks that differ
+0ea51c85 2026-10-06 perf-game: PS3_GAME_STATS_LINE=<ea>: per-word write histogram of one lock line (SPU PUTLLC / PUTLLUC / PPU cellSync CAS)
+3aadba37 2026-10-06 perf-game: poll passes (cellSync): line-based detection, poll-wait waits for a LINE change, new quiet-poll experiment (PS3_SYNC_QUIETPOLL=1, _OFF_FILE): a poll pass's lock/unlock does not wake parked PM lanes
+d62c9d58 2026-10-06 perf-game: render-thread HLE trims: lazy profiler breadcrumb, mftb without 64-bit divides, GCM pending words on their own cache line
+47e71b4e 2026-10-06 perf-game: event queue push answers a full queue without taking its lock (PS3_EVQ_FASTFULL=0 disables)
+97913dca 2026-10-06 live draw: PS3_DRAW_SHADOW keeps the bound topology value (strips from gpuoff 27c80d4 change it per draw)
+f36a9079 2026-10-06 tools/shader_warm/make_keys.py: shader warm-up key list from LD_SHADER_HARVEST tours (developer side)
+2e99cf1f 2026-10-06 live draw: native D3D triangle strips for indexed strips + per-frame 256 KB granule write tracking for textures
+b8a5e43f 2026-10-06 frame_trace: PS3_SPIKE_MS per-frame hitch attribution ([spike] lines: PSO creation, sync HLSL, texture decodes/evictions, ring-full flushes, guest file reads, ticker idle, SetWaitFlip wait; [spike-sum] every 10 s); texture cache 1024 -> 4096 entries (PS3_TEX_CACHE_CAP, TEXIDX 16384)
+3de08b9e 2026-10-06 live draw: PS3_DCL batched publishing (PS3_DCL_BATCH, default 4 KB) + short recorder spin (PS3_DCL_SPIN, default 256): the recorder spun ~75 % of a core waiting for per-draw publishes
+31cfcf66 2026-10-06 live draw: PS3_DRAW_SMPVAR -- variable-length sampler tables (highest sampled unit + 1) so the 2048-descriptor sampler heap holds the spawn view's combinations without a mid-frame DESCRIPTOR_RING flush
+048464b0 2026-10-06 live draw: FP cache hit path -- whole-program memcmp first, constant slots re-read only when their bytes changed
+1917c83b 2026-10-06 live draw: PS3_VF_SIMD -- GPU-fetch 16-bit index read 8 at a time (pshufb swap, restart compare, min/max, widen); groups with a cut take the scalar loop; verify vs scalar
+ed313eae 2026-10-06 live draw: PS3_DCL recorder thread follows the ticker's priority (frame-end drains waited for a NORMAL-priority time slice on a loaded machine)
+ea47b50d 2026-10-06 ticker core reservation: opt-in (PS3_TICKER_CORE=1), default off
+12b79812 2026-10-06 sys_ppu_thread: drop the dead [prof-stamp] print -- its signed counter (_n++ < 0) wrapped after 2^31 stamps (every lv2/HLE dispatch) and then printed on every call: 284 MB / 3.27 M log lines in a 10-min 120 fps session
+260fc4e6 2026-10-06 live draw: depth snapshot / Y16_X16 compute shaders bound their writes by the HOST size
+9c1c0924 2026-10-06 ppu_fs.cpp: include frame_trace.h in the distribution build too
+6f85719d 2026-10-06 live draw: PSO dedup by full desc + persistent D3D12 pipeline library with a rebuildable index (PS3_PSO_DEDUP, PS3_PSO_LIBRARY, PS3_PSO_PREWARM; all default on, =0 off)
+29392775 2026-10-06 shader warm-up v2: --warm-shaders prebuilds pipelines into the PSO library (key list G lines; installer stage)
+2aa3e3ca 2026-10-06 live draw: PS3_PSO_ASYNC=1 (opt-in) -- PSO misses that need a D3DCompile or a driver compile go to worker threads; their draws are skipped until the pipeline is back
+707ec289 2026-10-06 live draw: PSO library -- StorePipeline never sees a name twice (name set from the index + every store, stores serialised); the prewarm only warms the driver cache when the library is intact
+26a45c9c 2026-10-06 live draw: PSO library -- draws never wait on a save: no LoadGraphicsPipeline while Serialize holds the runtime's library lock (create instead); longest load and skipped loads in the save line
+7153251b 2026-10-06 live draw: PSO library -- the exit save logs its outcome when there is nothing new to write
+609c9f36 2026-10-06 live draw: PS3_PSO_ASYNC on by default (=0 off): with the install warm-up a session skips ~0 draws (excl bench: 6 draws in 5 frames per session, 0 render-thread PSO creates); the async path honours PS3_PSO_LIBRARY_OFF_FILE; prewarm stops early below 4 ms per create (was 1.5: a warm driver cache under load measured 2.1)
+36085aad 2026-10-06 live draw: PSO library -- prepare the shader disk cache before the prewarm starts also with PS3_PSO_LIBRARY_FILE (two prewarm threads raced the lazy setup; one skipped the whole index)
+5f2589ed 2026-10-06 log gates: saturating counters on the hot paths -- `x++ < N` -> `x < N && ++x` (243 gates in 24 files)
+91f2a96b 2026-10-06 live draw: FP capture API for parallel translation (rsx_live_draw_fp_capture in the walker, rsx_live_draw_set_fp_capture before the draw); FP reads go through ld_fp_src (no change when no capture is set)
+6b793a69 2026-10-06 live draw: PS3_DRAW_CBTRIM -- upload only the transform constants the VP reads (const_src range; all 512 when it indexes them); a reused block must cover the draw's range
+bfb64c67 2026-10-06 live draw: ld_vf_prepare skips the decode of attributes the gpufetch VS does not fetch (under PS3_VF_SIMD)
+ec8cf556 2026-10-06 live draw: PS3_DCL producer thread re-latched at every present (recording may move to perf-fifo's translation thread)
+22861e05 2026-10-06 live draw: PS3_DRAW_MICRO -- translation micro-levers (exact): cut-aware 16-bit index SIMD (pshufb compress of groups holding restart cuts), native-strip has-a-triangle check instead of the full topology count, partial ld_vf_plan clear, unchanged texture units keep their ONCE decode, hashed heap-start / GPU-VA caches, texture hint only when the scan runs
+3f521cad 2026-10-06 live draw: the unfetched-attribute skip (PS3_VF_SIMD) also needs PS3_DRAW_MICRO, so PS3_DRAW_MICRO + PS3_DRAW_CBTRIM off is batch8c's translation (one A/B measures the round)
+94f5b5ee 2026-10-06 live draw: PS3_DRAW_MICRO also copies native-strip segments 4 indices at a time in line (a CRT memcpy call per ~10-index segment was ~1 % of the ticker at the spawn view); overrun stays below n_tri and is rewritten in order; vids reserve total + 8; verify reads the strip back
+f6f7dbad 2026-10-06 guest_wtrack: PS3_GWT_MERGE -- a range's run of consecutive granules not yet asked this epoch is one GetWriteWatch query instead of one per 256 KB granule (same pages asked and reset in the same call, same generation bump; an already-asked granule still splits the run); verify asks each granule without reset first and checks the merged query reports those pages; [texdirty] line shows granule lookups / granules asked / queries
+2f72d037 2026-10-06 PS3_HLE_TRIM: lean import / syscall dispatch (default on; PS3_HLE_TRIM=0 / live PS3_HLE_TRIM_OFF_FILE)
+a37b5bf2 2026-10-06 PS3_HLE_TRIM follow-ups: plain ppu_prof_stamp again (12b7981 dropped its counter); saturating debug gates in ps3_hle_call / lv2_syscall
+14a3ebae 2026-10-06 PS3_GCM2D_WT_BATCH: one gwt_invalidate per inline-transfer span instead of per word (default on; =0 / live PS3_GCM2D_WT_BATCH_OFF_FILE)
+9aaa9f23 2026-10-06 live draw: PSO save / prewarm threads below normal + THREAD_MODE_BACKGROUND (CPU, I/O, memory), async workers below normal, no HIGHEST boost around Serialize (draws no longer wait on it): a cold first boot must not starve the boosted Bink audio thread (lead2 v3: 15 PortStops cold vs 3 warm)
+131f7969 2026-10-06 frame_trace: spike attribution -- [spike-thr] per guest thread CPU + top HLE/syscalls, texrepl counters, [spike-tex] slow texture decodes; [lwm-stats]
+4dcddc28 2026-10-06 live draw: texture refresh path -- PS3_TEXFAST, PS3_TEXINPLACE, PS3_TEXR8 (each =0 / _OFF_FILE)
+05d5ce6c 2026-10-06 cellSync: PS3_SYNC_POLLPARK (default OFF; =1 on, live _OFF_FILE) -- the poll-wait can block instead of spin
+c6948683 2026-10-06 HLE fast path in vm_read*/vm_write* (PS3_HLE_FASTMEM=0 / _OFF_FILE)
+04344998 2026-10-06 null backend: PS3_WINDOW_NOACTIVATE opens the window BEHIND the foreground window (SetWindowPos after the foreground window, HWND_BOTTOM if it is topmost/ours/none) instead of SW_SHOWNOACTIVATE at the top of the Z order -- test runs no longer cover a game the user is playing
+66a30009 2026-10-06 tools/shader_warm/make_keys.py: key V/P entries by the program's location in the game files, not by the harvested byte hash (the game patches inline FP constants: one program came in under up to ~50 hashes; v2 inputs 2372 -> 435 P lines, the pool harvest 24242 -> 489)
+ed2b417f 2026-10-06 live draw: PS3_PSO_ASYNC scene-change window -- a frame with >= PS3_PSO_ASYNC_BURST (4) get_pso misses compiles synchronously for PS3_PSO_ASYNC_SYNC_MS (3000) and draws wait for pending jobs; PS3_PSO_SKIP_DUMP test knob
+4b164875 2026-10-06 live draw: PS3_PSO_ASYNC_BURST default 24 (was 4): at 4 the window also opened in play (frames with 4+ new pipelines while skating into new areas: 58 synchronous creates, 16 frames > 100 ms in the measured phases of a cold run); real scene changes ask for 33-136 pipelines in one frame (UNTESTED at 24)
+a0b54857 2026-10-06 live draw: comment -- PS3_PSO_ASYNC_BURST default 24
+ae30756e 2026-10-06 live draw: PS3_PSO_ASYNC never skips 2D/UI/full-screen passes (depth test off) or characters (position stream from main memory: THP8's SPU-skinned buffers) -- their pipelines compile synchronously (PS3_PSO_ASYNC_NEVERSKIP=3 default, 1/2 one class, 0 none); PS3_PSO_CLASS_LOG=1 logs the decision per miss (UNTESTED: classifier to be verified on skater select / loading screen / level)
+a17466d7 2026-10-06 ppu_hle: ps3_hle_ctx_handler(nid) -- the context-aware HLE handler registered for a NID (NULL if none), so title code that replaces a lifted guest function can call the same implementation its import stub reaches without the import dispatch
+edabd4d5 2026-10-06 live draw: PS3_PSO_ASYNC skips draws only in scene-change frames (>= PS3_PSO_ASYNC_BURST misses in one frame, default 32: the first frames of a level / zone / menu behind its loading screen); everywhere else a miss compiles synchronously and a draw waits for its pending worker job -- menus, skater select, the first visible level frame and play never lose a draw. Replaces the 3 s synchronous window. PS3_PSO_ASYNC_MODE=all restores the batch9 behaviour
+2c8ac3f8 2026-10-06 live draw: NV40 convolution texture filters (TEX_FILTER min 7 / mag 4) sampled linearly, not POINT
+415e576e 2026-10-06 live gfx: PS3_GFX_SSAA supersampling, PS3_GFX_SHARPEN contrast-adaptive sharpening, area-filter downsample
+1e496bf0 2026-10-06 live draw: PS3_PSO_ASYNC -- while the render thread waits for a pending pipeline job (outside a scene-change frame) the BELOW_NORMAL workers run at NORMAL, so a busy CPU cannot starve the job it is blocked on; the stats line reports the longest wait
+2dceb812 2026-10-06 live draw: PS3_PSO_ASYNC -- a draw outside a scene-change frame whose job no worker has started takes it out of the queue and builds it on the render thread (a scene change queues ~100 jobs: cls3 waited 2.5 s behind them in the frame after a level-load burst); only a job already on a worker is waited for
+083743b3 2026-10-06 live draw: PS3_PSO_ASYNC -- a job built on the render thread (taken from the queue) stores into the library without waiting for a save in progress (queued like every render-thread store)
+8a282076 2026-10-06 texrepl: per-key redirects (texrepl_redirect) -- switch a replacement live without a pack rescan
+14014d42 2026-10-06 input: keyboard + mouse play from the game window's messages, rebindable; device tracking; stick invert
+7fb217c4 2026-10-06 ps3mod ABI 1.3: input_info / key_name / key_label, tex_redirect
+e3f46034 2026-10-07 live draw: a zeta's Y16_X16 view covers the guest texture's declared size, not the whole snapshot
+3a99a9c9 2026-10-07 live draw: render scale -- colour targets of at most 1/4 of the canvas per axis stay at guest size
+a3354907 2026-10-07 live draw: PS3_GFX_GPUTIME=1 -- D3D12 timestamp GPU span per frame in the [gfx-perf] line (measurement only)
+80e486bf 2026-10-07 live gfx: presets high and ultra += SSAA 1.5 + SHARPEN 35 (P8Plus defaults; replaces held 1867a7f)
+2f86cc23 2026-10-07 frame trace: PSO miss breakdown for PS3_SPIKE_MS -- psogen_ms (program decode + HLSL generation), psodisk / psodisk_ms (render-thread shader disk cache reads), libmiss_ms (the whole time of misses resolved from the library / dedup without a compile or create; psolib_ms only times LoadGraphicsPipeline). PS3_WARM_HLSL_DUMP=<dir>: --warm-shaders writes the HLSL of every shader it compiles (research)
+f8d5e1bc 2026-10-07 live draw: PS3_TEXPOOL -- texture-cache textures are placed resources in 64 MB DEFAULT heaps (first-fit free list, 4 KB placement for small ones) instead of one CreateCommittedResource each; a range returns to the list at the final release (fence point) via private data; a texture is placed only when the upload ring takes every level (placed memory is not zeroed); [texpool] stats; PS3_TEXPOOL=0 / _OFF_FILE; verify checks new ranges. Also PS3_WARM_HLSL_DUMP=<dir> (warm-up shader HLSL, measurement only)
+c0679965 2026-10-07 spu_helpers: swap-free shufb (SSE4.1) -- no byte swaps of a/b/c/result (control host byte h = control SPU byte h^3; source host byte = (s&0xF)^3), selector bits straight into pblendvb; SPU_SHUFB_SWAPFREE=0 restores the old sequence. Bit-exact vs spu_shufb_ref (tests/test_spu_shufb_swapfree.c: 20.3M checks incl. every selector byte at every position)
+3a82dbb5 2026-10-07 spu_channels: PS3_GAME_STATS job-batch time per job binary ([game-stats] job batches: key n avg max tot; key = FNV-1a of the 64 LS bytes at the job entry, as PS3_CPATH)
+cede74f4 2026-10-07 spu_float: SPU_FMA3 -- spu_fma/fms/fnms as one vfmadd when the TU is built with -mfma (FMA3 builds), instead of the double-precision emulation (~12 instructions). Same value: exact product, one RTZ rounding, DAZ/FTZ and the fbad/fclean edges identical. tests/test_spu_float.c gains a near-cancellation loop; 65.2M checks pass with and without -mfma
+14547e60 2026-10-07 ppu_lifter: --opt-vmx-sse -- vperm / vsldoi / lvsl / lvsr / vspltw / vsel / vxor / vor / vmrghw / vmrglw / vspltisw as whole-register ppu_vx_* helpers (SSE4.1: pshufb+blend, palignr, pshufd, unpck; PPU_VMX_SCALAR=1 or no SSE4.1: the plain lifter's scalar forms), so vectors stay in xmm instead of byte/word stores + a 16-byte reload per op (vperm was a 16-step byte loop). ppucheck: PPUCHECK_VMX_SSE=1 tests the new emission
+d35971d7 2026-10-07 spu_capture: SPU_CAPTURE job=<hash>[,skip=K][,max=N] -- capture one SPURS job batch (first branch into the job binary to the next PM poll) as a truncated session, so tools/spucheck/spu_replay can replay and bench exactly that job (outputs checked)
+c02c6585 2026-10-07 spu_capture: job captures are named spucap_job<hash>_<n>.bin (per-spec sequence numbers collided under one image id)
+c4d73ed9 2026-10-07 spu_replay: stub ppu_hle_fastmem_poll / ps3_hle_name (runtime refs from sys_event.c / frame_trace.c)
+66f8270c 2026-10-07 ppu_lifter: pass --opt-vmx-sse to the parallel lift workers (-j)
+945a8bf7 2026-10-07 ppu_codegen_opt: the locals pass treats a ppu_vx_* helper's first argument as a whole-register write (killed, not read), like the scalar forms it replaces -- no extra entry loads / store-backs for --opt-vmx-sse lifts
+ff49553e 2026-10-07 spu_float: include <immintrin.h> when __FMA__ (zig/MinGW: _mm_fmadd_ps is not declared via emmintrin.h); zig -mfma build + test_spu_float pass
+599702d4 2026-10-07 PS3_PAR_DRAW increment 1 (+ split-walker refactor, PS3_DSP_TRIM) rebased onto thp8-batch13 64f7171
+42cfd63e 2026-10-08 live draw: a render surface sampled as a texture goes through the unit's TEXTURE_CONTROL1 remap
+454b3d7e 2026-10-08 liftdiff: typed SetPriorityClass/GetCurrentProcess (the untyped call truncated the pseudo-handle and silently failed); log on failure
+c5eaf839 2026-10-08 portability: thp8 builds off Windows again (Linux / vkd3d), no Windows change
+a674dbaf 2026-10-08 rsx_null_backend (POSIX): no software re-render behind the live renderer
+9883a905 2026-10-08 rsx_live_draw (vkd3d): thread entry points use LD_THREAD_CC, not WINAPI
+249416de 2026-10-08 rsx_live_draw (vkd3d): failing stubs for the Windows-only present pass, FXAA and GetClientRect
+102ab15c 2026-10-08 spu: spu_overlay_note_get_src(ctx, ea, lsa, src, size) -- overlay residency bookkeeping of a GET from the transferred bytes, so a native replacement of a guest transfer that never copies into LS reports the same effects (spu_overlay_note_get unchanged, now a wrapper)
+fa052c7c 2026-10-08 spu: g_spurs_pm_idle_filter -- title hook: a parked SPURS PM lane woken by a write / kick re-arms its watch, then parks again while the hook says the job queue has nothing for it (timeouts always poll; NULL = old behaviour)
+5832dabe 2026-10-08 spu: g_spu_arm_wake_filter -- title hook at notify time (lock-line lock held, after the store): leave a parked armed lane asleep when the write cannot have given it work; game-stats wake-filtered counter
+13d14ebf 2026-10-09 host_pacing: PS3_PRESENT_FLIP_CREDIT -- a present that finds no flip WAITING banks the flip credit instead of being lost
+a3d45dd4 2026-10-09 spu_float: fast exact model for special float lanes (PS3_SPU_FP_FASTFIX, default on) -- MAIN's QBVS wait
+d36c44ee 2026-10-08 web: wasm port scaffolding (milestone 1)
+23524b68 2026-10-08 web: HLSL->WGSL translator for the generated shaders; range-fetch VFS IO worker
+b8acf15b 2026-10-08 web: D3D12 over WebGPU (WGS command stream) + WebGPU executor
+80fe134d 2026-10-08 runtime: WebAssembly platform layer (PS3_WASM) + POSIX build fix
+54f1f79f 2026-10-08 web: device worker (live WGS ring), AudioWorklet ring player, input (keyboard/mouse/Gamepad -> ps3_web_input)
+4d33f552 2026-10-08 live draw: builds again off Windows (vkd3d mode) + upload write hints for the WebGPU layer
+233c92a0 2026-10-08 web: Emscripten build pieces (emsdk 4.0.23): WasmFS /game + /hdd0, heap ceiling, boot page, fixes
+729f8890 2026-10-08 web: exact-type HLE thunks (gen_hle_nids --wasm-thunks), VFS bind fix, unsigned JS pointers, presenter stubs
+08b2f022 2026-10-08 web: boot to the title screen in Chrome (WebGPU), ~24 fps
+784921bf 2026-10-08 web: in-level Free Skate in Chrome; input hold, batched page log, SPU sampler
+5f33570e 2026-10-08 spu (wasm): exact SPU float fast path in double; job-batch time breakdown
+e69454dd 2026-10-08 spu_channels: QPC for the batch-breakdown clock on Windows
+ec259e83 2026-10-08 web: background pipeline warm-up from a saved list; GPU timing counters
+279d443d 2026-10-09 web: sound off by default; starvation plays silence, not noise
+a09786f5 2026-10-09 web: ?measure=freeskate automated fps runs, ?build= selector, host-flag stop guard, forced focus for measure runs
+000e5a54 2026-10-09 web: measure scene tag (level vs menu), [measure-start] marker, device-worker busy time and per-frame GPU-worker stats, ticker/wgs/sync lines in measure context
+7e256037 2026-10-09 web: ?gpu=<dir> device-worker variant selector; measure context keeps par-draw/sync/llwake boot banners
+1d4366c9 2026-10-09 wasm: lock-line waits wake on the event, not the browser timer floor (PS3_WASM_LLWAKE)
+3bff1cbe 2026-10-09 wasm: test_wasm_llwake.c compiles to an empty program off WebAssembly (posix_gate --base picks it up)
+08a337fc 2026-10-09 wasm: [wasm-wait] sched_yield attribution by site (ppu thread yield / cellSync spins / SPU park / other)
+e5d29e1a 2026-10-09 wasm: lock-line mutex spins 1024 probes before sleeping (wl1: sleeps averaged ~6 us)
+63a8a302 2026-10-09 web: fix the wasm build after the batch18 rebase -- duplicate present-pass stubs
+67f704d2 2026-10-09 web: frame snapshot for automated runs (device worker blits the next present into a small readback texture -> JPEG; ?measure logs it as [measure-shot])
+27dee23f 2026-10-09 web/gpu: per-draw cost of the WebGPU executor ~12x lower
+50cb8dd2 2026-10-09 web: measure snapshot in 2000-char console chunks; log why when no snapshot arrives
+25064ef3 2026-10-09 web: measure context carries PS3_DRAW_VERIFY counters and mismatches
+dc1930a5 2026-10-09 web: measure context forwards [ld-probe], [fifo-stats], [par-draw]
+046c1446 2026-10-09 live draw (wasm): PS3_LD_PROBE splits sink_end_impl into consts/setup, textures/targets, pso/bind/encode
+62044f45 2026-10-09 web: measure context forwards [skin-native]
+ae476ca4 2026-10-09 host_pacing: capped-clock present cadence -- PS3_PRESENT_PACE, PS3_FLIP_DISPLAY_LOCK, PS3_PACE_DXSTATS (+ test injector)
+4b5ece7e 2026-10-09 host_pacing: PS3_PACE_DXCSV per-present frame-statistics rows (present id, injector tag) for checkable on-screen intervals
+845bf06b 2026-10-09 host_pacing: PS3_PACE_INJECT_ON_FILE -- the test injector only while the file exists (one-boot segments)
+0d2b02b8 2026-10-09 spu_float: special-lane fix-up call in registers (SysV ABI on Win64 clang, no stack cookie) + global switch read
+6da62fc7 2026-10-09 web: measure run retries Enter (max 4) until the level draws, so a dropped menu press does not void the run
+beda725f 2026-10-09 web: only the last [skin-native] line in the measure context
+a026b4d6 2026-10-09 wasm: clock_gettime without the WASI BigInt round trip (PS3_WASM_FASTCLOCK, default on)
+ded89380 2026-10-09 host_pacing/rsx_live_draw: DXSTATS presentation mode (IDXGISwapChainMedia CompositionMode: composed/overlay/independent flip) + swap-chain ALLOW_TEARING support line -- is tearing (vsync=0) actually in effect
+d57604f1 2026-10-09 rsx_live_draw: rsx_live_draw_log_present_env -- read-only [present-env] lines (window vs monitor, styles, foreground, swap-chain format/scaling/alpha, output colour space/HDR, topmost windows over the monitor) on resize and when a [pace] window was mostly DWM-composed
+97e23d89 2026-10-09 host_pacing: [present-env] on the transition to mostly-composed only (was every 30 s) -- inert in steady state
+ab3de863 2026-10-09 rsx_live_draw: fix the [present-env] format strings (newline inside the literals)
+7ba6bf8e 2026-10-09 web: measure context carries the log tail when nothing was presented
+764d5dba 2026-10-09 DXSTATS: counts from IDXGISwapChain::GetFrameStatistics again (b7202a6's IDXGISwapChainMedia path read all-zero statistics), presentation mode via GetFrameStatisticsMedia every 60th present (PS3_PACE_DXSTATS_MEDIA=0 off), first results of each call logged ([dxstats]), the calls' QPC cost per present on the display line (avg/p99/max), PS3_PACE_DXSTATS_OFF_FILE live on/off
+4f899e29 2026-10-10 host_pacing: PS3_PACE_SCANPROBE=1 (default off) -- scanline regime probe: D3DKMTGetScanLine (gdi32, read-only) PS3_PACE_SCANPROBE_US (1000) after each Present on a probe thread; per stats window a histogram (vblank + tenths of the visible height), plain vs PS3_PACE_INJECT-delayed presents -- VRR (clusters at the top) vs fixed refresh (uniform) without DXGI frame statistics
+169e0da1 2026-10-10 live draw (wasm): texture mutation hash in wasm SIMD (PS3_TEXHASH_SIMD, default on)
+020979a9 2026-10-10 wasm: memcmp in SIMD (PS3_WASM_MEMCMP, default on)
+f54a51a7 2026-10-10 cellGcm par-draw (wasm): producer's flip hold re-checks after announcing the wait (PS3_PAR_FLIPWAIT_RECHECK)
+dcd4e5ca 2026-10-10 cellGcmSetWaitFlip (wasm): sleep on the pending-tick word instead of Sleep(1) (PS3_WAITFLIP_WAKE)
+b7a48bfe 2026-10-10 host_pacing: landing defaults -- PS3_FLIP_DISPLAY_LOCK ships only with PS3_PRESENT_PACE (pace off by =0 or its off file forces the lock off, logged once; the lock alone regressed act/rest in C0-CB); PS3_PACE_DXSTATS default OFF (=1 on). PS3_PACE_INJECT / PS3_PACE_SCANPROBE / PS3_PACE_DXCSV stay off unless set.
+6eba7b77 2026-10-10 web: measure scene tag separates the tunnel and street free-skate spawns
+fe7bf8b7 2026-10-10 rsx_live_draw: vkd3d (POSIX) build -- the [present-env] window/monitor check and the DXSTATS frame-statistics block are Win32/DXGI-only: guarded by !RSX_LIVE_VKD3D || _WIN32 (present-env = no-op stub, DXSTATS = no-op) -- posix_gate --strict linux/vkd3d/win PASS; Windows preprocessed output byte-identical
+fbfde612 2026-10-10 web: ?opfsls=1 lists the site's OPFS (/hdd0) with sizes and times (test aid)
+24797072 2026-10-10 web: closed-loop menu driver for ?measure (screen.js = port of the native harness's screen.py classifier, 40/40 labels identical on harness screenshots; raw frame readback from the device worker; virtual pad presses; FREE SKATE -> skater row 1 -> READY like boot_to_level.sh). ?drive=timed keeps the old timed key script.
+10f442e6 2026-10-10 web: ?skater=<row> for the measure driver (default 1 like the native harness; 0 = heavier worst case)
+4dc88aa9 2026-10-10 host_pacing (wasm): the decoupled vblank / flip clock in the browser build (PS3_VBLANK_HZ / PS3_FLIP_HZ)
+a77ff90c 2026-10-10 web: measure context forwards [pace] lines
+d838c414 2026-10-10 mod loader (wasm): statically linked plugins for a mod-capable browser build (ppu_mod_static.h)
+8465d66e 2026-10-10 web: ?mods=<name> mounts a mods pack at /mods (streamed like data/), mkdata.py --folder
+6dacde8d 2026-10-10 web: measure context keeps [mods] / P8Plus frame-pacing banners
+ff3ba3c7 2026-10-10 web: ?shots2 adds a frame snapshot at the measure window start (game-speed check)
+0715ba67 2026-10-10 web: ?push=<s> game-speed check (stick forward for a fixed time, then a snapshot)
+82bf1fcb 2026-10-07 spu: native job replacement hook (spu_job_native.h) + spu_replay --jobdump
+ad2d20da 2026-10-10 frame trace (wasm): PS3_SPIKE_MS itemises the browser build's own long-frame suspects
+fa803fd1 2026-10-10 web: measure context carries every [spike]/[spike-sum] line of the window
+a960a8a0 2026-10-10 sys_timer (wasm): PS3_USLEEP_PUMP -- deliver pending GCM vblank/flip handlers at sys_timer_usleep
+db99e042 2026-10-10 web: measure context carries the last [gpu] lines and the age of the device worker's last stats message
+da864f66 2026-10-10 live overlay: triangle sets (PS3MOD_LINES_TRIS / RSX_LIVE_LINES_TRIS: vertex triples, per-owner set drawn under the lines) + PS3MOD_LINES_QUERY capability probe; kill switch PS3_LIVE_TRIS=0 (refused, old behaviour)
+249ec22f 2026-10-10 web: ?measure=menu (menu stress: drive to the main menu, measure there)
+c6a08c44 2026-10-10 web/gpu: present coalescing to the display cadence (g3), stall diagnostics
+7f2ffd29 2026-10-10 host_pacing (wasm): PS3_PACE_MARGIN_CAP_US -- cap the clock thread's early-stop margin
+3426773c 2026-10-10 Revert "sys_timer (wasm): PS3_USLEEP_PUMP" -- hypothesis rejected (prof6 pump0/pump1: the usleep spin is the title's vblank floor, not starvation)
+ef7e9d29 2026-10-10 web: pass PRESENT_COALESCE to the device worker via its script URL
+7efbf526 2026-10-09 web/gpu: bind walk ~20% cheaper per draw (g2)
+18146061 2026-10-10 web: host flag "userweb" (USER_WEB: the user plays the web build) stops only automated ?measure pages
+fad7dedc 2026-10-10 web: Save log button (full kept log as a local .txt); uncaught page errors, unhandled rejections and worker errors go into the log
+4cfab4f6 2026-10-10 web: pass PIPE_ASYNC to the device worker too
+902f490a 2026-10-10 web: pass PIPE_PREWARM to the device worker
+3117676b 2026-10-10 web/gpu: new shaders/pipelines off the critical path (g5)
+18c3e4e1 2026-10-10 web: measure context carries g5 pipeline-path stats (translate/module/pipe ms, skipped draws, cache/warm hits)
+3aea7a27 2026-10-10 web: pass PIPE_BUDGET to the device worker
+07d68cbb 2026-10-10 web: measure context carries device-worker health (turn gaps, present max, coalescing counts, g6 create queue)
+21b9ff27 2026-10-10 web: keep the last 30 [gpu] lines in the measure context (slow-fence diagnostics)
+58dc1bea 2026-10-10 web: keep the last 30 [gpu] lines in the measure context (slow-fence diagnostics)
+2b8bbc2b 2026-10-10 rsx_live_draw (wasm): no shader disk cache lookups/stores on the translation thread (RSX_SHADER_DISK_CACHE_WASM=1 restores)
+b8f431a9 2026-10-10 web: boot.js back to CRLF line endings (a sed -i had converted it)
+c6fb56ca 2026-10-09 spu (wasm): SIMD128 fast paths for LS loads/stores, SPU float ops, shufb, conversions
+7bd5c1a3 2026-10-09 spu (wasm): full-range SIMD float model instead of the __int128 fixups; replay bench on process CPU time
+d2c2ab7e 2026-10-09 spu_float.h (wasm): keep the integer fix-up block SSE2-only (the SIMD128 path uses the full-range model since 92507cb)
+8a7dbada 2026-10-09 spu_float.h: native spu_fi text unchanged (the wasm SIMD form renames the loop to spu_fi_scalar via a macro)
+c0641f93 2026-10-09 spu_float.h (wasm SIMD): fm / csflt / cuflt round an exact double product by truncation (no TwoSum step)
+478c03fd 2026-10-09 ppu lifter (wasm): 64-bit guest load/store byte swap via one i8x16.shuffle; mulhd/mulhdu without __int128
+8060eb49 2026-10-10 ppu lifter (wasm): VMX lane loads/stores (ppu_vldu4/vstu4/vldf4/vstf4/vldh8/vsth8) as one v128 load/store + shuffle
+b8ac64ad 2026-10-09 wasm: nanosleep/usleep/clock_nanosleep override with an A/B switch for Emscripten's busy tail (PS3_WASM_SLEEP)
+fb003842 2026-10-11 web: pass PRESENT_ACK / PRESENT_TICK / PRESENT_TICK_MS to the device worker; measure context carries g8 present-ack stats
+9e0a2f0b 2026-10-10 live_draw: PS3_PSO_HLSL_MEMO -- memoise the VP / FP -> HLSL decompile by all of its inputs (pso/tex hitches)
+163dd56e 2026-10-10 live_draw: PS3_PSO_HLSL_MEMO -- key buffered-constant fragment programs by their instruction slots (constant slots zeroed, like warm_fp_instr_hash): the same material FP re-uploaded with new inline constants now hits
+cc0d0702 2026-10-10 live_draw: PS3_PSO_PRELOAD -- load every library pipeline in the background at start-up; build_pso takes it before the blob caches / disk cache / library
+27ec55aa 2026-10-10 live_draw: PS3_PSO_PRELOAD stops on a cold driver cache (first 16 loads > 4 ms avg): the render thread's library loads queued behind it (pool boots on fresh exe paths: render-thread loads up to 2.9 s while a 46 s preload ran)
+12f6c1a2 2026-10-11 Revert "ppu lifter (wasm): VMX lane loads/stores ... as one v128 load/store + shuffle"
+0bf82a62 2026-10-07 spu: native job replacement hook (spu_job_native.h) + spu_replay --jobdump
+717385ea 2026-10-07 spu_capture: every=<E> spec option (take every E-th run after skip)
+8cdc4894 2026-10-07 spu_replay --jobkey HEX: limit --jobdump to one job binary (other jobs that leave through a tail exit derail a nested run)
+4213d8a7 2026-10-10 web/gpu: fence / stall / cache-append diagnostics (g7)
+76e9a253 2026-10-11 web/gpu: present ack before the canvas blit, display-tick modes, ack-latency stats (g8)
+0813f8f0 2026-10-11 web/gpu: PRESENT_ACK off by default (g5 present path); stall lines say what the stretch was
+d5e85f87 2026-10-11 web: worker-health line carries the longest stretch's process time and batch count
+1e0fcbe3 2026-10-11 cellGcmSys: PS3_WAITFLIP_BUSYX -- the SetWaitFlip walker bound keeps waiting past its 250 ms cap while the PAR translation thread X still has records to execute (up to GCM_WAITFLIP_BUSY_MS, 2000), instead of forgiving the flip
+88134b10 2026-10-11 cellGcmSys: PS3_WAITFLIP_BUSYX -- 'busy' = the whole RSX pipeline (X has unexecuted records, OR the walker has not read up to put, OR it is inside a pass / held at the previous flip); GCM_WAITFLIP_BUSY_MS default 600; a forgive logs the pipeline state
+f02c8a0e 2026-10-11 web/README: known issue -- scene-entry hitch inside Chrome's GPU process (parked)
+aa287a46 2026-10-11 cellGcmSys: PS3_WALKER_LITE -- release the PAR producer's hold at a flip (read ahead by at most one flip) only while a guest thread waits in gcm_walker_wait for ring space; live off file; guest ring waits + releases in the [fifo-stats] par line
+ed25a73c 2026-10-11 cellGcmSys: PS3_WALKER_LITE only with the uncapped flip clock (flip=present) unless PS3_WALKER_LITE_CAPPED=1 -- capped phases keep the old code path
+ac4c7106 2026-10-11 PS3_INPUT_LAT=<ms> (diagnostic, default off): input-to-present latency -- a virtual key posted every <ms> (+jitter), consumed by the next port-0 cellPadGetData, ends at the present of the first flip queued after that poll; [input-lat] mean/p50/p90/max every 5 s
+88d99620 2026-10-11 cellGcmSys: PS3_WALKER_LITE ring-pressure gate -- armed only while the guest's ring-space wait averages > PS3_WALKER_LITE_ARM_US (1000) us/flip (EMA 1/8 per flip; disarm below half); unarmed = no release and no guest wake
+fb44e114 2026-10-11 cellGcmSys: PS3_WALKER_LITE pressure EMA 1/64 per flip (PS3_WALKER_LITE_EMA) -- 1/8 armed on single long wraps in act (alab6: 0.03 releases/flip)
+591c3cf1 2026-10-11 cellGcmSys: PS3_WALKER_LITE pressure gate evaluated every flip, also where the lever is off (capped / off file): 'pressure gate would arm N% of flips' in the [fifo-stats] par line (counters only)
+83daf9e8 2026-10-11 live_draw: PS3_PSO_LOAD_LOCK -- serialise ID3D12PipelineLibrary::LoadGraphicsPipeline (default on). The PS3_PSO_PRELOAD thread loaded library pipelines concurrently with the draw thread; the runtime does not synchronise two loads of the same PSO (boot crash, AV in the driver at 0 flips). Load timing starts after the lock (cold-cache rule sees driver time only).
+6178c5c8 2026-10-12 cellGcmSys: PS3_WALKER_LITE capped default on -- PS3_WALKER_LITE_CAPPED default 1, capped flip clock released per ring-space wait (PS3_WALKER_LITE_ARM_US_CAPPED, default 0); uncapped unchanged (ARM_US 1000 sustained-pressure gate)
+34233ddf 2026-10-12 web: serve the user's mods folder in place (--mount), mods files never stored by the browser
+7c389233 2026-10-12 web: point the P8Plus plugin's saved data (CAS looks, eye textures) at /hdd0/p8plus (/mods is read-only)
+4e37d8a6 2026-10-12 texrepl (wasm): HD texture replacement in the browser build
+d030f6fd 2026-10-12 web: HD texture packs (texrepl) default off on the page (?PS3_TEXREPL=1 to test)
+fdc861e7 2026-10-12 web: measure runs keep the texrepl boot / stats / failure lines and the P8Plus user-data, eye-colour and glyph lines
+d094d29a 2026-10-13 live_draw: LD_FRAME_DUMP_RAW=0 -- with the present pass on, a frame dump's frame_N.ppm is a hard link to the presented frame_N_out.ppm instead of the raw render target (up to ~50 MB at render_scale 6x3): one file's bytes per dump. Default unchanged (raw written); the harness sets it. Off Windows / link failure: raw as before.
+ac4c1685 2026-10-13 web README: known issue -- two frame-rate modes per boot; A/B rule = median of >= 3 boots per side
+e01bbdca 2026-10-13 web: ?CPU_PROBE=1 -- a fixed-loop CPU probe on the device worker (once a second) and the page thread, logged per measure window (fps-mode diagnosis)
+ffa213fc 2026-10-13 web: CPU_PROBE logs the per-second device-worker series of the window (min / median / max + samples) to spot level shifts inside a boot
+7a884c01 2026-10-13 web: ?shotw=<px> (max 1280) sets the width of the arm's one snapshot (full-resolution visual gates)
+8e0a51be 2026-10-13 web/gpu: ?GPU_TIME=1 -- GPU time per frame (timestamp queries, else onSubmittedWorkDone)
+ef4d0a48 2026-10-13 web: measure runs log ?GPU_TIME=1 per-frame GPU busy / span (avg, p50, p95) over the window
+8b7f592f 2026-10-14 web/gpu: VRAM estimate in the stats; canvas size published in the WGS ring header
+eb4bbb35 2026-10-14 live gfx (wasm): render scale / FXAA / sharpen present pass in the browser build
+f2da4104 2026-10-14 web/gpu (C): swap chain ResizeBuffers re-creates the back buffers; wgs_canvas_size()
+35396ae8 2026-10-14 web README: known issue rewritten -- ~42-44 fps at fps=60 on Chrome 155 (the earlier ~54 fps boots are not reproducible; cache, compiler tier, field trials, CPU clock ruled out)
+da56330f 2026-10-14 web: measure runs log the executor VRAM estimate and the [gfx] / WGSL-error boot lines
+eff69db3 2026-10-14 live gfx (wasm): presets high/ultra without command-list kicks in the browser build
+1a5fc789 2026-10-14 web: HD texture packs on whenever a mods folder is mounted (?PS3_TEXREPL=0/1 overrides)
+7f5b17f9 2026-10-14 web README: parity table with the native Project 8 Plus (2026-10-14: mods overlay, HD packs, render scale, CAS+, skinning; open: ultrawide, ini renderer keys, CAP)
+69378d39 2026-10-14 live gfx (wasm): HD output -- the swap chain follows the canvas backing size
+f16df601 2026-10-14 web: ?hdout=1 -- canvas backing follows its on-screen size x devicePixelRatio (HD output with render scale; being gated)
+54cbb1f7 2026-10-14 web: hdout resize after the device worker is ready (a resize during its init was dropped); measure keeps hdout / host-renderer lines
+97c2f5fa 2026-10-14 web: ?shotw up to 2560 (full-width snapshots for HD-output checks)
+9e351035 2026-10-14 web: measure keeps the [gfx] swap-chain resize / render-scale auto / cap lines
+9e2854bb 2026-10-14 web: HD output on by default (canvas backing follows the window; ?hdout=0 = off)
+8847bcfe 2026-10-14 web README parity: ini renderer keys and HD output now yes; ultrawide = pillarboxed 16:9 (next)
+dc506b27 2026-10-14 web: ?fill=1 -- the canvas fills the window at its own shape (ultrawide / Hor+, being gated); the screen classifier reads the centred 16:9 part of a wide frame
+1e1a63db 2026-10-14 mods/gfx (wasm): ultrawide -- plugins see the canvas aspect; auto scale per axis
+190ae765 2026-10-14 web: ?fill=1 also sets PS3_WASM_CANVAS_DISPLAY=1 (the game sees the canvas shape); measure keeps display-ready / Hor+ lines
+7386c5a4 2026-10-14 web: ?shot=pause -- the arm's snapshot is the pause menu over the level (HUD layout checks)
+3b05f435 2026-10-14 live draw (wasm): per-frame rings sized for a Hor+ frame; flush reasons in the frame trace
+e165cc2f 2026-10-14 web: measure keeps the [ld-rings] lines (per-frame ring flushes / high-water, rt5+)
+af106a15 2026-10-14 web: ultrawide on by default -- the canvas fills the window and the game sees its aspect (?fill=0 = 16:9 box)
+6c7298c9 2026-10-14 web README parity: ultrawide on by default (32:9 gated, ~15% fps cost), heap headroom noted
+9a9a300b 2026-10-14 live draw (wasm): keep only the sampler-ring increase; [ld-rings] counts variable sampler tables
+cf4d71cb 2026-10-14 web input: only BOUND keys (runtime defaults + the mods ini's key_* lists) are kept from the browser while playing; mouse wheel -> notches for WheelUp/Down (input block v2, +628); Keyboard Lock in fullscreen so Esc reaches the game
+0fe6e0c6 2026-10-14 web input (wasm): mouse wheel -> WheelUp/WheelDown presses (input block v2, int32 wheel_y at +628)
+85b92e44 2026-10-14 web: ?wheeltest=1 -- the menu driver moves one skater row with a mouse-wheel notch and logs the result (wheel binding check)
+b296a613 2026-10-14 web: wheeltest uses the page's canvas element
+2a3bde28 2026-10-14 web: ?shot=pause&pausekey=1 opens the pause menu with Esc (keyboard glyph checks)
+2c642430 2026-10-14 web: measure keeps the prompt / keyboard-binding / glyph boot lines
+3254d915 2026-10-14 web/gpu: request the adapter's maxTextureDimension2D (P8Plus 16384x240 glyph atlas; WebGPU default 8192); measure keeps the first [gpu] ERROR lines
+10bc46b4 2026-10-14 texrepl (wasm): keep the original for a replacement / redirect past the WebGPU device's max 2D size
+bde621f6 2026-10-14 web: pass the adapter's maxTextureDimension2D to the runtime (PS3_WASM_MAX_TEX2D: texrepl keeps the stock texture for bigger mods textures)
+e6818abd 2026-10-14 web: &pausewait=<ms> for the keyboard pause shot (the pause menu fades in)
+d87bb53e 2026-10-14 web README parity: keyboard/mouse bindings and Xbox/keyboard glyphs now yes (rt9)
+12ef7396 2026-10-14 web: save import / export -- the native savedata folder format as a .zip download (stored, byte-identical) and import from a .zip or a folder the player picks (confirm before replacing a browser save), only before Start; ?savetest= test aid
+17e9e1c7 2026-10-14 web: measure keeps [cellSaveData] boot lines
+864d8471 2026-10-14 web: &savemenu=1 with shot=pause opens PAUSE > SAVE GAME (save list check)
+2df97b37 2026-10-14 web: ?measure=smoke page smoke check (0 page errors before Start, Start reaches the game's first frames); page errors counted
+3d594d6a 2026-10-14 web README parity: save import / export done (native round trip verified)
+9a73511b 2026-10-14 web README parity: memory row updated to the rt9 numbers
+0ca93087 2026-10-14 host input (wasm): key labels from the page's keyboard layout (PS3_WASM_KEYLAYOUT)
+7cc86999 2026-10-14 web page: keyboard layout for key labels (PS3_WASM_KEYLAYOUT from the Keyboard Map API; ?keylayout=azerty test map)
+62eaff41 2026-10-14 web page: ?measure=intro (skip_intro = off check: key / click / pad presses until both logos are cut)
+3f16847b 2026-10-14 web page: measure logs keep the keyboard-layout and skip_intro boot lines
+8836bd5c 2026-10-14 live draw (wasm): PS3_WASM_FIF_DEPTH=2 -- the present waits for frame N-2 (three frame sets)
+fe06344d 2026-10-14 mod loader (wasm): guest_alloc works in the browser (plugin ABI 1.2 guest heap)
+d2d6f59d 2026-10-14 web: ?measure=cas (CREATE-A-SKATER visit, guest-memory failure check); README parity corrected (skip intro / CAS+ not verified: guest_alloc failed in all browser builds so far)
+1f612bcc 2026-10-14 web: ?measure=cas&caskeys= (pad path to one CAS screen per arm)
+1f92e3d8 2026-10-14 web page: every measure arm dumps all failure-pattern log lines ([measure-fail]); ?measure=intro measures the intro timeline (introkey=none for the plain sequence)
+957301da 2026-10-14 web page: intro arm logs the first presented frame (common time base with the native timeline)
+8a719047 2026-10-14 web page: cas arm keeps 30 CAS+ log lines
+70bc04d2 2026-10-14 web page: measure logs keep the PS3_VF_SIMD / DRAW_MICRO / TEXFAST boot lines
+d7bcd371 2026-10-14 web page: intro arm presses only in the logo window, keeps movie/bik log lines, valid without a classified menu (dark P8Plus screens)
+df94e5e8 2026-10-14 web page: intro log skips [live-draw] frame counter lines (movie=0); cas arm always keeps the late colour/eye/item/preview proof lines
+22cbb74c 2026-10-14 live draw (wasm): upload byte cuts behind PS3_WASM_CBHINT / PS3_WASM_VBSKIP (default off), O(1) span merge
+c53d38e1 2026-10-14 web page: pass DEV_STAGE / BIND_FAST through to the device worker (wasm-perf rt13 executor, ?gpu=rt13)
+16be6dad 2026-10-14 live draw (wasm): [ld-bytes] format string newline
+7c262f29 2026-10-14 web README: parity rows from gates W (skip intro), Z2 (CAS+ screens, mod items), T (key labels); default page build rt12
+458fc8aa 2026-10-14 web gpu executor: DEV_STAGE=1 mapped upload staging, BIND_FAST=1 bind-walk fast path (both default off), per-frame dev counters
+ab237c1a 2026-10-14 live draw (wasm): byte-cut stats as an [ld-rings] line (kept by the page's measure context)
+116565e5 2026-10-14 live draw (wasm): texture-hash counters in the [ld-rings] bytes line (count / MB per frame by location, changes)
+6a443fc9 2026-10-14 live draw (wasm): PS3_WASM_TEXPF=1 texture hashes ahead on a helper thread (P kicks at first use per frame; X accepts same frame + unchanged effect epoch), default off
+e4ff7317 2026-10-14 live draw (wasm): PS3_WASM_VFMEMO=1 memoised vertex-fetch plans (key: draw ranges + vertex-array registers + switches; index bytes compared), verify compares every field, default off
+8b767ba8 2026-10-14 web page: ?logre=<regex> test aid ([measure-log] game-log lines); cas arm keeps late look save/load lines
+1c59fa9d 2026-10-14 web: /mods files get the pack's mtimes (index.json) so the mods-overlay fingerprint is stable across boots -- the title's HDD data cache is no longer reset on every launch with ?mods= (lib_ps3web.js ps3web_vfs_list_url_t; old list function kept)
+80e575d3 2026-10-14 live draw (wasm): TEXPF effect epoch only for guest-visible side effects (ref, report, label writes, immediate flips) + 2D/old-loop/semaphore items; reuse a texture's older-frame slot; X skips older-tag slots; depth-0 only
+810cbb92 2026-10-14 web gpu executor: DEV_STAGE default on (=0: writeBuffer path); BIND_FAST stays opt-in
+cec67d04 2026-10-15 web README: default rt12w; warm launches (gate WM rt12wm: 71 s -> 11.4 s to the main menu); CAS eye colour gated (CAS2 rt12cas2); looks pending
+bea72d22 2026-10-15 web page: measure-arm stall watchdog ([measure-hang]: ps3dump, IO worker slots/fetches, GPU counters, last 80 log lines after 20 s without a present); io-worker {dump} message
+75059c5d 2026-10-15 web README: default back to rt12 (rt12w warm-boot stalls under investigation)
+910346cf 2026-10-15 web README: eye colour row names the gated build
+5c31cee1 2026-10-15 runtime (wasm): PS3_WASM_LAT=1 latency histograms -- sleep overshoot by size, event-queue and cond wake latency, evq block time, SPU job batches ([wasm-wait] lat lines every 5 s), default off
+66b96abc 2026-10-15 web page: OPFS contention test aids ?reloadat=<ms>, ?dupat=<ms> (second page in an iframe, ?measure=bgboot); iframe watchdog lines tagged (B)
+ffb3868d 2026-10-15 web page: reloadat/dupat hooks before the measure modes (intro/cas returned before reaching them)
+6fa04d26 2026-10-15 runtime (wasm): PS3_WASM_SLEEP=3 -- exact sleeps from one timer thread (sleepers wait for a notify for the last 16 ms; the timer thread spins the last 17 ms and wakes them), default unchanged
+cb26050f 2026-10-15 web page: stall safety net for players -- after 20 s without a present (tab visible): diagnosis into the log + 'Stuck loading' overlay (Reload / Reload without cache = mods state 'retry' so the runtime resets the data cache / Save log); measure arms keep the [measure-hang] console report
+62f4cffe 2026-10-15 runtime (wasm): PS3_WASM_SLEEP_TIMER_MS -- the mode-3 timer thread's spin window (default 17 ms)
+77bf0bb0 2026-10-15 web README: CAS looks save/load gated (LS rt12ls)
+e3bb6e43 2026-10-15 runtime (wasm): per-guest-thread usleep attribution under PS3_WASM_LAT; PS3_WASM_SLEEP=3 serves sleeps only while frames are presented (idle/hidden tab: plain waits, no spin)
+450b70a7 2026-10-15 runtime (wasm): PS3_WASM_SLEEP_THREADS=<names> -- exact (mode 3) sleeps only for the listed guest threads
+19d06865 2026-10-15 web README: default rt12w again (54 warm boots without a stall) + Stuck-loading safety net
+7c4c1e72 2026-10-15 runtime (wasm): sys_timer.c attribution block includes stdlib.h (getenv before the file's own include)
+8b1a524c 2026-10-15 web page: performance env defaults PS3_WASM_CBHINT=1 VBSKIP=1 SLEEP=3 (rt20 default; URL overrides still win)
+fcbe34cb 2026-10-15 runtime (wasm): PS3_WASM_SLEEP=3 -- threads off the list and sleeps while no frames are presented take exactly the mode-0 path (Emscripten's sleep, which spins sub-0.1 ms requests), not a coarse timed wait
+3d7ab098 2026-10-15 web page: ?hirestimer=1 (wasm-perf experiment, default off) + laptop guard: sleep mode 3 only with 12+ logical cores, else 0; ?sleep=0/3 override
+ee4e24a5 2026-10-15 web README: default rt22 (perf settings), frame rate from the rt20 gates + rt22 default check
+8924c3c3 2026-10-15 web page: laptop default -- under 12 logical cores: sleep mode 0 + hirestimer on (wasm-perf: +7.4% fps, half the >4 ms late sleeps, ~1/4 core); 12+: mode 3, no hirestimer; ?sleep= / ?hirestimer= override
+b070e62c 2026-10-15 web serve: --mount-cache (no-cache + ETag/Last-Modified, 304 on revalidation; V8 code cache for a .wasm), validators for --dir files; plain --mount stays no-store (wasm-perf patch)
+969640ab 2026-10-15 wasm: causal probes PS3_WASM_X_DELAY_US / PS3_WASM_SPU_DELAY_US (default off, PS3_WASM only)
+45bab483 2026-10-15 wasm: fix the causal probes -- X share follows g_ld_frames (par-draw presents without sink_flip), SPU delay at batch start
+bbc97532 2026-10-15 wasm: PS3_SYNC_POLLWAIT on by default in the browser build (cap 25 us) + "[wasm-wait] poll-wait" end-reason counters
+ccc21300 2026-10-15 wasm: cellSync.c poll-wait default -- keep each s_pw_us declaration whole (bbc97532 split it across the #endif)
+d1a24039 2026-10-15 web README: default rt25 (poll-wait), check rt25def 49.1 / 42.4
+57e693d4 2026-10-17 cellPad: guest ports handed out like a PS3, not by XInput slot (controller hot-plug)
+3f870ed1 2026-10-17 live_draw: texture cache eviction keeps the frames in flight, cap alias, eviction / reload log
+c8e6d735 2026-10-18 cellPad: port-assignment comment states what was measured (slot-1 pad: main menu yes, level no)
+d74b02a9 2026-10-18 Linux: dlopen plugin loader, WSI present without the per-frame wait, SDL audio pacing, SDL pads on the XInput pipeline
+ff11df4b 2026-10-18 Linux: lifter pool uses "spawn" on every host; plugin display info polls the SDL window at display_ready
+aa52a46c 2026-10-18 cellPad tests on Linux: pad_slotmap_test / pad_map_test against the SDL pipeline (29/0, 209/0)
+82cf2dd4 2026-10-18 Linux WSI: a window larger than the desktop is shrunk to fit (same aspect)
+6cf4c12e 2026-10-12 texrepl (wasm): HD texture replacement in the browser build
+ab88c8a3 2026-10-14 texrepl (wasm): keep the original for a replacement / redirect past the WebGPU device's max 2D size
+297172b7 2026-10-19 texrepl on native Linux: HD texture packs with the vkd3d live-draw renderer
+54967145 2026-10-19 Linux (vkd3d): the live-draw overlay -- host debug lines / triangle sets / frame captures for plugins
+41c3a3f8 2026-10-19 texrepl (Linux): redirect log lines show the path with '/' (the stored wide path keeps '\' internally)
+86a8132e 2026-10-20 cellSaveData: crash-safe saves (tmp file + rename, deferred reCreateMode cleanup); window-close exit waits for a save
+000188f9 2026-10-24 web-unify: Windows build preprocess-identical to thp8 + closefix (web-line changes that reached Windows go behind PS3_WASM)
+ce7cf161 2026-10-24 host_stubs.c: comment names vm.h's VM_READY again (rename slip)
+496a46a3 2026-10-24 web page: &savekeys=<tokens> after ?shot=pause&savemenu=1 (pad presses in the SAVE GAME screens; browser save/load smoke)
+5e96265a 2026-10-24 wasm: native code added since the web branch point builds for the browser -- cellPad slot-map ids (no USB ids from the Gamepad API), host_pacing TIMER_ALL_ACCESS + scanline probe stub (no gdi32 / D3DKMT); Windows preprocess unchanged
+a70c52b6 2026-10-24 host_pacing (wasm): CreateWaitableTimerExW stub (NULL: sleep_until's futex wait + spin) for the present-pace / inject timers
+12dcd7d8 2026-10-24 CMake: browser-only units (web_vfs.c, web_input.c, libs/video/webgpu/, runtime/platform/ps3_wasm_*.c) stay out of the native runtime library (if(NOT EMSCRIPTEN)): libps3recomp_runtime.a holds the same objects as before the web port
+fda181ae 2026-10-24 web README: the browser build comes from thp8-unified (one runtime line); u1 frame-rate check
+901034f8 2026-10-24 vm_read32/vm_write32: declare them with the runtime's 64-bit address everywhere (cellCamera.c, rsx_commands.c x2, cellGcmSys.c)
+0d266885 2026-10-24 cellGcmSys.c: drop the vm_read32 declaration (901034f8 made it conflict)

@@ -1,0 +1,14 @@
+{
+ "comment": "CPUSkinning (src/title/thp8_skin_native.c): the six headers tools/symskin.py generates ON THE PLAYER'S PC from the player's own SPU lift (src/spu_gen/job_skin/spu_recomp.c). Nothing generated ships: the generator does. A header that does not hash to these values means this lift is not the pinned one and the lifted CPUSkinning job runs instead.",
+ "input": "src/spu_gen/job_skin/spu_recomp.c",
+ "input_sha256": "64eb4cd4cc4a951275e0fe4f88ae9a06a5aad083fbee0bbd9db6299eda67f3ad",
+ "output_dir": "src/title_gen/skin",
+ "headers": {
+  "skin_p1.h": "3cf9d8cc5398577090a965904c7d6e0fc28cd025fc54eeb5ca0441ff8fa97c69",
+  "skin_p1_u128.h": "ec7623ff929ce893a73a551cf60c58038b9e02c8688c46bafb1d7c7604992055",
+  "skin_p2.h": "d72bb9b23cce2be05540540a56a5820ee23c4a61710e682e2c1497bda1fa08f2",
+  "skin_p2_u128.h": "30eee16e658279aa3916acab876e2506dcf28f94e8a5fc24599b2988b2a5a6c8",
+  "skin_p3.h": "c654c49cfffe3e730c4c93975d3e34c30e60563e668f1282577b23e25ae10561",
+  "skin_p3_u128.h": "41aa1d30c83a079297a1bc1b4af525986787a8d8a3fe0a3763498ca9ee7d85a5"
+ }
+}

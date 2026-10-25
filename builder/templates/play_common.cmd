@@ -1,0 +1,116 @@
+@echo off
+rem play_common.cmd <variant: vanilla|p8plus|mods> [fullscreen] [stretch] [window WxH] [audio "device name part"]
+rem Shared body of play.cmd / play_p8plus.cmd / play_mods.cmd. Written by the THP8 native builder.
+setlocal EnableExtensions
+rem this file lives in <install>\tools: the install folder is its parent
+for %%I in ("%~dp0..") do set "ROOT=%%~fI"
+set "VARIANT=%~1"
+shift
+
+rem ---- game data (read-only disc tree), the decrypted executables and YOUR HDD root (saves, data cache)
+set "GAMEDATA=@@GAMEDATA@@"
+set "PS3_VFS_ROOT=%GAMEDATA:\=/%"
+set "PS3_APP_HOME=%GAMEDATA:\=/%/PS3_GAME/USRDIR"
+set "PS3_HDD0_ROOT=%ROOT:\=/%/hdd0"
+set "PS3_VFS_STRICT=1"
+set "PS3_SELF_SIDECAR_DIR=%ROOT:\=/%/decrypted"
+set "ELF=%ROOT%\decrypted\EBOOT.elf"
+
+rem ---- player settings (the exe applies THP8's runtime defaults itself)
+set "PS3_VERBOSE=0"
+rem compiled shaders live in the install (the builder's "Precompiling shaders" stage fills it; the game adds what is missing)
+if not defined RSX_SHADER_CACHE_DIR set "RSX_SHADER_CACHE_DIR=%ROOT%\shadercache"
+set "PS3_NO_ESC_QUIT=1"
+rem PSO preload: ON (the runtime default) since repin25: the library load is serialised (PS3_PSO_LOAD_LOCK), see REPIN.md section 27. PS3_PSO_PRELOAD=0 turns it off.
+set "PS3_WINDOW=@@WINDOW@@"
+set "PS3_FULLSCREEN="
+rem vanilla renders 16:9: fullscreen (and F11) keeps the aspect with black bars ("stretch" fills the
+rem monitor); the Project 8 Plus plugin's Hor+ fills an ultrawide monitor itself
+set "PS3_FULLSCREEN_ASPECT=1"
+
+if /i "%VARIANT%"=="p8plus" (
+    set "EXE=%ROOT%\@@MODS_EXE@@"
+    set "PS3_MODS_ROOT=%ROOT:\=/%/mods"
+    set "TITLE=Tony Hawk's Project 8 (native) + Project 8 Plus"
+    set "PS3_FULLSCREEN_ASPECT="
+) else if /i "%VARIANT%"=="mods" (
+    set "EXE=%ROOT%\thp8.exe"
+    set "PS3_MODS_ROOT=%ROOT:\=/%/mods"
+    set "PS3_MODS_PLUGINS=0"
+    set "TITLE=Tony Hawk's Project 8 (native) + mods"
+) else (
+    set "EXE=%ROOT%\thp8.exe"
+    set "PS3_MODS_ROOT=off"
+    set "TITLE=Tony Hawk's Project 8 (native)"
+)
+
+rem the launcher's creator tools run tests with their own mods folder and console drive
+if defined THP8_OVERRIDE_MODS set "PS3_MODS_ROOT=%THP8_OVERRIDE_MODS:\=/%"
+if defined THP8_OVERRIDE_HDD0 set "PS3_HDD0_ROOT=%THP8_OVERRIDE_HDD0:\=/%"
+rem the player's mod settings from the launcher's Mods page (plugins\*.user.ini as PS3MOD_* variables)
+if /i "%VARIANT%"=="p8plus" if not defined THP8_OVERRIDE_MODS if exist "%ROOT%\launcher\mod_settings.cmd" call "%ROOT%\launcher\mod_settings.cmd"
+
+:args
+if "%~1"=="" goto argsdone
+if /i "%~1"=="fullscreen" ( set "PS3_FULLSCREEN=1" & shift & goto args )
+if /i "%~1"=="stretch" ( set "PS3_FULLSCREEN_ASPECT=" & shift & goto args )
+if /i "%~1"=="window" ( set "PS3_WINDOW=%~2" & shift & shift & goto args )
+if /i "%~1"=="audio" ( set "PS3_AUDIO_DEVICE=%~2" & shift & shift & goto args )
+echo unknown option "%~1" (use: fullscreen ^| stretch ^| window WxH ^| audio "device name")
+shift & goto args
+:argsdone
+
+if not exist "%EXE%" ( echo Missing %EXE% -- run the THP8 builder again to rebuild it. & exit /b 1 )
+if not exist "%ELF%" ( echo Missing %ELF% -- run the THP8 builder again. & exit /b 1 )
+if not exist "%GAMEDATA%\PS3_GAME\USRDIR\EBOOT.BIN" (
+    echo The game data is not at "%GAMEDATA%".
+    echo If you moved or deleted your game folder, run the THP8 builder again and pick it.
+    exit /b 1
+)
+if not exist "%ROOT%\hdd0" mkdir "%ROOT%\hdd0"
+if not exist "%ROOT%\logs" mkdir "%ROOT%\logs"
+set "LOG=%ROOT%\logs\play_%VARIANT%.log"
+
+title %TITLE%
+echo.
+echo  ==================================================================
+echo   %TITLE%
+echo  ==================================================================
+echo   Window: %PS3_WINDOW% (resizable)   F11 = fullscreen on/off
+echo   Close the game window to quit (Esc does NOT quit).
+echo.
+echo   Xbox controller            PS3 button   Tony Hawk's Project 8
+echo   ---------------            ----------   ---------------------
+echo   A                          Cross        Ollie / jump / accept
+echo   B                          Circle       Grab / back in some menus
+echo   X                          Square       Flip trick
+echo   Y                          Triangle     Grind / lip / back
+echo   LB / RB                    L1 / R1      Spin / manual-revert combos
+echo   LT / RT                    L2 / R2      (as on PS3)
+echo   Left stick / D-pad         Stick/D-pad  Steer / menus
+echo   Start                      Start        Pause
+echo   Back                       Select       (as on PS3)
+echo.
+echo   Keyboard: WASD = steer, Space = ollie, J flip, L grab, I grind, K = also ollie,
+echo   Q/E spin, U/O = L2/R2, Shift = focus, F = Nail the Trick, numpad = right stick,
+echo   arrows = menus, Enter/Space accept, Backspace back, Esc pause, Tab select
+echo   (rebind in the launcher; keys only reach the game while its window is focused)
+echo.
+echo   Sound: the Windows default output (switch it any time in Windows Sound
+echo   settings). Pick a device: add  audio "Headphones"
+echo   A start that builds the data cache (first start, mods changed) shows a progress screen.
+echo   Saves: %ROOT%\hdd0\home\00000001\savedata
+echo   Log:   %LOG%   (the last 5 sessions: .1 = the previous one ... .5)
+echo  ==================================================================
+echo   Starting...
+
+rem keep the last 5 sessions' logs: play_<variant>.log -> .1 -> ... -> .5 (renames; the oldest .5 is replaced)
+if exist "%LOG%.4" move /y "%LOG%.4" "%LOG%.5" >nul 2>&1
+if exist "%LOG%.3" move /y "%LOG%.3" "%LOG%.4" >nul 2>&1
+if exist "%LOG%.2" move /y "%LOG%.2" "%LOG%.3" >nul 2>&1
+if exist "%LOG%.1" move /y "%LOG%.1" "%LOG%.2" >nul 2>&1
+if exist "%LOG%" move /y "%LOG%" "%LOG%.1" >nul 2>&1
+"%EXE%" "%ELF%" > "%LOG%" 2>&1
+set "RC=%ERRORLEVEL%"
+echo   Game exited (code %RC%). Log: %LOG%
+endlocal & exit /b %RC%

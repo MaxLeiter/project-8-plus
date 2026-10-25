@@ -1,0 +1,29 @@
+Tony Hawk's Project 8 (native) on the Steam Deck
+================================================
+
+1. Desktop Mode (Steam button > Power > Switch to Desktop).
+2. Put your game folder (the one with PS3_GAME) on the Deck or the SD card, and get RPCS3:
+   the AppImage from rpcs3.net into ~/Applications (EmuDeck puts it there too), or the
+   Flatpak from Discover.
+3. Unpack this package, e.g. into ~/thp8-builder, open Konsole there and run
+       ./thp8-builder.sh --cli --game "/run/media/deck/SD/THP8" --install ~/Games/THP8 --addons p8plus
+   (--target proton is the default; add --target native for the experimental native build).
+   Keep the Deck on power: the build takes about 1-1.5 hours; the Deck does not sleep meanwhile.
+   An install folder on the internal drive with the game on the SD card copies the game data
+   (5.2 GB); on the same drive the files are hard-linked (no extra space).
+4. Add it to Steam:
+       ~/Games/THP8/play_p8plus.sh steam-options
+   prints what to do. In short:
+     proton:  Steam > Games > Add a Non-Steam Game > Browse (all files) > ~/Games/THP8/thp8_mods.exe,
+              Properties > Compatibility > force Proton 10+ (or GE-Proton), Launch Options = the line
+              steam-options printed (it starts with PS3_VFS_ROOT=Z:/...).
+     native:  Add a Non-Steam Game > ~/Games/THP8/play_p8plus.sh, no compatibility tool, no
+              launch options.
+5. Back to Game Mode, start it from the library. Controls: Steam Input's default "Gamepad"
+   layout; the game uses the Xbox mapping (A = Cross, B = Circle, X = Square, Y = Triangle,
+   LB/RB = L1/R1, LT/RT = L2/R2, Start = Start, View = Select). The game runs fullscreen at the
+   Deck's 1280x800 with 16:9 black bars (Project 8 Plus' Hor+ fills the 16:10 screen).
+
+If something goes wrong, the logs are in ~/Games/THP8/logs (play_<variant>.log, the last 5
+sessions .1 ... .5; with proton also steam-*.log when "PROTON_LOG=1 %command%" is used). The test
+plan's collect script (thp8_linux_collect.sh) gathers them with the system details.

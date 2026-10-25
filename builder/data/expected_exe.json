@@ -1,0 +1,17 @@
+{
+ "comment": "SHA-256 of the code/data sections of the exes the pinned zig produces (hashes only).",
+ "mods+fma": {
+  ".data": "636994c176dddda2183b0f3ae580e0af1378873525931d29ccdb2bfc03d2a060",
+  ".pdata": "15704e22427c5c52b2f9740dc91905607f72a104f41d5496bfb9b78a3170ff9f",
+  ".rdata": "babb796e3d2aba6dda26309159cf56cf728c1775de34493fcfe365e19149d7a8",
+  ".text": "05c5f3614709ad991bc5ac81826d1e30ab64e5e78f6e665f1dfe94e57ac7fc56",
+  ".tls": "783ba85bd831daba1f6291dd0648925573ef35619cdf6a373d7311986550fad8"
+ },
+ "vanilla+fma": {
+  ".data": "4703b55e56439644b8acefe80469c033cfb709cc3996258fda4721e4abe8955d",
+  ".pdata": "390775fc4fdbd32554f2540a6e061a7edf1a190b41871cbfc7aaab9451c911f8",
+  ".rdata": "0e5152fe7b1b05c543756daa5c5bb23160b4f3e9d8bb2e4d0a2b7b5eb6b8e22f",
+  ".text": "5a35776c682d0ad5312fb47d87ce6036c42a7f2a093c544abb54064049f13280",
+  ".tls": "88522dc010fd0997a0a2b1f1c86d0ab5d9b989e2cf49dff7b2d09e8cd6e2c5ba"
+ }
+}
