@@ -14,7 +14,7 @@
         --sdl2-tar  <SDL2-2.x.y.tar.gz the shipped SDL2 headers come from> \
         -o NOTICE_linux
 
-    HD pack (packaging/make_release.py ships it as NOTICE_HD.txt inside THP8-HD-Pack-<ver>.zip):
+    HD pack (packaging/make_release.py ships it as NOTICE_HD.txt inside Project8Plus-<ver>-hd-pack-windows-x64.zip):
     python publish/make_notice.py --hd [--thp8-mod <clean thp8-mod export>] -o NOTICE_HD
 
 Licence texts are read from those trees, never typed in here, so regenerating
@@ -453,12 +453,12 @@ def linux_notice(args):
 
 
 def hd_notice(args):
-    """NOTICE of the HD pack (THP8-HD-Pack-<ver>.zip, NOTICE_HD.txt): ONNX Runtime with DirectML and the AI model."""
+    """NOTICE of the HD pack (Project8Plus-<ver>-hd-pack-windows-x64.zip, NOTICE_HD.txt): ONNX Runtime with DirectML and the AI model."""
     o = []
     o.append("=" * W + "\nNOTICE - the HD pack\n" + "=" * W + "\n\n")
     o.append(para("""
         Third-party software and data in the THP8 native port's HD pack
-        (THP8-HD-Pack-<version>.zip), the download the launcher fetches when HD
+        (Project8Plus-<version>-hd-pack-windows-x64.zip), the download the launcher fetches when HD
         textures are switched on. It is installed into the builder folder at the paths
         listed below. Nothing in it is game content: the HD textures are made on the
         player's PC from the player's own copy of the game and are not distributed."""))
@@ -765,7 +765,7 @@ def main():
     o.append(para("""
         Fetched only when needed, from their usual public sources. Listed here for transparency."""))
     o.append("\n" + "\n".join([
-        "The HD pack (THP8-HD-Pack-<version>.zip): the HD textures' AI upscaler (ONNX Runtime with DirectML) and its",
+        "The HD pack (Project8Plus-<version>-hd-pack-windows-x64.zip): the HD textures' AI upscaler (ONNX Runtime with DirectML) and its",
         "  model. Fetched by the launcher only when HD textures are switched on, checked against the SHA-256 the builder",
         "  pins (builder/data/hdpack.json), and installed into the builder folder. It carries its own notice,",
         "  NOTICE_HD.txt (installed next to this file).",

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "id": "example.board_graphic",
+  "name": "Example: custom deck graphic",
+  "version": "1.0.0",
+  "author": "Project 8 Plus modding kit",
+  "description": "Gives Tony Hawk's deck an original procedural graphic (chevron bands, a starburst and MODKIT lettering).",
+  "license": "MIT",
+  "tags": ["example", "board", "texture"],
+  "game": {"title_id": "BLUS30011", "disc_version": "01.02"},
+  "priority": 50,
+  "requires": [],
+  "conflicts": [],
+  "ops": [
+    {"op": "skin.deck_graphic", "skater": "Hawk", "image": "assets/deck.png"}
+  ]
+}

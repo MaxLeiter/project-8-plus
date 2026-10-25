@@ -16,7 +16,10 @@ You need
     5.2 GB if the game data has to be copied because the install folder is on a
     different drive.
   - Internet access once, to download the compiler (zig 0.16.0, 97 MB, checked
-    against a fixed SHA-256) -- not needed with the "-offline" package.
+    against a fixed SHA-256) -- not needed with the "-offline" package -- and, if
+    HD textures are on, the HD pack (about 44 MB, also checked against a fixed
+    SHA-256; it can also be put next to this folder by hand). With HD textures off
+    nothing else is downloaded.
 
 Use
   1. Unpack this zip anywhere (a short path without special characters is best).

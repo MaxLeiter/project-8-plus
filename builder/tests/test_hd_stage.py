@@ -228,7 +228,7 @@ class HdJob(HdBase):
         self.assertEqual(len([c for c in self.calls() if c["argv"][0] == "install"]), 2)
 
     def test_pause_and_resume(self):
-        self.put("slow.txt", "1.5")
+        self.put("slow.txt", "6")       # long enough that the pause lands while the upscale child runs, even under load
         self.put("control.json", json.dumps({"pause": False}))
         j = self.job()
         res = {}

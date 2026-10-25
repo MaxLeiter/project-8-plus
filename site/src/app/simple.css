@@ -94,6 +94,17 @@
   color: var(--text-2);
 }
 
+/* a thin slanted bar between the note's items, at the slant of the PLAY buttons (14 px over 60 px = 13 deg) */
+.s-sep {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin: 0 0.75em;
+  vertical-align: -0.14em;
+  background: var(--muted);
+  transform: skewX(-13deg);
+}
+
 .s-download {
   --h: 58px;
 }
@@ -384,7 +395,7 @@
   font: 800 clamp(28px, 2.8vw, 38px)/0.95 var(--font-display);
   text-transform: uppercase;
   color: var(--text);
-  margin: 14px 0 14px;
+  margin: 0 0 14px;
 }
 
 .s-card p {

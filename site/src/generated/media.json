@@ -435,36 +435,36 @@
    "placeholder": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAADQAwCdASoYAAcAPu1kqU2ppaQiMAgBMB2JQAAKLo8p0GaJuMcgSAAA+4Zm0wbResW7YjVb8ncUC3Edt1zdwmOipwhrdFN2scK3I/4fQDci49szioVFl6080HHA9hZP+qqoBhJGzRDyDQAA",
    "w": 5120
   },
-  "hero-m": {
+  "hero-m-arc": {
    "files": [
     {
-     "bytes": 29471,
-     "src": "hero-m-400.avif",
+     "bytes": 34384,
+     "src": "hero-m-arc-400.avif",
      "type": "image/avif",
      "w": 400
     },
     {
-     "bytes": 37194,
-     "src": "hero-m-400.webp",
+     "bytes": 49360,
+     "src": "hero-m-arc-400.webp",
      "type": "image/webp",
      "w": 400
     },
     {
-     "bytes": 57903,
-     "src": "hero-m-600.avif",
+     "bytes": 58975,
+     "src": "hero-m-arc-520.avif",
      "type": "image/avif",
-     "w": 600
+     "w": 520
     },
     {
-     "bytes": 70304,
-     "src": "hero-m-600.webp",
+     "bytes": 86414,
+     "src": "hero-m-arc-520.webp",
      "type": "image/webp",
-     "w": 600
+     "w": 520
     }
    ],
-   "h": 1402,
-   "placeholder": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAAAQBACdASoOABgAPu1iqU2ppaOiMAgBMB2JZQCsAywBV96qC79COw1AaAD+caywo/3IK1Xgv+DTv4SP5lUyhYUb7nh10ykcIflKU0KtuoWJd6+sGdJcC1k/XwI6hEFto1lRZ1TUzrhzuzyVWBG0mgAA",
-   "w": 790
+   "h": 1440,
+   "placeholder": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAADwAwCdASoOABgAPu1kqk4ppaQiMAgBMB2JQBdgZYAyDIDQJpcfsGg4AM4K9fddmp6RaLGRK02somdJI1OcrXQI9f0Bkbe9FrSwfefVbcXGuJyz6OT7q0HABayNvv4geUmWSLvEMBxmEpVfS996OTFZfLBE53UTDZzXFW/bAAA=",
+   "w": 811
   },
   "livelink-overlay": {
    "files": [
@@ -1529,64 +1529,64 @@
   }
  },
  "videos": {
-  "hero-loop": {
+  "hero-loop-arc": {
    "audio": false,
    "draft": null,
-   "duration": 11.97,
-   "h": 902,
+   "duration": 9.13,
+   "h": 900,
    "mobile": null,
    "poster": {
     "files": [
      {
-      "bytes": 31274,
-      "src": "hero-loop-poster-640.avif",
+      "bytes": 27804,
+      "src": "hero-loop-arc-poster-640.avif",
       "type": "image/avif",
       "w": 640
      },
      {
-      "bytes": 46578,
-      "src": "hero-loop-poster-640.webp",
+      "bytes": 42410,
+      "src": "hero-loop-arc-poster-640.webp",
       "type": "image/webp",
       "w": 640
      },
      {
-      "bytes": 101967,
-      "src": "hero-loop-poster-1280.avif",
+      "bytes": 104743,
+      "src": "hero-loop-arc-poster-1280.avif",
       "type": "image/avif",
       "w": 1280
      },
      {
-      "bytes": 145972,
-      "src": "hero-loop-poster-1280.webp",
+      "bytes": 154812,
+      "src": "hero-loop-arc-poster-1280.webp",
       "type": "image/webp",
       "w": 1280
      },
      {
-      "bytes": 142620,
-      "src": "hero-loop-poster-1600.avif",
+      "bytes": 165215,
+      "src": "hero-loop-arc-poster-1600.avif",
       "type": "image/avif",
       "w": 1600
      },
      {
-      "bytes": 200876,
-      "src": "hero-loop-poster-1600.webp",
+      "bytes": 244222,
+      "src": "hero-loop-arc-poster-1600.webp",
       "type": "image/webp",
       "w": 1600
      }
     ],
-    "h": 902,
-    "placeholder": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAABQBACdASoYAA4APu1iqU2ppaQiMAgBMB2JYwDE2BdkNBVTwNVT+Ph23ulAAP6U8/8rm9+DQaUNR3A3/0lmQnV4yqLaT17o19h2TikKqStmWdYxH2uW30IvKcHFjIr+rxD3fUhm6BAsgq2AW+yc5BRtSroHEj0speKtPQHT/A0D/2yQ6pcdIAAA",
+    "h": 900,
+    "placeholder": "data:image/webp;base64,UklGRpAAAABXRUJQVlA4IIQAAAAQBACdASoYAA4APu1iqU2ppaOiMAgBMB2JQBfnAqi3Df1Z3InDAMZdAAD+PZXyy0Z0OOfkP5ERgABXlsqnlo6+nddEh9bGf6YsL9SzynfhmG+UHERIdepzOpb6XDlIG9gHu2jWha+VOqqueQne3VRUStpL5w3xi0r/hHxMdLfnpkKqAAA=",
     "w": 1600
    },
    "sources": [
     {
-     "bytes": 2419697,
-     "src": "hero-loop.av1.mp4",
+     "bytes": 1655969,
+     "src": "hero-loop-arc.av1.mp4",
      "type": "video/mp4; codecs=\"av01.0.08M.08\""
     },
     {
-     "bytes": 3078567,
-     "src": "hero-loop.h264.mp4",
+     "bytes": 2012010,
+     "src": "hero-loop-arc.h264.mp4",
      "type": "video/mp4; codecs=\"avc1.640028\""
     }
    ],

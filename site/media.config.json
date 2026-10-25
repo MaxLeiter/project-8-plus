@@ -2,23 +2,10 @@
   "$comment": "Source media for the site. scripts/media.py encodes these into public/media/ and writes src/generated/media.json. Roots are relative to site/ (both repos checked out side by side under one folder) and can be overridden with the env vars P8_MEDIA_<ROOT>. Never point at game files: screenshots and recordings only.",
   "roots": {
     "SHOTS": "../../thp8-native/docs/shots",
-    "TRAILER": "../../thp8-mod/work/trailer/v2"
+    "TRAILER": "../../thp8-mod/work/trailer/v2",
+    "SITESRC": "media-src"
   },
   "images": [
-    {
-      "id": "hero-m",
-      "src": "{TRAILER}/share/clean_8d/05_cretepark_drone.png",
-      "widths": [
-        400,
-        600
-      ],
-      "crop": [
-        850,
-        0,
-        790,
-        1402
-      ]
-    },
     {
       "id": "g-900-deck",
       "src": "{TRAILER}/share/clean_8d/02_the900_peak_deck.png",
@@ -364,26 +351,17 @@
         1280,
         1920
       ]
+    },
+    {
+      "id": "hero-m-arc",
+      "src": "{SITESRC}/hero_arc_m_tall_center.png",
+      "widths": [
+        400,
+        520
+      ]
     }
   ],
   "videos": [
-    {
-      "id": "hero-loop",
-      "concat": [
-        "{TRAILER}/share/clean_8d/loop_cretepark.mp4",
-        "{TRAILER}/share/clean_8d/loop_houses_drone.mp4"
-      ],
-      "width": 1600,
-      "fps": 30,
-      "crf_av1": 50,
-      "crf_h264": 31,
-      "poster": 0.4,
-      "poster_widths": [
-        640,
-        1280,
-        1600
-      ]
-    },
     {
       "id": "loop-editor-park",
       "src": "{TRAILER}/share/clean_8d/loop_editor_park.mp4",
@@ -521,6 +499,20 @@
       "crf_av1_mobile": 44,
       "crf_h264_mobile": 28,
       "mobile_fps": 30
+    },
+    {
+      "id": "hero-loop-arc",
+      "src": "{TRAILER}/../v3/v4/hero_loop_master_herofly_houses_arc.mp4",
+      "width": 1600,
+      "fps": 30,
+      "crf_av1": 50,
+      "crf_h264": 31,
+      "poster": 4.55,
+      "poster_widths": [
+        640,
+        1280,
+        1600
+      ]
     }
   ]
 }

@@ -42,8 +42,12 @@ Play
   <install>/play.sh steam-options       how to add it to Steam (Game Mode): see STEAM_DECK.txt
   Saves: <install>/hdd0   Logs: <install>/logs/play_<variant>.log (+ the last 5 sessions .1 ... .5)
 
-Not on Linux yet: the HD textures, smoothed skaters, Xbox prompts and boot screen add-ons
-(their tools are Windows-only for now), and the launcher window (use the command line).
+Not on Linux yet: making the HD textures, smoothed skaters, Xbox prompts and boot screen add-ons
+(their tools are Windows-only for now; texture packs made on Windows do play here), and the launcher
+window (use the command line). Project 8 Plus itself, its keyboard prompts and the first-start
+"Preparing the game" screen work on both builds.
+
+Testing: TESTING.txt is the whole test on one page (about 2 hours, one report file to send).
 
 Legal: you must own the game. This project is not affiliated with Activision, Neversoft,
 Tony Hawk, Sony or Valve. See NOTICE.txt and linux/lib/LICENSES for third-party licences.

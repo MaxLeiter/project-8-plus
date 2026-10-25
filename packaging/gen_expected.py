@@ -39,7 +39,7 @@ def main():
             cur = json.load(open(p, encoding="utf-8"))
         args = sys.argv[2:]
         for exe, variant in zip(args[0::2], args[1::2]):
-            secs = hashes.pe_sections(exe)
+            secs = hashes.exe_sections(exe)      # PE (thp8.exe) or ELF (the native Linux thp8, key native:<variant>)
             cur[variant] = {k: v for k, v in secs.items() if k in hashes.STABLE}
             print(variant, cur[variant])
         cur["comment"] = "SHA-256 of the code/data sections of the exes the pinned zig produces (hashes only)."

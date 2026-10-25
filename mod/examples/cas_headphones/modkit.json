@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "id": "example.cas_headphones",
+  "name": "Example: headphones in Create-a-Skater",
+  "version": "1.0.0",
+  "author": "Project 8 Plus modding kit",
+  "description": "A new Create-a-Skater item: original over-ear headphones in the Misc items list of the punk style. Needs P8Plus with cas_plus on.",
+  "license": "MIT",
+  "tags": ["example", "skater", "cas"],
+  "game": {"title_id": "BLUS30011", "disc_version": "01.02"},
+  "priority": 50,
+  "requires": [],
+  "conflicts": [],
+  "ops": [
+    {
+      "op": "cas.add_item",
+      "id": "headphones",
+      "label": "Headphones",
+      "style": "PUNK",
+      "slot": "Accessory03",
+      "gltf": "assets/headphones.glb",
+      "rigid_bone": "Bone_Head",
+      "colourable": true
+    }
+  ]
+}

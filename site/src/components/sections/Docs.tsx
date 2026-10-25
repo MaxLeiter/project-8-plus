@@ -2,7 +2,7 @@ import { ChevronDown, Download, FileText, Plus as PlusIcon, TriangleAlert } from
 import { ApiReference } from "../ApiReference";
 import { DocsSidebar, type IndexEntry, type TocGroup } from "../DocsSidebar";
 import { links, reposPublic } from "@/content/site";
-import { loadApi, loadGuide } from "@/lib/docs";
+import { loadApi, loadGuide, sourceUrl } from "@/lib/docs";
 import { apiId } from "@/lib/ids";
 import { asset } from "@/lib/paths";
 
@@ -44,7 +44,8 @@ const TROUBLE: QA[] = [
     a: (
       <p>
         The first build downloads the zig compiler, about 97 MB, and checks its SHA-256. That step needs an internet
-        connection. Run the builder again once you are online; it continues where it stopped.
+        connection. Run the builder again once you are online; it continues where it stopped. With HD textures on, the
+        HD pack (about 44 MB) downloads after the build the same way and resumes on its own when the connection is back.
       </p>
     ),
   },
@@ -158,7 +159,7 @@ const REQUIREMENTS: [string, React.ReactNode][] = [
   ["Processor", <>Any x64 CPU. On a CPU with AVX2 the build uses the faster FMA3 instructions, and that install then needs an AVX2 CPU. A fast single core helps most.</>],
   ["Memory", <>16 GB recommended. The build runs fewer parallel jobs with less.</>],
   ["Disk", <>About 4 GB free to install with the default add-ons, and about 2 GB once installed. Game data on the same NTFS drive is hard-linked. On another drive it&rsquo;s copied, which needs about 5 GB more.</>],
-  ["Internet", <>Needed once, to download the zig compiler. It&rsquo;s about 97 MB and checked against a pinned SHA-256.</>],
+  ["Internet", <>Needed once, to download the zig compiler (about 97 MB) and, with HD textures on, the HD pack: the AI upscaler and its model, about 44 MB, no game content. Both are checked against pinned SHA-256s.</>],
   ["Build time", <>About 20 to 25 minutes on an 8-core CPU, once. An interrupted build resumes where it stopped.</>],
   ["HD textures", <>Made in the background after the install, about 1 hour on a recent graphics card and about 2 on a mid-range one, so you can play while it runs. They need a DirectX 12 graphics card; without one they are skipped.</>],
   ["Controller", <>An XInput pad such as an Xbox controller is recommended. The keyboard also works.</>],
@@ -367,8 +368,8 @@ export async function Docs() {
                     <span className="src">
                       <FileText size={14} aria-hidden className="inline-icon" /> <code className="mono">{d.source}</code>
                     </span>
-                    {reposPublic ? (
-                      <a href={`${links.modRepo}/blob/${links.modBranch}/${d.source}`} rel="noopener">
+                    {reposPublic && sourceUrl(d.source) ? (
+                      <a href={sourceUrl(d.source)!} rel="noopener">
                         View source
                       </a>
                     ) : null}

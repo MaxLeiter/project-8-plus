@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assemble the LINUX player download: THP8-Native-Builder-<version>-linux-x86_64.tar.xz
+"""Assemble the LINUX player download: Project8Plus-<version>-linux-x86_64.tar.xz
 
 The builder runs on the player's Linux PC / Steam Deck and builds there, from their own game copy:
   --target proton (default)  thp8.exe (+ thp8_mods.exe), the Windows build, played through Proton 10+
@@ -7,7 +7,7 @@ The builder runs on the player's Linux PC / Steam Deck and builds there, from th
 Contents (nothing derived from the game -- the same scans as make_release.py):
   thp8-builder.sh            runs the builder with the system's python3 (3.11+), sleep inhibited while it builds
   thp8_linux_collect.sh      a tester's report: system facts, a timed run with screenshots, logs, failure summary
-  README.txt  STEAM_DECK.txt  NOTICE.txt  LICENSE.txt
+  README.txt  STEAM_DECK.txt  TESTING.txt (the one-page tester run)  NOTICE.txt  LICENSE.txt
   builder/                   thp8_builder + data + templates (the same code as the Windows download)
   ps3recomp/                 ps3recomp (MIT) sources as in the Windows download, lib/libps3recomp_runtime.a (Windows,
                              for proton), lib/linux/libps3recomp_runtime.a (Linux, for native), gen/ppu_hle_nids.cpp
@@ -41,7 +41,7 @@ PROJECT = os.path.normpath(os.path.join(HERE, ".."))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(PROJECT, "builder"))
 import make_release as mr  # noqa: E402  (copytree, PS3RECOMP_DIRS/TOOLS/SKIP, scan_no_game_content, sha256)
-from thp8_builder import VERSION  # noqa: E402
+from thp8_builder import VERSION, asset_name  # noqa: E402
 
 BUILDER_SH = r"""#!/usr/bin/env bash
 # THP8 native builder for Linux / Steam Deck. Builds the game on THIS machine from YOUR copy of it.
@@ -119,7 +119,7 @@ def main():
     if vk_sha not in notice:
         sys.exit(f"--notice names {vk_base} with another SHA-256 than {vk_sha}: regenerate it")
 
-    name = f"THP8-Native-Builder-{VERSION}-linux-x86_64" + ("-offline" if a.zig_tar else "")
+    name = asset_name("linux") + ("-offline" if a.zig_tar else "")
     root = os.path.join(a.out, name)
     if os.path.isdir(root):
         sys.exit(f"{root} exists: move it away first (this script never deletes)")
@@ -250,12 +250,31 @@ def main():
     p = os.path.join(PROJECT, "LICENSE")
     if os.path.isfile(p):
         write_text(os.path.join(root, "LICENSE.txt"), open(p, encoding="utf-8").read())
-    for src, dst in (("README_linux.txt", "README.txt"), ("STEAM_DECK.txt", "STEAM_DECK.txt")):
+    for src, dst in (("README_linux.txt", "README.txt"), ("STEAM_DECK.txt", "STEAM_DECK.txt"), ("TESTING.txt", "TESTING.txt")):
         p = os.path.join(HERE, "linux", src)
         if os.path.isfile(p):
             write_text(os.path.join(root, dst), open(p, encoding="utf-8").read().replace("{{VERSION}}", VERSION))
 
     # ---- nothing from the game in here (same two scans as the Windows package)
+    # ---- no build-machine path in anything shipped (a drive-letter path into a user profile or a thp8 tree, a Git Bash
+    # /c/Users path or a WSL /mnt/<drive> path, e.g. a __FILE__ or DWARF comp_dir in a binary; publish/scrub.py --scan
+    # checks the same); the two upstream release tarballs are taken as they are
+    import re
+    mpath = re.compile(rb"[A-Za-z]:[\\/](?:thp8|Users)|/c/Users/|/mnt/[a-z]/")
+    upstream = {os.path.join(lin, "lib", "source", vk_base)} | (
+        {os.path.join(root, "toolchain", os.path.basename(a.zig_tar))} if a.zig_tar else set())
+    leaks = []
+    for dp, _dn, fn in os.walk(root):
+        for f in fn:
+            p = os.path.join(dp, f)
+            if p in upstream:
+                continue
+            with open(p, "rb") as fh:
+                m = mpath.search(fh.read())
+            if m:
+                leaks.append(f"{os.path.relpath(p, root)}: {m.group(0).decode('latin-1')}...")
+    if leaks:
+        sys.exit("REFUSING to package, build-machine paths inside:\n" + "\n".join(leaks))
     bad = mr.scan_no_game_content(root)
     if bad:
         sys.exit("REFUSING to package, game-derived-looking files:\n" + "\n".join(bad))

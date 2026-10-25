@@ -1,0 +1,188 @@
+{
+  "format": 1,
+  "id": "example.houses_people",
+  "name": "Example: people in Houses",
+  "version": "1.0.0",
+  "author": "Project 8 Plus modding kit",
+  "description": "Six people in view of the Houses free-skate start: two idling in the garage (one with a chosen head), a goal-giver looking at the skater on the driveway, a kid walking a loop, a man wandering between three points and a pro skater (Nyjah Huston) skating a line with an ollie across the street.",
+  "license": "MIT",
+  "tags": [
+    "example",
+    "people",
+    "peds"
+  ],
+  "game": {
+    "title_id": "BLUS30011",
+    "disc_version": "01.02"
+  },
+  "priority": 50,
+  "requires": [],
+  "conflicts": [],
+  "ops": [
+    {
+      "op": "peds.add",
+      "zone": "z_houses",
+      "name": "ex_ped_suit",
+      "kind": "stand",
+      "pos": [
+        -62.39,
+        2.4,
+        -64.31
+      ],
+      "yaw_deg": 225,
+      "profile": {
+        "base": "RPed_Businessmen",
+        "parts": {
+          "head": "Businessmen_Head03"
+        }
+      },
+      "anim": "PedM_ArmCrosIdle01_xx"
+    },
+    {
+      "op": "peds.add",
+      "zone": "z_houses",
+      "name": "ex_ped_fan",
+      "kind": "stand",
+      "pos": [
+        -60.84,
+        2.4,
+        -65.86
+      ],
+      "yaw_deg": 225,
+      "profile": "RPed_TouristF",
+      "anims": [
+        "PedF_02_Cheer_xx",
+        "PedF_01_Clap_xx",
+        "PedF_02_Laughing01_xx"
+      ]
+    },
+    {
+      "op": "peds.add",
+      "zone": "z_houses",
+      "name": "ex_giver",
+      "kind": "goal_giver",
+      "pos": [
+        -59.71,
+        2.4,
+        -64.45
+      ],
+      "yaw_deg": 225,
+      "profile": "GPed_Jason_Lee",
+      "look_at_skater": true,
+      "anims": [
+        "PedM_Talk01_xx",
+        "PedM_Talk02_xx",
+        "PedM_CallSk8r02_xx"
+      ]
+    },
+    {
+      "op": "peds.add",
+      "zone": "z_houses",
+      "name": "ex_walker",
+      "kind": "walker",
+      "profile": "RPed_Kid",
+      "path": {
+        "points": [
+          [
+            -61.05,
+            2.4,
+            -62.26
+          ],
+          [
+            -58.79,
+            2.4,
+            -64.52
+          ],
+          [
+            -57.09,
+            1.6,
+            -62.82
+          ],
+          [
+            -59.35,
+            1.6,
+            -60.56
+          ]
+        ],
+        "loop": true,
+        "speed": "walk"
+      },
+      "idle_at_points": [
+        null,
+        "PedMKid_Idle02_01_xx",
+        null,
+        null
+      ]
+    },
+    {
+      "op": "peds.add",
+      "zone": "z_houses",
+      "name": "ex_wanderer",
+      "kind": "walker",
+      "profile": "RPed_Businessmen01",
+      "path": {
+        "points": [
+          [
+            -59.28,
+            1.0,
+            -59.22
+          ],
+          [
+            -55.39,
+            1.0,
+            -62.4
+          ],
+          [
+            -56.1,
+            0.3,
+            -59.57
+          ]
+        ],
+        "mode": "wander"
+      },
+      "idle_at_points": [
+        "PedM_CheckWatch_xx",
+        "PedM_Looking01_xx",
+        "PedM_Stretch01_xx"
+      ]
+    },
+    {
+      "op": "peds.add",
+      "zone": "z_houses",
+      "name": "ex_skater",
+      "kind": "skater",
+      "profile": "Pro_Huston_Skater",
+      "path": {
+        "points": [
+          [
+            -59.99,
+            0.3,
+            -53.56
+          ],
+          [
+            -56.81,
+            0.3,
+            -56.74
+          ],
+          [
+            -53.27,
+            0.3,
+            -60.28
+          ],
+          [
+            -50.09,
+            0.3,
+            -63.46
+          ]
+        ],
+        "loop": true,
+        "actions": [
+          "continue",
+          "continue",
+          "ollie",
+          "continue"
+        ]
+      }
+    }
+  ]
+}

@@ -76454,10 +76454,10 @@ index 794abe77..9bb94d3c 100644
                  except OSError:
 diff --git a/tools/ppu_codegen_opt.py b/tools/ppu_codegen_opt.py
 new file mode 100644
-index 00000000..9a17c81f
+index 00000000..f721a121
 --- /dev/null
 +++ b/tools/ppu_codegen_opt.py
-@@ -0,0 +1,1224 @@
+@@ -0,0 +1,1271 @@
 +"""ppu_codegen_opt.py -- optional code-generation passes for ppu_lifter.py output.
 +
 +Every pass here is OFF unless the lifter is given the matching --opt-* flag, and
@@ -76518,6 +76518,10 @@ index 00000000..9a17c81f
 +    # changes once the values are SSA locals instead of ctx memory. Keeping VRs in
 +    # ctx makes the vector code compile exactly as in the plain lift.
 +    locals_vr: bool = True
++    # wasm=True (ppu_lifter.py --wasm): the WebAssembly forms of the 64-bit byte swap (one i8x16.shuffle) and of
++    # ppc_mulhd/mulhdu (no __int128 libcall), behind __wasm_simd128__ / __wasm__. Off = the native lift text
++    # byte-for-byte as before (the browser build was the only user; native lifts must stay pinnable).
++    wasm: bool = False
 +
 +    def any(self) -> bool:
 +        return (self.fast_mem or self.fast_icall or self.musttail or self.locals
@@ -76525,7 +76529,7 @@ index 00000000..9a17c81f
 +
 +    def tag(self) -> str:
 +        on = [n for n in ("fast_mem", "trust_sp", "fast_icall", "musttail", "locals", "fp",
-+                          "cr", "inline")
++                          "cr", "inline", "wasm")
 +              if getattr(self, n)]
 +        if self.locals and not self.locals_vr:
 +            on.append("no_vr")
@@ -76602,19 +76606,7 @@ index 00000000..9a17c81f
 +#define PPU_GLD8(m, a)  (*(PPU_MEMV const uint8_t*)((m) + (a)))
 +#define PPU_GLD16(m, a) __builtin_bswap16(*(PPU_MEMV const ppu_u16u*)((m) + (a)))
 +#define PPU_GLD32(m, a) __builtin_bswap32(*(PPU_MEMV const ppu_u32u*)((m) + (a)))
-+/* ppu-wasm-patch v1 */
-+#if defined(__wasm_simd128__) && !defined(PPU_WASM_SCALAR)
-+/* WebAssembly has no byte-swap instruction (__builtin_bswap64 = 22 scalar ops): the guest access stays one
-+ * volatile scalar load/store, its value is swapped with one i8x16.shuffle. */
-+#include <wasm_simd128.h>
-+static inline uint64_t ppu_bswap64(uint64_t v) {
-+    return (uint64_t)wasm_i64x2_extract_lane(wasm_i8x16_shuffle(wasm_i64x2_splat((int64_t)v), wasm_i64x2_splat(0),
-+                                             7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8), 0);
-+}
-+#else
-+#define ppu_bswap64 __builtin_bswap64
-+#endif
-+#define PPU_GLD64(m, a) ppu_bswap64(*(PPU_MEMV const ppu_u64u*)((m) + (a)))
++#define PPU_GLD64(m, a) __builtin_bswap64(*(PPU_MEMV const ppu_u64u*)((m) + (a)))
 +static inline uint8_t ppu_ld8(const uint8_t* m, uint64_t ea) {
 +    uint32_t a = (uint32_t)ea;
 +    if (PPU_UNLIKELY(ppu_line_flags[a >> 7] & 1u)) return vm_read8(a);
@@ -76660,7 +76652,7 @@ index 00000000..9a17c81f
 +static inline void ppu_st64(uint8_t* m, uint64_t ea, uint64_t v) {
 +    uint32_t a = (uint32_t)ea;
 +    if (PPU_UNLIKELY(ppu_line_flags[a >> 7] & 2u)) { vm_write64(a, v); return; }
-+    *(PPU_MEMV ppu_u64u*)(m + a) = ppu_bswap64(v);
++    *(PPU_MEMV ppu_u64u*)(m + a) = __builtin_bswap64(v);
 +}
 +"""
 +
@@ -76756,9 +76748,63 @@ index 00000000..9a17c81f
 +    }"""
 +
 +
++
++# WebAssembly forms (CodegenOptions.wasm, ppu_lifter.py --wasm): replacements of the native template text
++_WASM_GLD64_OLD = """#define PPU_GLD64(m, a) __builtin_bswap64(*(PPU_MEMV const ppu_u64u*)((m) + (a)))
++"""
++_WASM_GLD64_NEW = """/* ppu-wasm-patch v1 */
++#if defined(__wasm_simd128__) && !defined(PPU_WASM_SCALAR)
++/* WebAssembly has no byte-swap instruction (__builtin_bswap64 = 22 scalar ops): the guest access stays one
++ * volatile scalar load/store, its value is swapped with one i8x16.shuffle. */
++#include <wasm_simd128.h>
++static inline uint64_t ppu_bswap64(uint64_t v) {
++    return (uint64_t)wasm_i64x2_extract_lane(wasm_i8x16_shuffle(wasm_i64x2_splat((int64_t)v), wasm_i64x2_splat(0),
++                                             7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8), 0);
++}
++#else
++#define ppu_bswap64 __builtin_bswap64
++#endif
++#define PPU_GLD64(m, a) ppu_bswap64(*(PPU_MEMV const ppu_u64u*)((m) + (a)))
++"""
++_WASM_ST64_OLD = """    *(PPU_MEMV ppu_u64u*)(m + a) = __builtin_bswap64(v);
++"""
++_WASM_ST64_NEW = """    *(PPU_MEMV ppu_u64u*)(m + a) = ppu_bswap64(v);
++"""
++_WASM_MUL_ANCHOR = """#else
++static inline int64_t ppc_mulhd(int64_t a, int64_t b) {
++    return (int64_t)((__int128)(int64_t)a * (__int128)(int64_t)b >> 64);
++"""
++_WASM_MUL_BLOCK = """#elif defined(__wasm__) && !defined(PPU_WASM_SCALAR)
++/* WebAssembly: a 128-bit multiply is a __multi3 libcall; four 32x32->64 products instead. The signed high
++ * half is the unsigned one minus (a < 0 ? b : 0) and (b < 0 ? a : 0), mod 2^64. */
++static inline uint64_t ppc_mulhdu(uint64_t a, uint64_t b) {
++    const uint64_t al = (uint32_t)a, ah = a >> 32, bl = (uint32_t)b, bh = b >> 32;
++    const uint64_t ll = al * bl, lh = al * bh, hl = ah * bl, hh = ah * bh;
++    const uint64_t mid = (ll >> 32) + (uint32_t)lh + (uint32_t)hl;
++    return hh + (lh >> 32) + (hl >> 32) + (mid >> 32);
++}
++static inline int64_t ppc_mulhd(int64_t a, int64_t b) {
++    return (int64_t)(ppc_mulhdu((uint64_t)a, (uint64_t)b) - (a < 0 ? (uint64_t)b : 0) - (b < 0 ? (uint64_t)a : 0));
++}
++"""
++
++
++def _wasm_text(t: str, pairs) -> str:
++    crlf = "\r\n" in t
++    if crlf:
++        t = t.replace("\r\n", "\n")
++    for old, new in pairs:
++        if t.count(old) != 1:
++            raise ValueError("--wasm: template text not found exactly once: " + old.splitlines()[0][:60])
++        t = t.replace(old, new)
++    return t.replace("\n", "\r\n") if crlf else t
++
++
 +def patch_source_preamble(text: str, opts: CodegenOptions) -> str:
 +    """Rewrite helper definitions inside SOURCE_PREAMBLE for the enabled passes.
 +    Works on either EOL convention."""
++    if opts.wasm:
++        text = _wasm_text(text, ((_WASM_MUL_ANCHOR, _WASM_MUL_BLOCK + _WASM_MUL_ANCHOR),))
 +    if not opts.fp:
 +        return text
 +    crlf = "\r\n" in text
@@ -76780,7 +76826,8 @@ index 00000000..9a17c81f
 +        return ""
 +    s = _PRE_COMMON
 +    if opts.fast_mem:
-+        s += _PRE_FASTMEM
++        s += _wasm_text(_PRE_FASTMEM, ((_WASM_GLD64_OLD, _WASM_GLD64_NEW), (_WASM_ST64_OLD, _WASM_ST64_NEW))) \
++            if opts.wasm else _PRE_FASTMEM
 +    if opts.fast_icall:
 +        s += _PRE_ICALL
 +    if opts.musttail:
@@ -77962,7 +78009,7 @@ index 67dfd3fd..4a706539 100644
          # register: splats (element index) and FP<->int converts (scale).
          # All emit "vD, vB, UIMM" so the lifter reads a bare integer at ops[2].
 diff --git a/tools/ppu_lifter.py b/tools/ppu_lifter.py
-index 7917a9d8..1f7adfd6 100644
+index 7917a9d8..4079c85e 100644
 --- a/tools/ppu_lifter.py
 +++ b/tools/ppu_lifter.py
 @@ -31,6 +31,8 @@ try:
@@ -78582,26 +78629,7 @@ index 7917a9d8..1f7adfd6 100644
  
  /* The guest timebase (mftb/mftbu): one global monotonic clock scaled to the
   * PS3's 79.8 MHz, provided by the runtime (runtime/syscalls/sys_timer.c). */
-@@ -314,6 +903,18 @@ static inline uint64_t ppc_mulhdu(uint64_t a, uint64_t b) {
-     _umul128(a, b, &hi);
-     return hi;
- }
-+#elif defined(__wasm__) && !defined(PPU_WASM_SCALAR)
-+/* WebAssembly: a 128-bit multiply is a __multi3 libcall; four 32x32->64 products instead. The signed high
-+ * half is the unsigned one minus (a < 0 ? b : 0) and (b < 0 ? a : 0), mod 2^64. */
-+static inline uint64_t ppc_mulhdu(uint64_t a, uint64_t b) {
-+    const uint64_t al = (uint32_t)a, ah = a >> 32, bl = (uint32_t)b, bh = b >> 32;
-+    const uint64_t ll = al * bl, lh = al * bh, hl = ah * bl, hh = ah * bh;
-+    const uint64_t mid = (ll >> 32) + (uint32_t)lh + (uint32_t)hl;
-+    return hh + (lh >> 32) + (hl >> 32) + (mid >> 32);
-+}
-+static inline int64_t ppc_mulhd(int64_t a, int64_t b) {
-+    return (int64_t)(ppc_mulhdu((uint64_t)a, (uint64_t)b) - (a < 0 ? (uint64_t)b : 0) - (b < 0 ? (uint64_t)a : 0));
-+}
- #else
- static inline int64_t ppc_mulhd(int64_t a, int64_t b) {
-     return (int64_t)((__int128)(int64_t)a * (__int128)(int64_t)b >> 64);
-@@ -430,6 +1031,34 @@ def _imm(token: str) -> str:
+@@ -430,6 +1019,34 @@ def _imm(token: str) -> str:
          return token
  
  
@@ -78636,7 +78664,7 @@ index 7917a9d8..1f7adfd6 100644
  def _cr_field_set(bf: int) -> str:
      """Generate C to set a CR field from a comparison result."""
      shift = (7 - bf) * 4
-@@ -541,6 +1170,18 @@ class PPULifter:
+@@ -541,6 +1158,18 @@ class PPULifter:
                  f"underscore; using {prefix + chr(95)!r}"+chr(10))
              prefix += "_"
          self.prefix = prefix
@@ -78655,7 +78683,7 @@ index 7917a9d8..1f7adfd6 100644
          # Cache for _range_insns: (instructions, len, ordered, addrs). Keyed by
          # the instruction-list identity so the FULL list (mid-function / serial
          # lift) is sorted+indexed once, not rescanned per call.
-@@ -901,11 +1542,18 @@ class PPULifter:
+@@ -901,11 +1530,18 @@ class PPULifter:
              # genuine 64-bit arithmetic such as the SWAR word-at-a-time strlen
              # (`add rX, masked_word, 0x7F7F7F7F7F7F7F7F`), which then never
              # detects the terminator byte in the high word and scans forever.
@@ -78676,7 +78704,7 @@ index 7917a9d8..1f7adfd6 100644
  
          if mn == "subfic":
              # RT = EXTS(SI) - RA over the full 64 bits; XER[CA] = NOT borrow
-@@ -917,33 +1565,42 @@ class PPULifter:
+@@ -917,33 +1553,42 @@ class PPULifter:
                      f"ctx->gpr[{rd}] = _b - _a; "
                      f"ctx->xer = (ctx->xer & ~(1u << 29)) | ((_b >= _a) ? (1u << 29) : 0u); }}")
  
@@ -78728,7 +78756,7 @@ index 7917a9d8..1f7adfd6 100644
          if mn.startswith("mulhw") and not mn.startswith("mulhwu"):
              rd, ra, rb = _reg_idx(ops[0]), _reg_idx(ops[1]), _reg_idx(ops[2])
              return f"ctx->gpr[{rd}] = (int64_t)(int32_t)((int32_t)((int64_t)(int32_t)ctx->gpr[{ra}] * (int64_t)(int32_t)ctx->gpr[{rb}] >> 32));"
-@@ -956,15 +1613,24 @@ class PPULifter:
+@@ -956,15 +1601,24 @@ class PPULifter:
          # INT_MIN/-1 overflow) -- it leaves an undefined result and continues.
          # The host C division WOULD trap (SIGFPE / 0xC0000094), so guard it and
          # yield 0, matching hardware's "garbage but no fault" behaviour.
@@ -78757,7 +78785,7 @@ index 7917a9d8..1f7adfd6 100644
  
          # ------- Logical -------
          if mn == "ori":
-@@ -1054,6 +1720,13 @@ class PPULifter:
+@@ -1054,6 +1708,13 @@ class PPULifter:
              # (the old (int64_t)(int32_t) cast) corrupted every rlwinm whose bit
              # 31 was set -- e.g. newlib dtoa's exponent-field extraction, which
              # then fed __pow5mult a garbage exponent and spun forever.
@@ -78771,7 +78799,7 @@ index 7917a9d8..1f7adfd6 100644
              return (f"ctx->gpr[{ra}] = (uint64_t)"
                      f"ppc_rlwinm((uint32_t)ctx->gpr[{rs}], {sh}, {mb}, {me});")
  
-@@ -1061,8 +1734,13 @@ class PPULifter:
+@@ -1061,8 +1722,13 @@ class PPULifter:
              ra, rs = _reg_idx(ops[0]), _reg_idx(ops[1])
              sh, mb, me = ops[2], ops[3], ops[4]
              # RA = (ROTL32(RS,SH) & m) | (RA & ~m), m = MASK(MB+32,ME+32) which
@@ -78787,7 +78815,7 @@ index 7917a9d8..1f7adfd6 100644
              return (f"ctx->gpr[{ra}] = (ctx->gpr[{ra}] & 0xFFFFFFFF00000000ull) | "
                      f"(uint64_t)ppc_rlwimi((uint32_t)ctx->gpr[{ra}], (uint32_t)ctx->gpr[{rs}], {sh}, {mb}, {me});")
  
-@@ -1205,6 +1883,44 @@ class PPULifter:
+@@ -1205,6 +1871,44 @@ class PPULifter:
                  return (f"{{ uint64_t _ea = ctx->gpr[{base}] + {disp}; {body} }}")
              return f"/* {mn} unhandled operands: {insn.operands} */;"
  
@@ -78832,7 +78860,7 @@ index 7917a9d8..1f7adfd6 100644
          # ------- Stores -------
          store_map = {
              "stb": "vm_write8", "stbu": "vm_write8",
-@@ -1278,14 +1994,14 @@ class PPULifter:
+@@ -1278,14 +1982,14 @@ class PPULifter:
              frd, ra_i, rb_i = _reg_idx(ops[0]), _reg_idx(ops[1]), _reg_idx(ops[2])
              single = mn in ("lfsx", "lfsux")
              if mn.endswith("ux") and ra_i != "0":
@@ -78849,7 +78877,7 @@ index 7917a9d8..1f7adfd6 100644
              else:
                  return f"{{ uint64_t tmp = vm_read64({ea}); memcpy(&ctx->fpr[{frd}], &tmp, 8); }}"
  
-@@ -1294,14 +2010,14 @@ class PPULifter:
+@@ -1294,14 +1998,14 @@ class PPULifter:
              # stfdx also contains 's' -- match single explicitly [fork eb5451b3]
              single = mn in ("stfsx", "stfsux")
              if mn.endswith("ux") and ra_i != "0":
@@ -78866,7 +78894,7 @@ index 7917a9d8..1f7adfd6 100644
              else:
                  return f"{{ uint64_t tmp; memcpy(&tmp, &ctx->fpr[{frs}], 8); vm_write64({ea}, tmp); }}"
  
-@@ -1385,8 +2101,12 @@ class PPULifter:
+@@ -1385,8 +2089,12 @@ class PPULifter:
          # cellmark: engine_handle_input leaked 0xA0/call, corrupting the caller's
          # stack). LR holds the target (set by the preceding mtlr); dispatch like
          # bctrl, then CONTINUE (link = call).
@@ -78880,7 +78908,7 @@ index 7917a9d8..1f7adfd6 100644
  
          if mn == "b":
              target = ops[0]
-@@ -1441,15 +2161,18 @@ class PPULifter:
+@@ -1441,15 +2149,18 @@ class PPULifter:
          if (mn.endswith("lr") and mn not in ("bl", "blr", "blrl") and
                  mn.startswith("b") and
                  not mn.startswith("blr")):  # guard against "blr" literal
@@ -78903,7 +78931,7 @@ index 7917a9d8..1f7adfd6 100644
  
          # Indirect call/jump through CTR in any conditional or named form:
          #   b<cond>ctr / bcctr  (no link) -> tail jump: dispatch, then return
-@@ -1461,9 +2184,10 @@ class PPULifter:
+@@ -1461,9 +2172,10 @@ class PPULifter:
          # (func_00000030). On a real title this is thousands of vtable calls.
          if (mn.startswith("b") and mn not in ("bctr", "bctrl")
                  and (mn.endswith("ctr") or mn.endswith("ctrl"))):
@@ -78917,7 +78945,7 @@ index 7917a9d8..1f7adfd6 100644
              return f"if ({cond}) {{ ps3_indirect_call(ctx); DRAIN_TRAMPOLINE(ctx); return; }}"
  
          # Conditional branches
-@@ -1477,19 +2201,19 @@ class PPULifter:
+@@ -1477,19 +2189,19 @@ class PPULifter:
                          and tgt in self.function_entries):
                      # conditional tail call to a function prologue inside this
                      # (merged) range -- trampoline, don't goto (see the `b` case).
@@ -78941,7 +78969,7 @@ index 7917a9d8..1f7adfd6 100644
                      # Use trampoline for cross-fragment conditional branches
                      self.branch_targets.add(tgt)
                      return f"if ({cond}) {{ g_trampoline_fn = (void(*)(void*)){self.prefix}func_{tgt:08X}; return; }}"
-@@ -1532,8 +2256,10 @@ class PPULifter:
+@@ -1532,8 +2244,10 @@ class PPULifter:
          if mn == "bctrl":
              # Indirect call through CTR register. The CTR value is a GUEST
              # address (or OPD pointer). We dispatch through a hash table
@@ -78954,7 +78982,7 @@ index 7917a9d8..1f7adfd6 100644
  
          # ------- SPR -------
          if mn == "mflr":
-@@ -1625,8 +2351,7 @@ class PPULifter:
+@@ -1625,8 +2339,7 @@ class PPULifter:
              disp, base = _disp_base(ops[1])
              if disp is not None:
                  if mn in ("lfs", "lfsu"):
@@ -78964,7 +78992,7 @@ index 7917a9d8..1f7adfd6 100644
                  else:
                      line = (f"{{ uint64_t tmp = vm_read64(ctx->gpr[{base}] + {disp}); "
                              f"memcpy(&ctx->fpr[{frd}], &tmp, 8); }}")
-@@ -1644,8 +2369,7 @@ class PPULifter:
+@@ -1644,8 +2357,7 @@ class PPULifter:
                  # store, corrupting the double (breaks fctidz+stfd+ld float->GPR
                  # idioms and any stored double). [ps3recomp fork JonathanDC64 eb5451b3]
                  if mn in ("stfs", "stfsu"):
@@ -78974,7 +79002,7 @@ index 7917a9d8..1f7adfd6 100644
                  else:
                      line = (f"{{ uint64_t tmp; memcpy(&tmp, &ctx->fpr[{frs}], 8); "
                              f"vm_write64(ctx->gpr[{base}] + {disp}, tmp); }}")
-@@ -1670,7 +2394,9 @@ class PPULifter:
+@@ -1670,7 +2382,9 @@ class PPULifter:
              helper = fp_binary[mn_base]
              expr = f"{helper}(ctx->fpr[{fra}], ctx->fpr[{frb}])"
              # Book I 4.6.5: the single forms round the result to single
@@ -78985,7 +79013,7 @@ index 7917a9d8..1f7adfd6 100644
              if mn_base.endswith("s"):
                  expr = f"ppu_fp_single({expr})"
              return f"ctx->fpr[{frd}] = {expr};"
-@@ -1707,10 +2433,9 @@ class PPULifter:
+@@ -1707,10 +2421,9 @@ class PPULifter:
          if mn_base in fma_map:
              frd, fra, frc, frb = _reg_idx(ops[0]), _reg_idx(ops[1]), _reg_idx(ops[2]), _reg_idx(ops[3])
              neg_b, neg_res = fma_map[mn_base]
@@ -78998,7 +79026,7 @@ index 7917a9d8..1f7adfd6 100644
              return f"ctx->fpr[{frd}] = {expr};"
  
          if mn_base in ("frsp",):
-@@ -1729,8 +2454,9 @@ class PPULifter:
+@@ -1729,8 +2442,9 @@ class PPULifter:
          if mn_base in ("fctiw", "fctiwz"):
              frd = _reg_idx(ops[0])
              frb = _reg_idx(ops[1])
@@ -79010,7 +79038,7 @@ index 7917a9d8..1f7adfd6 100644
                      f"memcpy(&tmp, &ctx->fpr[{frd}], 8); "
                      f"tmp = (tmp & 0xFFFFFFFF00000000ULL) | iv; "
                      f"memcpy(&ctx->fpr[{frd}], &tmp, 8); }}")
-@@ -1738,8 +2464,9 @@ class PPULifter:
+@@ -1738,8 +2452,9 @@ class PPULifter:
          if mn_base in ("fctid", "fctidz"):
              frd = _reg_idx(ops[0])
              frb = _reg_idx(ops[1])
@@ -79022,7 +79050,7 @@ index 7917a9d8..1f7adfd6 100644
                      f"memcpy(&ctx->fpr[{frd}], &iv, 8); }}")
  
          if mn_base in ("fcfid",):
-@@ -1752,21 +2479,21 @@ class PPULifter:
+@@ -1752,21 +2467,21 @@ class PPULifter:
              frd = _reg_idx(ops[0])
              frb = _reg_idx(ops[1])
              if mn_base.endswith("s"):
@@ -79049,7 +79077,7 @@ index 7917a9d8..1f7adfd6 100644
              return f"ctx->fpr[{frd}] = 1.0 / ctx->fpr[{frb}];"
  
          if mn_base == "fsel":
-@@ -1792,47 +2519,71 @@ class PPULifter:
+@@ -1792,47 +2507,71 @@ class PPULifter:
                      f"ctx->cr = (ctx->cr & ~(0xFu << {shift})) | (cr_val << {shift}); }}")
  
          # ------- 64-bit multiply / divide -------
@@ -79135,7 +79163,7 @@ index 7917a9d8..1f7adfd6 100644
  
          if mn.startswith("subfe"):
              # rd = ~rA + rB + CA. A formula that can't set carry when ca=0
-@@ -1840,12 +2591,15 @@ class PPULifter:
+@@ -1840,12 +2579,15 @@ class PPULifter:
              # bignum loops spin forever on this).
              rd, ra, rb = _reg_idx(ops[0]), _reg_idx(ops[1]), _reg_idx(ops[2])
              # XER[CA] = ADC carry-out of (~RA + RB + ca), per PowerISA / RPCS3 add64_flags.
@@ -79152,7 +79180,7 @@ index 7917a9d8..1f7adfd6 100644
  
          # ------- addc/subfc (carry arithmetic, carry-out only, no carry-in) -------
          # startswith() captures the . (record) and o (overflow) variants, matching
-@@ -1853,19 +2607,25 @@ class PPULifter:
+@@ -1853,19 +2595,25 @@ class PPULifter:
          # addc:  rD = rA + rB; CA = carry out of the add (unsigned wrap => result < rA).
          if mn.startswith("addc"):
              rd, ra, rb = _reg_idx(ops[0]), _reg_idx(ops[1]), _reg_idx(ops[2])
@@ -79180,7 +79208,7 @@ index 7917a9d8..1f7adfd6 100644
  
          # ------- Condition register logical ops -------
          if mn == "cror":
-@@ -1931,8 +2691,11 @@ class PPULifter:
+@@ -1931,8 +2679,11 @@ class PPULifter:
              ra = _reg_idx(ops[0])
              rs = _reg_idx(ops[1])
              rb = _reg_idx(ops[2])
@@ -79194,7 +79222,7 @@ index 7917a9d8..1f7adfd6 100644
              return f"ctx->gpr[{ra}] = ppc_rlwinm((uint32_t)ctx->gpr[{rs}], (int)(ctx->gpr[{rb}] & 31), {mb}, {me});"
  
          # mffs — move from FPSCR
-@@ -1940,18 +2703,39 @@ class PPULifter:
+@@ -1940,18 +2691,39 @@ class PPULifter:
              frd = _reg_idx(ops[0])
              return f"{{ uint64_t fpscr64 = ctx->fpscr; memcpy(&ctx->fpr[{frd}], &fpscr64, 8); }}"
  
@@ -79246,7 +79274,7 @@ index 7917a9d8..1f7adfd6 100644
  
          # ------- Store/load with update indexed -------
          if mn == "stdux":
-@@ -2016,9 +2800,36 @@ class PPULifter:
+@@ -2016,9 +2788,36 @@ class PPULifter:
                      f"ctx->cr = (ctx->cr & ~(0xFu << 28)) | (_sc ? (2u << 28) : 0u); "
                      f"ctx->reserve_addr = 0; }}")
  
@@ -79285,7 +79313,7 @@ index 7917a9d8..1f7adfd6 100644
  
          # ------- Byte-reverse loads/stores -------
          if mn == "lwbrx":
-@@ -2065,6 +2876,12 @@ class PPULifter:
+@@ -2065,6 +2864,12 @@ class PPULifter:
              return (f"{{ uint64_t ea = ctx->gpr[{ra}] + ctx->gpr[{rb}]; "
                      f"ctx->gpr[{rd}] = (int64_t)(int16_t)vm_read16(ea); ctx->gpr[{ra}] = ea; }}")
  
@@ -79298,7 +79326,7 @@ index 7917a9d8..1f7adfd6 100644
          # ------- Move from time base -------
          # THE guest clock. The old emission was a per-call-site static that
          # advanced 16667 ticks PER READ -- not time: every site had a private
-@@ -2132,31 +2949,40 @@ class PPULifter:
+@@ -2132,31 +2937,40 @@ class PPULifter:
              # case, where hardware sets CA=1).
              rd, ra = _reg_idx(ops[0]), _reg_idx(ops[1])
              # addme = RA + CA - 1 = RA + (~0) + CA; XER[CA] = ADC carry-out.
@@ -79342,7 +79370,7 @@ index 7917a9d8..1f7adfd6 100644
  
          # ------- mulhd / mulhdu (multiply high doubleword) -------
          if mn.startswith("mulhd") and not mn.startswith("mulhdu"):
-@@ -2214,6 +3040,22 @@ class PPULifter:
+@@ -2214,6 +3028,22 @@ class PPULifter:
                      f"uint8_t* d = (uint8_t*)&ctx->vr[{vd}]; "
                      f"for (int i = 0; i < 16; i++) d[i] = ((uint32_t)i >= 16u - sh) ? m[i - (int)(16u - sh)] : 0; }}")
  
@@ -79365,7 +79393,7 @@ index 7917a9d8..1f7adfd6 100644
          if mn == "lvebx" or mn == "lvehx" or mn == "lvewx":
              vd = int(ops[0][1:]) if ops[0].startswith("v") else _reg_idx(ops[0])
              ra = _reg_idx(ops[1])
-@@ -2245,6 +3087,10 @@ class PPULifter:
+@@ -2245,6 +3075,10 @@ class PPULifter:
              # lvsl/lvsr generate permutation vectors for unaligned loads.
              # lvsl: for byte offset b, generates {b, b+1, b+2, ..., b+15}
              # lvsr: generates {16-b, 17-b, ..., 31-b}
@@ -79376,7 +79404,7 @@ index 7917a9d8..1f7adfd6 100644
              if mn == "lvsl":
                  return (f"{{ uint8_t b = (uint8_t)(({_xea(ra,rb)}) & 0xF); "
                          f"for (int i = 0; i < 16; i++) ((uint8_t*)&ctx->vr[{vd}])[i] = b + i; }}")
-@@ -2258,6 +3104,8 @@ class PPULifter:
+@@ -2258,6 +3092,8 @@ class PPULifter:
              va = int(ops[1][1:])
              vb = int(ops[2][1:])
              vc = int(ops[3][1:])
@@ -79385,7 +79413,7 @@ index 7917a9d8..1f7adfd6 100644
              return (f"{{ uint8_t* a = (uint8_t*)&ctx->vr[{va}]; "
                      f"uint8_t* b = (uint8_t*)&ctx->vr[{vb}]; "
                      f"uint8_t* c = (uint8_t*)&ctx->vr[{vc}]; "
-@@ -2273,6 +3121,8 @@ class PPULifter:
+@@ -2273,6 +3109,8 @@ class PPULifter:
              vd = int(ops[0][1:])
              vb = int(ops[1][1:])
              uimm = int(ops[2]) & 3
@@ -79394,7 +79422,7 @@ index 7917a9d8..1f7adfd6 100644
              return (f"{{ uint32_t* d = (uint32_t*)&ctx->vr[{vd}]; "
                      f"uint32_t val = ((uint32_t*)&ctx->vr[{vb}])[{uimm}]; "
                      f"d[0] = d[1] = d[2] = d[3] = val; }}")
-@@ -2281,6 +3131,8 @@ class PPULifter:
+@@ -2281,6 +3119,8 @@ class PPULifter:
              vd = int(ops[0][1:])
              va = int(ops[1][1:])
              vb = int(ops[2][1:])
@@ -79403,7 +79431,7 @@ index 7917a9d8..1f7adfd6 100644
              return (f"{{ uint64_t* d = (uint64_t*)&ctx->vr[{vd}]; "
                      f"uint64_t* a = (uint64_t*)&ctx->vr[{va}]; "
                      f"uint64_t* b = (uint64_t*)&ctx->vr[{vb}]; "
-@@ -2290,6 +3142,8 @@ class PPULifter:
+@@ -2290,6 +3130,8 @@ class PPULifter:
              vd = int(ops[0][1:])
              va = int(ops[1][1:])
              vb = int(ops[2][1:])
@@ -79412,7 +79440,7 @@ index 7917a9d8..1f7adfd6 100644
              return (f"{{ uint64_t* d = (uint64_t*)&ctx->vr[{vd}]; "
                      f"uint64_t* a = (uint64_t*)&ctx->vr[{va}]; "
                      f"uint64_t* b = (uint64_t*)&ctx->vr[{vb}]; "
-@@ -2305,6 +3159,8 @@ class PPULifter:
+@@ -2305,6 +3147,8 @@ class PPULifter:
          # Temps handle vD aliasing vA/vB (`vmrghw v0,v0,v13`).
          if mn in ("vmrghb","vmrghh","vmrghw","vmrglb","vmrglh","vmrglw"):
              vd = int(ops[0][1:]); va = int(ops[1][1:]); vb = int(ops[2][1:])
@@ -79421,7 +79449,7 @@ index 7917a9d8..1f7adfd6 100644
              esz = mn[5]
              ctype, n = ({"b":("uint8_t",16), "h":("uint16_t",8), "w":("uint32_t",4)})[esz]
              half = n // 2
-@@ -2333,9 +3189,7 @@ class PPULifter:
+@@ -2333,9 +3177,7 @@ class PPULifter:
              va = int(ops[1][1:])
              vb = int(ops[2][1:])   # ops[2] = vB = addend (encoding order)
              vc = int(ops[3][1:])   # ops[3] = vC = multiplicand
@@ -79432,7 +79460,7 @@ index 7917a9d8..1f7adfd6 100644
  
          if mn == "vnmsubfp":
              # vD = -(vA*vC - vB) = vB - vA*vC. Encoding order [vD,vA,vB,vC]:
-@@ -2344,19 +3198,15 @@ class PPULifter:
+@@ -2344,19 +3186,15 @@ class PPULifter:
              va = int(ops[1][1:])
              vb = int(ops[2][1:])   # ops[2] = vB = minuend (encoding order)
              vc = int(ops[3][1:])   # ops[3] = vC = multiplicand
@@ -79455,7 +79483,7 @@ index 7917a9d8..1f7adfd6 100644
  
          if mn == "vmulfp":
              # Not a real PPC instruction but some disassemblers emit it
-@@ -2370,6 +3220,8 @@ class PPULifter:
+@@ -2370,6 +3208,8 @@ class PPULifter:
              va = int(ops[1][1:])
              vb = int(ops[2][1:])
              vc = int(ops[3][1:])
@@ -79464,7 +79492,7 @@ index 7917a9d8..1f7adfd6 100644
              return (f"{{ uint64_t* d=(uint64_t*)&ctx->vr[{vd}]; "
                      f"uint64_t* a=(uint64_t*)&ctx->vr[{va}]; "
                      f"uint64_t* b=(uint64_t*)&ctx->vr[{vb}]; "
-@@ -2391,7 +3243,8 @@ class PPULifter:
+@@ -2391,7 +3231,8 @@ class PPULifter:
                  pred = "a[i]==b[i]"
              else:
                  load = (f"float a[4],b[4]; ppu_vldf4(&ctx->vr[{va}],a); "
@@ -79474,7 +79502,7 @@ index 7917a9d8..1f7adfd6 100644
                  pred = vcmp_f[mn.rstrip(".")]
              body = (f"{{ {load}uint32_t d[4]; int t=0; "
                      f"for(int i=0;i<4;i++){{ int r=({pred}); d[i]=r?~0u:0u; t+=r; }} "
-@@ -2407,29 +3260,28 @@ class PPULifter:
+@@ -2407,29 +3248,28 @@ class PPULifter:
              va = int(ops[1][1:])
              vb = int(ops[2][1:])
              sh = int(ops[3])  # numeric shift count (disasm emits plain number)
@@ -79521,7 +79549,7 @@ index 7917a9d8..1f7adfd6 100644
  
          if mn.startswith("vcmpequw"):
              vd, va, vb = int(ops[0][1:]), int(ops[1][1:]), int(ops[2][1:])
-@@ -2578,7 +3430,8 @@ class PPULifter:
+@@ -2578,7 +3418,8 @@ class PPULifter:
              else:
                  pick = "(a[i]<b[i]) ? a[i] : (b[i]<a[i]) ? b[i] : (signbit(a[i]) ? a[i] : b[i])"
              return (f"{{ float a[4],b[4],d[4]; ppu_vldf4(&ctx->vr[{va}],a); ppu_vldf4(&ctx->vr[{vb}],b); "
@@ -79531,7 +79559,7 @@ index 7917a9d8..1f7adfd6 100644
                      f"ppu_vstf4(&ctx->vr[{vd}],d); }}")
  
          # Splat immediate (vspltisb/h/w) — splat a 5-bit signed immediate
-@@ -2593,6 +3446,8 @@ class PPULifter:
+@@ -2593,6 +3434,8 @@ class PPULifter:
                  # store BE: swap bytes within each halfword lane
                  return (f"{{ uint8_t* p=(uint8_t*)&ctx->vr[{vd}]; uint16_t hv=(uint16_t)((int16_t){simm}); "
                          f"for(int i=0;i<8;i++){{ p[i*2]=(uint8_t)(hv>>8); p[i*2+1]=(uint8_t)hv; }} }}")
@@ -79540,7 +79568,7 @@ index 7917a9d8..1f7adfd6 100644
              else:
                  return (f"{{ uint32_t v[4]; for(int i=0;i<4;i++) v[i]=(uint32_t)(int32_t){simm}; "
                          f"ppu_vstu4(&ctx->vr[{vd}],v); }}")
-@@ -2616,18 +3471,16 @@ class PPULifter:
+@@ -2616,18 +3459,16 @@ class PPULifter:
          # Float reciprocal estimate / reciprocal sqrt estimate
          if mn == "vrefp":
              vd, vb = int(ops[0][1:]), int(ops[-1][1:])  # vB = last operand (vmx_vx emits vD, vA, vB)
@@ -79562,7 +79590,7 @@ index 7917a9d8..1f7adfd6 100644
  
          # vrfin / vrfiz had no lowering at all: they lifted to a TODO comment,
          # so vD kept whatever it held before. Guitar Hero III uses vrfin (9
-@@ -2637,17 +3490,17 @@ class PPULifter:
+@@ -2637,17 +3478,17 @@ class PPULifter:
          if mn == "vrfin":  # round to FP integer, nearest (ties to even)
              vd, vb = int(ops[0][1:]), int(ops[-1][1:])
              return (f"{{ float b[4],d[4]; ppu_vldf4(&ctx->vr[{vb}],b); "
@@ -79583,7 +79611,7 @@ index 7917a9d8..1f7adfd6 100644
  
          # Float/int convert (operand form "vD, vB, UIMM" — UIMM is a bare int)
          if mn == "vcfsx" or mn == "vcfux":
-@@ -2659,7 +3512,9 @@ class PPULifter:
+@@ -2659,7 +3500,9 @@ class PPULifter:
                      f"for(int i=0;i<4;i++) d[i]=(float)({src_ty})bi[i]{scale}; ppu_vstf4(&ctx->vr[{vd}],d); }}")
  
          # PEM vctsxs/vctuxs: SATURATE out-of-range (a plain cast is UB and
@@ -79594,7 +79622,7 @@ index 7917a9d8..1f7adfd6 100644
          if mn == "vctsxs" or mn == "vctuxs":
              vd, vb = int(ops[0][1:]), int(ops[1][1:])
              uimm = int(ops[2]) if len(ops) > 2 and not ops[2].startswith("v") else 0
-@@ -2668,12 +3523,15 @@ class PPULifter:
+@@ -2668,12 +3511,15 @@ class PPULifter:
              if mn == "vctsxs":
                  sat = ("(v!=v) ? 0 : (v>=2147483647.0f) ? 2147483647 : "
                         "(v<=-2147483648.0f) ? (-2147483647-1) : (int32_t)v")
@@ -79613,7 +79641,7 @@ index 7917a9d8..1f7adfd6 100644
  
          # Compare with Rc (vcmpeqfp., vcmpgefp., etc.)
          if mn.startswith("vcmpbfp"):
-@@ -2682,65 +3540,280 @@ class PPULifter:
+@@ -2682,65 +3528,280 @@ class PPULifter:
              # words). vcmpbfp: bit 0 = !(a <= b), bit 1 = !(a >= -b); a NaN
              # fails both compares and so sets both bits.
              return (f"{{ float a[4],b[4]; uint32_t d[4]; ppu_vldf4(&ctx->vr[{va}],a); ppu_vldf4(&ctx->vr[{vb}],b); "
@@ -79716,20 +79744,32 @@ index 7917a9d8..1f7adfd6 100644
  
 -        # Saturating add
 -        if mn == "vaddsbs":
--            vd, va, vb = int(ops[0][1:]), int(ops[1][1:]), int(ops[2][1:])
--            return (f"{{ int8_t* d=(int8_t*)&ctx->vr[{vd}]; int8_t* a=(int8_t*)&ctx->vr[{va}]; "
--                    f"int8_t* b=(int8_t*)&ctx->vr[{vb}]; "
--                    f"for(int i=0;i<16;i++){{int32_t r=(int32_t)a[i]+(int32_t)b[i]; d[i]=(int8_t)(r>127?127:r<-128?-128:r);}} }}")
--        if mn == "vadduhs":
 +        # vmul{e,o}{s,u}{b,h}: products of the even / odd lanes, double width
 +        # (vmulesh / vmulosh have their own handler below)
 +        _m = re.fullmatch(r"vmul([eo])([su])([bh])", mn)
 +        if _m and mn not in ("vmulesh", "vmulosh"):
              vd, va, vb = int(ops[0][1:]), int(ops[1][1:]), int(ops[2][1:])
+-            return (f"{{ int8_t* d=(int8_t*)&ctx->vr[{vd}]; int8_t* a=(int8_t*)&ctx->vr[{va}]; "
+-                    f"int8_t* b=(int8_t*)&ctx->vr[{vb}]; "
+-                    f"for(int i=0;i<16;i++){{int32_t r=(int32_t)a[i]+(int32_t)b[i]; d[i]=(int8_t)(r>127?127:r<-128?-128:r);}} }}")
+-        if mn == "vadduhs":
+-            vd, va, vb = int(ops[0][1:]), int(ops[1][1:]), int(ops[2][1:])
 -            return (f"{{ uint16_t* d=(uint16_t*)&ctx->vr[{vd}]; uint16_t* a=(uint16_t*)&ctx->vr[{va}]; "
 -                    f"uint16_t* b=(uint16_t*)&ctx->vr[{vb}]; "
 -                    f"for(int i=0;i<8;i++){{uint32_t r=(uint32_t)a[i]+(uint32_t)b[i]; d[i]=(uint16_t)(r>65535u?65535u:r);}} }}")
 -        if mn == "vaddshs":
+-            vd, va, vb = int(ops[0][1:]), int(ops[1][1:]), int(ops[2][1:])
+-            return (f"{{ int16_t* d=(int16_t*)&ctx->vr[{vd}]; int16_t* a=(int16_t*)&ctx->vr[{va}]; "
+-                    f"int16_t* b=(int16_t*)&ctx->vr[{vb}]; "
+-                    f"for(int i=0;i<8;i++){{int32_t r=(int32_t)a[i]+(int32_t)b[i]; d[i]=(int16_t)(r>32767?32767:r<-32768?-32768:r);}} }}")
+-        if mn == "vadduws":
+-            vd, va, vb = int(ops[0][1:]), int(ops[1][1:]), int(ops[2][1:])
+-            return (f"{{ uint32_t* d=(uint32_t*)&ctx->vr[{vd}]; uint32_t* a=(uint32_t*)&ctx->vr[{va}]; "
+-                    f"uint32_t* b=(uint32_t*)&ctx->vr[{vb}]; "
+-                    f"for(int i=0;i<4;i++){{uint64_t r=(uint64_t)a[i]+(uint64_t)b[i]; d[i]=(uint32_t)(r>0xFFFFFFFFu?0xFFFFFFFFu:r);}} }}")
+-
+-        # Subtract saturate
+-        if mn == "vsubsws":
 +            n = _vsz[_m.group(3)]
 +            ty, sty, cnt = _vl[n]
 +            dty = _vl[2 * n][0]
@@ -79749,18 +79789,6 @@ index 7917a9d8..1f7adfd6 100644
 +                "vpkshss": (2, ("s", "-128", "127")), "vpkswss": (4, ("s", "-32768", "32767"))}
 +        if mn in _vpk:
              vd, va, vb = int(ops[0][1:]), int(ops[1][1:]), int(ops[2][1:])
--            return (f"{{ int16_t* d=(int16_t*)&ctx->vr[{vd}]; int16_t* a=(int16_t*)&ctx->vr[{va}]; "
--                    f"int16_t* b=(int16_t*)&ctx->vr[{vb}]; "
--                    f"for(int i=0;i<8;i++){{int32_t r=(int32_t)a[i]+(int32_t)b[i]; d[i]=(int16_t)(r>32767?32767:r<-32768?-32768:r);}} }}")
--        if mn == "vadduws":
--            vd, va, vb = int(ops[0][1:]), int(ops[1][1:]), int(ops[2][1:])
--            return (f"{{ uint32_t* d=(uint32_t*)&ctx->vr[{vd}]; uint32_t* a=(uint32_t*)&ctx->vr[{va}]; "
--                    f"uint32_t* b=(uint32_t*)&ctx->vr[{vb}]; "
--                    f"for(int i=0;i<4;i++){{uint64_t r=(uint64_t)a[i]+(uint64_t)b[i]; d[i]=(uint32_t)(r>0xFFFFFFFFu?0xFFFFFFFFu:r);}} }}")
--
--        # Subtract saturate
--        if mn == "vsubsws":
--            vd, va, vb = int(ops[0][1:]), int(ops[1][1:]), int(ops[2][1:])
 -            return (f"{{ int32_t* d=(int32_t*)&ctx->vr[{vd}]; int32_t* a=(int32_t*)&ctx->vr[{va}]; "
 -                    f"int32_t* b=(int32_t*)&ctx->vr[{vb}]; "
 -                    f"for(int i=0;i<4;i++){{int64_t r=(int64_t)a[i]-(int64_t)b[i]; d[i]=(int32_t)(r>0x7FFFFFFFLL?0x7FFFFFFFLL:r<-0x80000000LL?-0x80000000LL:r);}} }}")
@@ -79943,7 +79971,7 @@ index 7917a9d8..1f7adfd6 100644
  
              # The vector register file holds BIG-ENDIAN data. Reading it through
              # a host int16_t*/int32_t* and writing the result back the same way
-@@ -2832,65 +3905,6 @@ class PPULifter:
+@@ -2832,65 +3893,6 @@ class PPULifter:
  
          # (vmaxsw handled above by the generic vmax/vmin loop)
  
@@ -80009,7 +80037,7 @@ index 7917a9d8..1f7adfd6 100644
          # vmulesh / vmulosh -- multiply the EVEN / ODD signed halfword lanes to
          # four 32-bit products.
          #
-@@ -2936,60 +3950,33 @@ class PPULifter:
+@@ -2936,60 +3938,33 @@ class PPULifter:
              return (f"{{ uint16_t* d=(uint16_t*)&ctx->vr[{vd}]; uint16_t* b=(uint16_t*)&ctx->vr[{vb}]; "
                      f"uint16_t v=b[{uimm}]; for(int i=0;i<8;i++) d[i]=v; }}")
  
@@ -80092,7 +80120,7 @@ index 7917a9d8..1f7adfd6 100644
          mn = mnemonic.rstrip("la")  # strip link and absolute bits
          if mn.startswith("b"):
              mn = mn[1:]  # strip leading 'b'
-@@ -3170,9 +4157,12 @@ class PPULifter:
+@@ -3170,9 +4145,12 @@ class PPULifter:
          # extern declarations (and the matching comment) to match the source.
          # 'function_table_count' starts with 'function_table', so a single
          # replace covers both uniformly.
@@ -80108,7 +80136,7 @@ index 7917a9d8..1f7adfd6 100644
          lines = [preamble]
          # Forward declarations
          for func in self.functions:
-@@ -3234,6 +4224,20 @@ class PPULifter:
+@@ -3234,6 +4212,20 @@ class PPULifter:
          lines.append("    }")
          lines.append("    return mask;")
          lines.append("}")
@@ -80129,11 +80157,11 @@ index 7917a9d8..1f7adfd6 100644
          lines.append("static inline uint64_t ppc_rldicl(uint64_t rs, int sh, int mb) {")
          lines.append("    return ppc_rotl64(rs, sh) & ppc_mask64(mb, 63);")
          lines.append("}")
-@@ -3268,6 +4272,12 @@ class PPULifter:
+@@ -3268,6 +4260,12 @@ class PPULifter:
          lines.append("    return (sh >= 64) ? (rs >> 63) : (rs >> sh);")
          lines.append("}")
          lines.append("")
-+        if self.cg_opts.fp:
++        if self.cg_opts.fp or self.cg_opts.wasm:
 +            lines[0] = _cg.patch_source_preamble(lines[0], self.cg_opts)
 +        extra = _cg.source_preamble(self.cg_opts)
 +        if extra:
@@ -80142,7 +80170,7 @@ index 7917a9d8..1f7adfd6 100644
          return lines
  
      def _emit_functions(self) -> list["LiftedFunction"]:
-@@ -3332,14 +4342,30 @@ class PPULifter:
+@@ -3332,14 +4330,30 @@ class PPULifter:
              return False
          return not (self.code_lo <= tgt < self.code_hi)
  
@@ -80176,7 +80204,7 @@ index 7917a9d8..1f7adfd6 100644
          for bline in func.body_lines:
              lines.append(f"    {bline}" if not bline.endswith(":") else bline)
  
-@@ -3375,10 +4401,36 @@ class PPULifter:
+@@ -3375,10 +4389,36 @@ class PPULifter:
                        f"0x{func.fallthrough_to:08X}; emitting halt", flush=True)
                  lines.append(f"        /* missing continuation 0x{func.fallthrough_to:08X}: halt */ return;")
  
@@ -80213,7 +80241,7 @@ index 7917a9d8..1f7adfd6 100644
      def _table_lines(self) -> list[str]:
          """The exported function table (typedef + extern declaration live in
          the header). Emitted once, into the final chunk file."""
-@@ -3392,6 +4444,29 @@ class PPULifter:
+@@ -3392,6 +4432,29 @@ class PPULifter:
          lines.append("};")
          lines.append(f"const uint64_t {self.prefix}function_table_count = {len(funcs)};")
          lines.append("")
@@ -80243,7 +80271,7 @@ index 7917a9d8..1f7adfd6 100644
          return lines
  
      def emit_source(self) -> str:
-@@ -3402,9 +4477,11 @@ class PPULifter:
+@@ -3402,9 +4465,11 @@ class PPULifter:
          func_by_addr = {f.start_addr: f for f in emit_funcs}
          sorted_addrs = sorted(func_by_addr.keys())
          addr_index = {a: i for i, a in enumerate(sorted_addrs)}
@@ -80257,7 +80285,7 @@ index 7917a9d8..1f7adfd6 100644
          lines += self._table_lines()
          return "\n".join(lines)
  
-@@ -3419,6 +4496,7 @@ class PPULifter:
+@@ -3419,6 +4484,7 @@ class PPULifter:
          func_by_addr = {f.start_addr: f for f in emit_funcs}
          sorted_addrs = sorted(func_by_addr.keys())
          addr_index = {a: i for i, a in enumerate(sorted_addrs)}
@@ -80265,7 +80293,7 @@ index 7917a9d8..1f7adfd6 100644
  
          preamble = self._preamble_lines()
          written: list[str] = []
-@@ -3441,7 +4519,10 @@ class PPULifter:
+@@ -3441,7 +4507,10 @@ class PPULifter:
          for i, func in enumerate(emit_funcs):
              if i % 10000 == 0:
                  print(f"  ... emitting {i}/{n} functions", flush=True)
@@ -80277,7 +80305,7 @@ index 7917a9d8..1f7adfd6 100644
              if cur and cur_len + len(deflines) > max_lines:
                  flush(cur)
                  cur = []
-@@ -3722,12 +4803,52 @@ def discover_jump_tables(all_insns, read_u32, toc, text_lo, text_hi, func_starts
+@@ -3722,12 +4791,52 @@ def discover_jump_tables(all_insns, read_u32, toc, text_lo, text_hi, func_starts
              # at the NEAREST definition of `cand`, so when one exists inside the
              # window the result is unchanged.
              for w in reversed(win_cand):
@@ -80330,7 +80358,7 @@ index 7917a9d8..1f7adfd6 100644
                  elif w.mnemonic in ('lwz', 'ld') and len(a) == 2 and '(' in a[1]:
                      # TWO-LEVEL base: `lwz r30, d1(r2); lwz r11, d2(r30)`. The
                      # table address is not in the TOC itself but in a global the
-@@ -3920,7 +5041,8 @@ _WORKER_STATE: dict = {}
+@@ -3920,7 +5029,8 @@ _WORKER_STATE: dict = {}
  
  def _worker_init(segs, big_endian, name_map, prefix, hle_stub_nids=None,
                   function_entries=None, code_lo=0, code_hi=None, jump_tables=None,
@@ -80340,7 +80368,7 @@ index 7917a9d8..1f7adfd6 100644
      _WORKER_STATE["segs"] = segs
      _WORKER_STATE["be"] = big_endian
      _WORKER_STATE["names"] = name_map
-@@ -3950,6 +5072,7 @@ def _worker_lift(task):
+@@ -3950,6 +5060,7 @@ def _worker_lift(task):
      lifter.code_hi = _WORKER_STATE.get("code_hi", None)
      lifter.jump_tables = _WORKER_STATE.get("jump_tables", {})
      lifter.toc_base = _WORKER_STATE.get("toc_base", 0)
@@ -80348,7 +80376,7 @@ index 7917a9d8..1f7adfd6 100644
      results = []
      for start, end in bounds:
          blob = b""
-@@ -3980,11 +5103,13 @@ def _parallel_lift(lifter, func_bounds, segs, big_endian, jobs):
+@@ -3980,11 +5091,13 @@ def _parallel_lift(lifter, func_bounds, segs, big_endian, jobs):
      # indefinitely joining a worker after all results are drained (observed: main
      # blocked at ~11 CPU-s for minutes post-100%, one idle worker left alive).
      # close() (no new tasks) + join() (graceful worker exit) avoids the deadlock.
@@ -80364,7 +80392,7 @@ index 7917a9d8..1f7adfd6 100644
      try:
          for idx0, results, ct, bt in pool.imap_unordered(_worker_lift, tasks):
              results_by_idx[idx0] = results
-@@ -4048,12 +5173,61 @@ def main() -> None:
+@@ -4048,12 +5161,64 @@ def main() -> None:
                          help="Prefix for every emitted func_*/function_table "
                               "symbol (e.g. 'libsre_') so a relocated PRX image "
                               "links alongside the main title without collisions")
@@ -80421,12 +80449,15 @@ index 7917a9d8..1f7adfd6 100644
 +                        help="VMX vperm/vsldoi/lvsl/lvsr/vspltw/vsel/vxor/vor/vmrghw/vmrglw/vspltisw as "
 +                             "whole-register helpers (SSE4.1 build; PPU_VMX_SCALAR=1 compiles the old forms). "
 +                             "Not part of --opt-all.")
++    parser.add_argument("--wasm", action="store_true",
++                        help="WebAssembly forms in the generated helpers (browser build only; the native lift text is "
++                             "unchanged without it)")
 +    parser.add_argument("--opt-all", action="store_true",
 +                        help="All --opt-* passes except --opt-inline.")
      args = parser.parse_args()
  
      # Load firmware-import stubs (addr -> NID) up front; applied to func_bounds
-@@ -4344,8 +5518,11 @@ def main() -> None:
+@@ -4344,8 +5509,11 @@ def main() -> None:
                  for o in range(0, len(d) - 7, 8):
                      c = int.from_bytes(d[o:o+4], 'big')
                      t = int.from_bytes(d[o+4:o+8], 'big')
@@ -80439,7 +80470,7 @@ index 7917a9d8..1f7adfd6 100644
                          toc_freq[t] += 1
              for t, n in toc_freq.most_common(8):
                  if n >= 64 and t not in toc_candidates:
-@@ -4480,6 +5657,20 @@ def main() -> None:
+@@ -4480,6 +5648,20 @@ def main() -> None:
  
      lifter = PPULifter(prefix=args.symbol_prefix)
      lifter.header_name = args.header_name
@@ -80454,13 +80485,13 @@ index 7917a9d8..1f7adfd6 100644
 +        fp=args.opt_all or args.opt_fp,
 +        cr=args.opt_all or args.opt_cr,
 +        inline=args.opt_inline, inline_max=args.inline_max,
-+        locals_vr=not args.opt_locals_no_vr)
++        locals_vr=not args.opt_locals_no_vr, wasm=args.wasm)
 +    if lifter.cg_opts.any():
 +        print(f"  codegen options: {lifter.cg_opts.tag()}")
      # A single-module executable keeps r2 (TOC) constant, so an `ld r2, N(r1)` TOC
      # restore can be lowered to this literal instead of a stack read (the recomp has
      # no glink stub writing the save slot, so the stack read returns garbage -> r2
-@@ -4575,12 +5766,20 @@ def main() -> None:
+@@ -4575,12 +5757,20 @@ def main() -> None:
          print(f"Wrote {os.path.basename(src_path)}")
      else:
          print("Writing C source (split into chunks)...", flush=True)

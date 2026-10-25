@@ -1,0 +1,14 @@
+{
+  "id": "example.ramp_challenge",
+  "name": "Example: kicker challenge",
+  "version": "1.0.0",
+  "author": "Project 8 Plus",
+  "description": "A custom challenge: launch off the modding kit's kicker ramp in the Houses garage and land a 50,000 point combo. A dialog box congratulates you; the best attempt is saved.",
+  "main": "scripts/main.lua",
+  "api": 1,
+  "config": {
+    "target": 50000,
+    "ramp": [-61.05, 2.39, -64.52],
+    "radius": 4.0
+  }
+}

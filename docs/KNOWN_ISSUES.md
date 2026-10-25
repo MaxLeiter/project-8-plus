@@ -78,6 +78,13 @@ exits); rebuild with `--fma off` for a portable install.
 - Any release other than BLUS30011 disc version 01.02 ([SETUP.md](SETUP.md)).
 - Windows on ARM and macOS.
 
+## Linux (experimental)
+
+- Linux ships as an **experimental** package in this release (`Project8Plus-<version>-linux-x86_64.tar.xz`): build and
+  play on a Linux PC with your own game, as on Windows; no HD textures there yet. See its TESTING.txt.
+
 ## Coming soon
 
-- Linux and Steam Deck: a Linux version is being tested and is not released yet.
+- Steam Deck.
+- Mac.
+- Online play.

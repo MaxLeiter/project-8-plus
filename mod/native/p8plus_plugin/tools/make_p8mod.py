@@ -30,6 +30,7 @@ FEATURE_KEYS = {
     "P8F_CAS_PREVIEW": ["cas_preview_on_focus"], "P8F_CAS_PLUS": ["cas_plus", "cas_items", "cas_color_all"],
     "P8F_RENDER_GUARD": ["render_list_guard"],
     "P8F_SPLAT_FADE": ["splat_fade"],
+    "P8F_HUD_GUARD": ["hud_guard"],
     "P8F_FIRST_LAUNCH": ["first_launch_screen"],
 }
 ENTRY = re.compile(r"\{\s*(P8F_[A-Z0-9_]+)\s*,\s*\"([^\"]*)\"\s*,\s*(?:\"(?:[^\"\\]|\\.)*\"\s*)+,\s*(0x[0-9A-Fa-f]+)\s*,\s*([WR])\b",

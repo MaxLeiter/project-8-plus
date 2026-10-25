@@ -28,7 +28,9 @@ SDL_GetNumAudioDevices SDL_SetWindowSize SDL_GetWindowDisplayIndex SDL_GetDispla
 SDL_SetWindowPosition SDL_RaiseWindow SDL_GetWindowID SDL_free SDL_malloc SDL_GetMouseState"
 { echo "/* link-time stub of libSDL2-2.0.so.0 (make_sdl2_kit.sh); never loaded at run time */"
   for f in $FUNCS; do echo "void $f(void) {}"; done; } > "$OUT/lib/sdl2_stub.c"
-"$ZIG" cc -target x86_64-linux-gnu.2.31 -shared -fPIC -Wl,-soname,libSDL2-2.0.so.0 \
-    -o "$OUT/lib/libSDL2-2.0.so.0" "$OUT/lib/sdl2_stub.c"
+# path-free + deterministic (the package scan refuses build-machine paths): built from inside lib/ with a relative source,
+# no debug info, no build id
+( cd "$OUT/lib" && "$ZIG" cc -target x86_64-linux-gnu.2.31 -shared -fPIC -g0 -ffile-prefix-map="$PWD"=sdl2 \
+    -Wl,-soname,libSDL2-2.0.so.0 -Wl,--strip-debug -Wl,--build-id=none -o libSDL2-2.0.so.0 sdl2_stub.c )
 cp "$HERE/SDL2Config.cmake" "$OUT/cmake/"
 echo "SDL2 kit in $OUT (cmake: -DSDL2_DIR=$OUT/cmake)"

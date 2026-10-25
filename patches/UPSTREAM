@@ -3,4 +3,4 @@ url     https://github.com/sp00nznet/ps3recomp
 commit  a679051ef304555291de2eb3ec8a3dbf64a761a8
 patch   patches/ps3recomp-thp8.patch
 # git write-tree of the patched tree (core.autocrlf=false, every file added): the state the release is built from
-tree    6bf55e743fb89877b0cc6dc737545597e1055f6a
+tree    21859ec0f8fcb26c4388883a00d6462a7f0b03b6

@@ -132,6 +132,7 @@ class Run(Base):
         env = st.call_args.kwargs["extra_env"]
         self.assertEqual(env["P8PLUS_PREPARE"], r.progress_path)
         self.assertEqual(env["PS3MOD_THP8_MOD_P8PLUS_SKIP_INTRO"], "1")
+        self.assertEqual(env["PS3MOD_THP8_MOD_P8PLUS_STRAIGHT_TO_MENU"], "1")   # the current key, every platform
         self.assertEqual((env["PS3MOD_THP8_MOD_P8PLUS_FPS"], env["PS3MOD_THP8_MOD_P8PLUS_VSYNC"]), ("unlocked", "off"))
         self.assertEqual(st.call_args.args[1], "p8plus")
         for _ in range(50):

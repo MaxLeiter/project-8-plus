@@ -71,7 +71,7 @@ typedef enum p8_feature {
     P8F_HORPLUS, P8F_HUD169, P8F_PILLARBOX,
     P8F_NO_DOF, P8F_NO_BLUR, P8F_NO_RADIAL_BLUR, P8F_NO_BLOOM, P8F_BLOOM_SCALE,
     P8F_NEUTRAL_GRADING, P8F_NO_GRAIN, P8F_DRAW_DIST, P8F_SHADOW_DIST, P8F_NOLOD, P8F_HAZE, P8F_CAMERA,
-    P8F_CAS_PREVIEW, P8F_INTRO, P8F_CAS_PLUS, P8F_RENDER_GUARD, P8F_SPLAT_FADE, P8F_FIRST_LAUNCH,
+    P8F_CAS_PREVIEW, P8F_INTRO, P8F_CAS_PLUS, P8F_RENDER_GUARD, P8F_SPLAT_FADE, P8F_FIRST_LAUNCH, P8F_HUD_GUARD,
     P8F_COUNT
 } p8_feature;
 
@@ -85,6 +85,7 @@ static const char* const s_feature_name[P8F_COUNT] = {
     "CAS preview on focus", "Intro movies (a press skips; straight_to_menu)", "Create-a-Skater Plus",
     "Render list guard", "Blood splats fade (TextureSplat lifetime)",
     "First launch screen (data cache progress)",
+    "HUD guard (show a HUD left hidden)",
 };
 
 static int s_intro_ok;   /* p8_intro_init succeeded */
@@ -117,6 +118,7 @@ static int feature_enabled(p8_feature f)
     case P8F_RENDER_GUARD:    return g_cfg.render_guard || p8_render_stats();
     case P8F_SPLAT_FADE:      return g_cfg.splat_fade;
     case P8F_FIRST_LAUNCH:    return s_intro_ok && s_fl_ok;
+    case P8F_HUD_GUARD:       return g_cfg.hud_guard;
     default:                  return 0;
     }
 }
@@ -256,6 +258,15 @@ static const p8_hook_def s_hooks[] = {
     { P8F_SPLAT_FADE, "Blood splats fade (native)", "-",
       0x00613A5C, W, {0}, p8_hook_splat_fade, P8S_COUNT,
       "post: guest_call the splat manager update sub_004F3EE8 (opd 0xC492E0), which nothing in the game calls" },
+    { P8F_HUD_GUARD, "HUD guard (native)", "-",
+      0x0043DE70, W, {0}, p8_hook_hud_track, P8S_COUNT,
+      "pre: CScript::call_script -- hide_all_hud_sprites / show_all_hud_sprites starting = HUD hidden / shown" },
+    { P8F_HUD_GUARD, "HUD guard (native)", "-",
+      0x0043DC9C, W, {0}, p8_hook_hud_track, P8S_COUNT,
+      "pre: CScript::SetScript (spawned / goto'd scripts) -- the same two scripts" },
+    { P8F_HUD_GUARD, "HUD guard (native)", "-",
+      0x00613A5C, W, {0}, p8_hook_hud_guard, P8S_COUNT,
+      "post: HUD hidden > 2 s with no hiding context (pause, front end, cam anim, cutscene, movie, telescope, menu) -> SpawnScriptNow show_all_hud_items" },
     { P8F_RENDER_GUARD, "Render list guard (native)", "-",
       0x005C3AD0, W, {0}, p8_hook_render_lists, P8S_COUNT,
       "pre: a full bucket of the scene's object table [r3+0x280] gets a 0 in its last slot; post: slot restored" },
@@ -727,6 +738,7 @@ static void load_config(void)
     g_cfg.cas_plus = p8_cfg_bool("cas_plus", 1);
     g_cfg.render_guard = p8_cfg_bool("render_list_guard", 1);
     g_cfg.splat_fade = p8_cfg_bool("splat_fade", 1);
+    g_cfg.hud_guard = p8_cfg_bool("hud_guard", 1);
     {
         const char* it = p8_cfg_str("cas_items", "all");
         if (!it || !strcmp(it, "all")) g_cfg.cas_items_all = 1;
@@ -1145,6 +1157,7 @@ PS3MOD_EXPORT int ps3mod_init(const ps3mod_host* host, ps3mod_info* out)
     if (feature_enabled(P8F_HORPLUS)) p8_ws_init();
     if (g_cfg.cas_preview && p8_caspreview_init() != 0) g_cfg.cas_preview = 0;
     if (g_cfg.cas_plus && p8_casplus_init() != 0) g_cfg.cas_plus = 0;
+    if (g_cfg.hud_guard && p8_hudguard_init() != 0) g_cfg.hud_guard = 0;
 
     /* Key bindings / camera invert for the port's pad layer: before anything asks the port for its
      * key table (p8_prompts_init does), and before the game's cellPadInit. */

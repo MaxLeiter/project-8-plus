@@ -29,6 +29,7 @@ PLUGIN_ENV = "PS3MOD_THP8_MOD_P8PLUS_"
 TIMEOUT_S = 600            # a prepare run that takes longer than this is stopped (the game then builds it itself)
 CLOSE_GRACE_S = 20         # after "done" the game closes itself; past this its own process tree is ended
 NO_PROGRESS_S = 120        # no progress file at all by then: the plugin cannot prepare (an older one): stopped
+NO_PROGRESS_S_POSIX = 360  # Linux: a slower boot to the intro point (headless; measured ~3 min on a CPU-only Vulkan box)
 
 TITLE_FIRST = "Preparing the game for first launch"
 NOTE_FIRST = "This only happens once. The game copies its data to the console drive; later starts go straight to the menu."
@@ -121,7 +122,8 @@ def runtime_set(inst):
 def needs(inst, mods_root):
     """'' = the next Project 8 Plus start goes straight on; 'first' = it would build the cache (none yet, or the last
     build did not finish); 'mods' = it would rebuild it (the mod files changed since it was built)."""
-    if not inst or not os.path.isfile(os.path.join(inst, "thp8_mods.exe")):
+    if not inst or not (os.path.isfile(os.path.join(inst, "thp8_mods.exe")) or
+                        (os.name != "nt" and os.path.isfile(os.path.join(inst, "thp8_mods")))):   # + the native Linux ELF
         return ""
     if not os.path.isfile(listing_path(inst)):
         return "first"
@@ -208,12 +210,21 @@ class Prepare:
             "PS3_WINDOW_NOACTIVATE": "1",           # the window never takes the focus; the plugin hides it at once
             "PS3_AUDIO_MUTE": "1",
             "PS3_NO_ESC_QUIT": "1",
-            PLUGIN_ENV + "SKIP_INTRO": "1",           # no logos / PRESS START: straight to the cache wait
+            # no logos / PRESS START: straight to the cache wait (STRAIGHT_TO_MENU is the plugin's key since the intro rework;
+            # SKIP_INTRO, its old name, is kept for older plugins and is ignored by current ones)
+            PLUGIN_ENV + "STRAIGHT_TO_MENU": "1",
+            PLUGIN_ENV + "SKIP_INTRO": "1",
             # the game copies the cache a request per frame: uncapped (and no vsync, nobody sees the window) it is
             # done in under half the time (measured 18.7 s instead of 49.8 s at ~200 fps)
             PLUGIN_ENV + "FPS": "unlocked",
             PLUGIN_ENV + "VSYNC": "off",
-        }
+        } | ({} if os.name == "nt" else {
+            # Linux (play_p8plus.sh): no window at all -- SDL's dummy video driver has no window to make, so the native
+            # renderer draws off screen at full speed (the Proton build's plugin hides its own window as on Windows); no
+            # sound device. (The null renderer instead copies the cache at its slower frame pace: 15+ min in a test.)
+            "SDL_VIDEODRIVER": "dummy",
+            "SDL_AUDIODRIVER": "dummy",
+        })
 
     def start(self):
         os.makedirs(os.path.dirname(self.progress_path), exist_ok=True)
@@ -262,7 +273,7 @@ class Prepare:
         elif done and time.time() - self.t_done > CLOSE_GRACE_S:
             self.proc.terminate()                     # its own tree, by PID: the cache is complete, the exit hung
             self.finished, self.ok = True, True
-        elif not self.progress and time.time() - self.t0 > NO_PROGRESS_S:
+        elif not self.progress and time.time() - self.t0 > (NO_PROGRESS_S if os.name == "nt" else NO_PROGRESS_S_POSIX):
             self.proc.terminate()
             self.finished = True
             self.error = ("The game did not report any progress (its Project 8 Plus plugin may be older than this "

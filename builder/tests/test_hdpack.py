@@ -103,18 +103,18 @@ class BuildPack(unittest.TestCase):
             for k in ("a", "b"):
                 root = os.path.join(t, k, "tree")
                 make_tree(root)
-                pins.append(hdpack.build_pack(root, os.path.join(t, k, "THP8-HD-Pack-0.1.0.zip"), "0.1.0", log=lambda s: None))
+                pins.append(hdpack.build_pack(root, os.path.join(t, k, "Project8Plus-0.9.0-hd-pack-windows-x64.zip"), "0.9.0", log=lambda s: None))
                 left = sorted(os.path.relpath(os.path.join(dp, f), root).replace("\\", "/")
                               for dp, _d, fn in os.walk(root) for f in fn)
                 self.assertEqual(left, ["addons/tex/recipes/texclass_overrides.json", "addons/tex/texrepl.py",
                                         "python/Lib/site-packages/numpy/__init__.py"])
             self.assertEqual(pins[0], pins[1])                                 # same inputs, same bytes
-            with zipfile.ZipFile(os.path.join(t, "a", "THP8-HD-Pack-0.1.0.zip")) as z:
+            with zipfile.ZipFile(os.path.join(t, "a", "Project8Plus-0.9.0-hd-pack-windows-x64.zip")) as z:
                 names = z.namelist()
             self.assertIn(hdpack.MANIFEST, names)
             self.assertIn("NOTICE_HD.txt", names)
             self.assertEqual(len(names), 9)                                    # 8 files + the manifest
-            self.assertEqual(pins[0]["urls"], ["{release}/THP8-HD-Pack-0.1.0.zip"])
+            self.assertEqual(pins[0]["urls"], ["{release}/Project8Plus-0.9.0-hd-pack-windows-x64.zip"])
 
 
 class Fetch(unittest.TestCase):
@@ -184,10 +184,10 @@ class InstallPack(unittest.TestCase):
         t = self.tmp.name
         tree = os.path.join(t, "tree")
         self.files = make_tree(tree)
-        self.zip = os.path.join(t, "pub", "THP8-HD-Pack-0.1.0.zip")
+        self.zip = os.path.join(t, "pub", "Project8Plus-0.9.0-hd-pack-windows-x64.zip")
         os.makedirs(os.path.dirname(self.zip))
-        self.pin = hdpack.build_pack(tree, self.zip, "0.1.0", log=lambda s: None)
-        self.bundle = os.path.join(t, "builder", "THP8-Native-Builder-0.1.0")
+        self.pin = hdpack.build_pack(tree, self.zip, "0.9.0", log=lambda s: None)
+        self.bundle = os.path.join(t, "builder", "Project8Plus-0.9.0-windows-x64")
         shutil.copytree(tree, self.bundle)                                     # what the main download carries
         os.makedirs(os.path.join(self.bundle, "builder", "data"))
         with open(os.path.join(self.bundle, "builder", "data", "hdpack.json"), "w") as f:
@@ -266,9 +266,9 @@ class JobDownloads(HdBase):
         with open(model, "rb") as f:
             make_tree(tree, model=f.read())
         os.remove(model)                                                       # the main download has no model
-        self.zip = os.path.join(t, "pub", "THP8-HD-Pack-0.1.0.zip")
+        self.zip = os.path.join(t, "pub", "Project8Plus-0.9.0-hd-pack-windows-x64.zip")
         os.makedirs(os.path.dirname(self.zip))
-        self.pin = hdpack.build_pack(tree, self.zip, "0.1.0", log=lambda s: None)
+        self.pin = hdpack.build_pack(tree, self.zip, "0.9.0", log=lambda s: None)
         os.makedirs(os.path.join(self.bundle, "builder", "data"))
         with open(os.path.join(self.bundle, "builder", "data", "hdpack.json"), "w") as f:
             json.dump(self.pin, f)

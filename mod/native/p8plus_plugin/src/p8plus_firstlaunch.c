@@ -25,7 +25,9 @@
  *
  * Linux .so: the same screen; the text comes from posix/p8plus_text_posix.c (stb_truetype: the launcher's fonts in
  * <plugin dir>/p8plus_ui when the package has them, else the system's sans), the listing is read with stdio. The
- * prepare run (a hidden Win32 window that closes itself) is Windows only: P8PLUS_PREPARE is ignored there.
+ * prepare run works there too: the builder starts it without a window (the null renderer, SDL's dummy video driver), so
+ * there is nothing to hide; when the cache is complete the plugin asks the port to quit with SIGTERM (SDL turns it into
+ * the window's close request; the builder ends the run itself if it is still there 20 s later).
  *
  * Nothing of the game is in this file: guest addresses, a script key and a file layout.
  */
@@ -43,6 +45,8 @@
 #include <windows.h>
 #if !defined(_WIN32)
 #include "p8plus_text_posix.h"   /* posix/: text without GDI */
+#include <signal.h>
+#include <unistd.h>
 #endif
 
 #define FL_LISTING   "D1848E4C.CHK"
@@ -813,6 +817,9 @@ static DWORD WINAPI fl_worker(LPVOID arg)
         P8_INFO("first launch: prepare run done: closing the game");
 #if defined(_WIN32)
         EnumWindows(fl_enum_own, 0);      /* WM_CLOSE: the port's quit request, the game exits normally */
+#else
+        kill(getpid(), SIGTERM);          /* SDL: the quit request (default action: the process ends; the cache is
+                                             complete and its listing closed) */
 #endif
     }
     {
@@ -934,10 +941,9 @@ int p8_fl_init(void)
     s_enabled = g_cfg.first_launch_screen;
     s_prepare = fl_env("P8PLUS_PREPARE", s_prepare_file, sizeof s_prepare_file) && s_prepare_file[0];
 #if !defined(_WIN32)
-    if (s_prepare) {
-        P8_WARN("first launch: P8PLUS_PREPARE (the launcher's hidden prepare run) is Windows only: ignored");
-        s_prepare = 0;
-    }
+    if (s_prepare)
+        P8_INFO("first launch: prepare run: builds the data cache (no window: the builder runs it headless), progress -> %s",
+                s_prepare_file);
 #endif
     s_probe = fl_env("P8PLUS_FL_PROBE", v, sizeof v) && v[0] && v[0] != '0';
     if (fl_env("PS3_HDD0_ROOT", v, sizeof v)) {

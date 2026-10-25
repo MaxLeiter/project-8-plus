@@ -1,5 +1,6 @@
 Tony Hawk's Project 8 (native) on the Steam Deck
 ================================================
+(Testing it for the project? TESTING.txt is the same path as a one-page test with what to send back.)
 
 1. Desktop Mode (Steam button > Power > Switch to Desktop).
 2. Put your game folder (the one with PS3_GAME) on the Deck or the SD card, and get RPCS3:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assemble the player download: THP8-Native-Builder-<version>.zip
+"""Assemble the player download: Project8Plus-<version>-windows-x64.zip
 
 Contents (nothing derived from the game -- checked at the end):
   THP8 Launcher.cmd         starts the launcher window (or the builder's CLI with arguments)
@@ -39,7 +39,7 @@ import zipfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 PROJECT = os.path.normpath(os.path.join(HERE, ".."))
 sys.path.insert(0, os.path.join(PROJECT, "builder"))
-from thp8_builder import VERSION  # noqa: E402
+from thp8_builder import VERSION, asset_name  # noqa: E402
 
 # thp8-mod tools the add-ons need (the boot screens run install_hd.py's native pack install / uninstall / status; the HD textures run
 # texrepl.py and, through it, hdbatch / hdpak / upscale_onnx (ONNX Runtime: no PyTorch) / verify_hd with the world recipe, the
@@ -268,7 +268,7 @@ def main():
         a.p8plus_ini = cand if a.addons_tools and os.path.isfile(cand) else             os.path.join(PROJECT, "mods_p8plus", "plugins", "thp8_mod_p8plus.ini")
     print(f"p8plus ini: {a.p8plus_ini}")
 
-    name = f"THP8-Native-Builder-{VERSION}" + ("-offline" if a.zig_zip else "")
+    name = asset_name("windows") + ("-offline" if a.zig_zip else "")
     root = os.path.join(a.out, name)
     if os.path.isdir(root):
         shutil.rmtree(root)
@@ -437,7 +437,7 @@ def main():
             fo.write(crlf(fi.read().replace("{{VERSION}}", VERSION)))
 
     # ---- the HD pack (HD textures: ONNX Runtime + DirectML, the model, the HD recipes): a download of its own, moved out
-    # of the tree into THP8-HD-Pack-<version>.zip; its pin (size, SHA-256, content id) goes into the bundle's
+    # of the tree into Project8Plus-<version>-hd-pack-windows-x64.zip; its pin (size, SHA-256, content id) goes into the bundle's
     # builder/data/hdpack.json, the launcher fetches it when HD textures are on (thp8_builder/hdpack.py)
     hdpin = None
     if a.addons_tools and a.hd_model:
@@ -448,7 +448,7 @@ def main():
         with open(hd_notice, encoding="utf-8") as fi, open(os.path.join(root, "NOTICE_HD.txt"), "w", encoding="utf-8",
                                                           newline="") as fo:
             fo.write(crlf(fi.read()))
-        hdname = f"THP8-HD-Pack-{VERSION}"
+        hdname = asset_name("hd_pack")
         hdtree = os.path.join(a.out, hdname)
         if os.path.isdir(hdtree):
             shutil.rmtree(hdtree)

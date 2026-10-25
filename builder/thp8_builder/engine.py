@@ -354,8 +354,10 @@ class Engine:
         return all(os.path.isfile(os.path.join(self.inst, self.exe_name(v))) for v in self.variants)
 
     def exe_ref(self, variant):
-        """Key of the reference section hashes (data/expected_exe.json) for this build configuration."""
-        return variant + ("+fma" if self.fma else "") + ("" if self.memv else "+nomemv") + ("" if self.pgo else "+nopgo")
+        """Key of the reference section hashes (data/expected_exe.json) for this build configuration; the native Linux
+        ELF's keys start with native: (the Proton target builds the Windows exe: the Windows keys)."""
+        return ("native:" if getattr(self, "target", "windows") == "native" else "") + variant + \
+            ("+fma" if self.fma else "") + ("" if self.memv else "+nomemv") + ("" if self.pgo else "+nopgo")
 
     def pgo_sha(self):
         """sha256 of the profile this build compiles with ('off' when PGO is off): part of the compile / link stage keys."""
@@ -686,9 +688,6 @@ class Engine:
         return out, vars_
 
     def stage_verify_exe(self, _):
-        if self.target == "native":
-            self.log("[verify_exe] the native Linux build has no reference hashes yet: skipped")
-            return
         for v in self.variants:
             exe = os.path.join(self.inst, self.exe_name(v))
             ok, msg = hashes.check_exe(exe, self.exe_ref(v), self.log)

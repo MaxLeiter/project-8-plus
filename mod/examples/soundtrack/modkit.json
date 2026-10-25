@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "id": "example.soundtrack",
+  "name": "Example: an original song in the playlist",
+  "version": "1.0.0",
+  "author": "Project 8 Plus modding kit",
+  "description": "Adds 'Your Game, Your Rules' (the Project 8 Plus score, CC BY 4.0) to the game's music playlist, after the stock songs. Now Playing and the MUSIC PLAYLIST menu show it.",
+  "license": "MIT (manifest); music CC BY 4.0",
+  "tags": ["example", "music", "soundtrack"],
+  "game": {"title_id": "BLUS30011", "disc_version": "01.02"},
+  "priority": 50,
+  "requires": [],
+  "conflicts": [],
+  "ops": [
+    {"op": "music.add", "file": "assets/your_game_your_rules.mp3", "artist": "Project 8 Plus", "title": "Your Game, Your Rules", "genre": "Punk"}
+  ]
+}

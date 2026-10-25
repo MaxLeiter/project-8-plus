@@ -187,5 +187,43 @@ class ZigPins(unittest.TestCase):
         self.assertEqual(toolchain._archive_dir(spec["zig"]["file"]), "zig-x86_64-windows-0.16.0")
 
 
+def _tiny_elf(text, rodata):
+    """A minimal ELF64 LE: null + .text + .rodata + .bss (NOBITS) + .shstrtab section headers."""
+    import struct
+    names = b"\0.text\0.rodata\0.bss\0.shstrtab\0"
+    body = text + rodata + names
+    off_text, off_ro, off_nm = 64, 64 + len(text), 64 + len(text) + len(rodata)
+    shoff = 64 + len(body)
+    hdr = b"\x7fELF" + bytes([2, 1, 1]) + bytes(9) + struct.pack("<HHIQQQIHHHHHH", 2, 62, 1, 0, 0, shoff, 0, 64, 0, 0, 64, 5, 4)
+    def sh(name, typ, off, size):
+        return struct.pack("<IIQQQQIIQQ", name, typ, 0, 0, off, size, 0, 0, 1, 0)
+    shs = (sh(0, 0, 0, 0) + sh(names.index(b".text"), 1, off_text, len(text)) + sh(names.index(b".rodata"), 1, off_ro, len(rodata))
+           + sh(names.index(b".bss"), 8, 0, 4096) + sh(names.index(b".shstrtab"), 3, off_nm, len(names)))
+    return hdr + body + shs
+
+
+class ElfSections(unittest.TestCase):
+    """verify_exe on the native Linux ELF: section hashes of an ELF, keys native:<variant>."""
+
+    def test_elf_sections_hash_the_bytes(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = os.path.join(d, "thp8")
+            with open(p, "wb") as f:
+                f.write(_tiny_elf(b"\x90" * 16, b"hello\0"))
+            s = hashes.exe_sections(p)
+            self.assertEqual(s[".text"], hashlib.sha256(b"\x90" * 16).hexdigest())
+            self.assertEqual(s[".rodata"], hashlib.sha256(b"hello\0").hexdigest())
+            self.assertNotIn(".bss", s)                     # NOBITS: no bytes
+            self.assertIn(".rodata", hashes.STABLE)
+
+    def test_native_exe_ref_prefix(self):
+        e = engine.Engine.__new__(engine.Engine)
+        e.fma, e.memv, e.pgo = True, True, True
+        e.target = "native"
+        self.assertEqual(e.exe_ref("mods"), "native:mods+fma")
+        e.target = "proton"
+        self.assertEqual(e.exe_ref("mods"), "mods+fma")
+
+
 if __name__ == "__main__":
     unittest.main()

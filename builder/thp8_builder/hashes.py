@@ -108,9 +108,41 @@ def pe_sections(path):
     return out
 
 
+def elf_sections(path):
+    """{name: sha256 of the section's bytes} for an ELF64 little-endian file (the native Linux build). SHT_NOBITS
+    sections (.bss, .tbss) have no bytes and are left out."""
+    with open(path, "rb") as f:
+        d = f.read()
+    if d[:4] != b"\x7fELF" or d[4] != 2 or d[5] != 1:
+        raise ValueError("not an ELF64 little-endian file")
+    shoff = struct.unpack_from("<Q", d, 0x28)[0]
+    shentsize, shnum, shstrndx = struct.unpack_from("<HHH", d, 0x3A)
+    def sh(i):
+        return struct.unpack_from("<IIQQQQIIQQ", d, shoff + i * shentsize)
+    stro = sh(shstrndx)[4]
+    out = {}
+    for i in range(1, shnum):
+        nm, typ, _fl, _addr, off, size = sh(i)[:6]
+        if typ == 8:            # SHT_NOBITS
+            continue
+        end = d.index(b"\0", stro + nm)
+        out[d[stro + nm:end].decode("ascii", "replace")] = hashlib.sha256(d[off:off + size]).hexdigest()
+    return out
+
+
+def exe_sections(path):
+    """PE or ELF: {section name: sha256}."""
+    with open(path, "rb") as f:
+        magic = f.read(4)
+    return elf_sections(path) if magic == b"\x7fELF" else pe_sections(path)
+
+
 # Sections that must come out identical from the pinned toolchain. (.buildid /
-# .debug sections and the header timestamp are not compared.)
-STABLE = (".text", ".rdata", ".data", ".pdata", ".xdata", ".tls")
+# .debug sections and the header timestamp are not compared.) ELF (the native Linux build): code, read-only data, data,
+# the relro data, TLS initialisers and the unwind tables; not .note.gnu.build-id, .comment, .symtab / .strtab or
+# .debug_*.
+STABLE = (".text", ".rdata", ".data", ".pdata", ".xdata", ".tls",
+          ".rodata", ".data.rel.ro", ".tdata", ".eh_frame", ".init_array", ".fini_array")
 
 
 def check_exe(exe, variant, log):
@@ -118,7 +150,7 @@ def check_exe(exe, variant, log):
     if exp is None or variant not in exp:
         log(f"[verify_exe] no reference section hashes for {variant} -- skipping")
         return True, ""
-    got = pe_sections(exe)
+    got = exe_sections(exe)
     want = exp[variant]
     bad = [s for s in STABLE if s in want and got.get(s) != want[s]]
     log(f"[verify_exe] {os.path.basename(exe)}: " + ", ".join(

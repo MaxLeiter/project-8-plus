@@ -81,6 +81,7 @@ typedef struct p8_config {
     double draw_distance;    /* suspend-component distance multiplier, 1 = stock */
     double shadow_distance;  /* shadow_lod_dist multiplier, 1 = stock (experimental) */
     int    splat_fade;       /* splat_fade: age the game's texture splats (bail blood) every frame */
+    int    hud_guard;        /* hud_guard: show a HUD left hidden with no hiding context (p8plus_gfx.c) */
     int    render_guard;     /* render_list_guard: close a full render bucket before sub_5C3AD0 links it */
     int    haze_pct;         /* distance haze: atmosphere strength + Fog screen effect, 100 = stock */
     int    nolod;            /* debug: force the engine's `nolod` path */
@@ -251,6 +252,9 @@ P8_HOOK(p8_hook_shadow_dist);
 P8_HOOK(p8_hook_nolod);
 P8_HOOK(p8_hook_render_lists);
 P8_HOOK(p8_hook_splat_fade);
+P8_HOOK(p8_hook_hud_track);
+P8_HOOK(p8_hook_hud_guard);
+int p8_hudguard_init(void);   /* hud_guard: guest scratch; -1 = off */
 int p8_render_stats(void);   /* P8PLUS_RENDER_STATS=1: log bucket fill peaks (also with render_list_guard off) */
 P8_HOOK(p8_hook_haze_atmo);
 P8_HOOK(p8_hook_haze_fog);

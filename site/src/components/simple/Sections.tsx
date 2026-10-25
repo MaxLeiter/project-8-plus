@@ -1,5 +1,5 @@
 // The simple one-page site (branch site-simple). All visible words come from src/content/simple.ts.
-import { ArrowRight, Check, Clock, Disc3, Download, HardDrive, MemoryStick, Monitor, Cpu, Gamepad2, TriangleAlert, Plus as PlusIcon } from "lucide-react";
+import { ArrowRight, Check, Clock, Download, HardDrive, MemoryStick, Monitor, Cpu, Gamepad2, TriangleAlert, Plus as PlusIcon } from "lucide-react";
 import { HdSwitcher, type HdPair } from "./HdSwitcher";
 import { HeroMedia } from "../HeroMedia";
 import { Lockup } from "../Lockup";
@@ -33,6 +33,25 @@ function DownloadButton({ size = 22, className = "" }: { size?: number; classNam
   );
 }
 
+/** The texts with the first mention of `word` (across all of them) turned into a link that opens in a new tab. */
+function linkFirst(texts: string[], word: string, href: string): React.ReactNode[] {
+  let done = false;
+  return texts.map((t) => {
+    const at = done ? -1 : t.indexOf(word);
+    if (at < 0) return t;
+    done = true;
+    return (
+      <>
+        {t.slice(0, at)}
+        <a href={href} target="_blank" rel="noopener">
+          {word}
+        </a>
+        {t.slice(at + word.length)}
+      </>
+    );
+  });
+}
+
 /** Big two-tone condensed title: first word white, second pink. */
 function Title({ id, parts, as: Tag = "h2" }: { id: string; parts: string[]; as?: "h2" | "h3" }) {
   return (
@@ -52,8 +71,8 @@ export function DraftBanner() {
 
 export function Intro() {
   const trailer = video("trailer");
-  const wide = video("hero-loop").poster;
-  const tall = image("hero-m");
+  const wide = video("hero-loop-arc").poster;
+  const tall = image("hero-m-arc");
   return (
     <section className="hero s-hero" id="top" aria-labelledby="hero-title">
       <div className="hero-media">
@@ -64,7 +83,7 @@ export function Intro() {
           <img src={fallbackSrc(wide, 1280)} srcSet={srcSet(wide, "image/webp")} sizes="100vw" alt="" width={wide.w} height={wide.h} fetchPriority="high" decoding="async" />
         </picture>
       </div>
-      <HeroMedia clip={clipData("hero-loop")} label="Crete skatepark and Houses, Project 8 Plus on PC" />
+      <HeroMedia clip={clipData("hero-loop-arc")} label="A slow flight around the Houses cul-de-sac, Project 8 Plus on PC" />
       <div className="hero-band">
         <div className="wrap">
           <h1 id="hero-title" className="hero-lockup-h">
@@ -74,13 +93,29 @@ export function Intro() {
         </div>
       </div>
       <div className="wrap s-hero-body">
-        <p className="hero-kicker">{copy.hero.kicker}</p>
         <p className="s-hero-line">{copy.hero.line}</p>
         <div className="hero-cta">
           <DownloadButton className="s-download" />
+          {reposPublic ? (
+            <a className="link-arrow s-linux" href={links.linuxDownload} rel="noopener" title={copy.linux.note}>
+              {copy.linux.link} <ArrowRight size={16} aria-hidden />
+            </a>
+          ) : null}
           <Trailer clip={clipData("trailer")} draft={trailer.draft} label={copy.hero.trailer} />
         </div>
-        <p className="s-hero-note">{copy.hero.downloadNote}</p>
+        <p className="s-hero-note">
+          {copy.hero.downloadNote.map((item, i) => (
+            <span key={item}>
+              {i > 0 ? (
+                <>
+                  <span className="sr-only">, </span>
+                  <span className="s-sep" aria-hidden />
+                </>
+              ) : null}
+              {item}
+            </span>
+          ))}
+        </p>
       </div>
     </section>
   );
@@ -165,7 +200,6 @@ export function Mods() {
             </ul>
           </div>
           <div className="s-mods-note">
-            <p className="s-small">{copy.mods.original}</p>
             <a className="link-arrow" href={asset("docs/#guide")}>
               {copy.mods.docsLink} <ArrowRight size={16} aria-hidden />
             </a>
@@ -187,10 +221,9 @@ export function Basics() {
         </header>
         <div className="s-cards">
           <article className="s-card" id="own" aria-labelledby="own-title">
-            <Disc3 size={28} aria-hidden className="s-card-icon" />
             <h3 id="own-title">{copy.own.title}</h3>
-            {copy.own.body.map((p) => (
-              <p key={p}>{p}</p>
+            {linkFirst(copy.own.body, "RPCS3", links.rpcs3).map((p, i) => (
+              <p key={i}>{p}</p>
             ))}
             <a className="link-arrow" href="https://rpcs3.net/quickstart" rel="noopener">
               {copy.own.howTo} <ArrowRight size={16} aria-hidden />
@@ -198,7 +231,6 @@ export function Basics() {
           </article>
 
           <article className="s-card" id="run" aria-labelledby="run-title">
-            <Monitor size={28} aria-hidden className="s-card-icon" />
             <h3 id="run-title">{copy.run.title}</h3>
             <dl className="s-spec">
               {copy.run.rows.map((r, i) => {
@@ -218,7 +250,7 @@ export function Basics() {
                 <Clock size={15} aria-hidden /> {copy.comingSoon.title}
               </h4>
               <ul>
-                {copy.comingSoon.items.map((x) => (
+                {(reposPublic ? copy.comingSoon.itemsAtLaunch : copy.comingSoon.items).map((x) => (
                   <li key={x}>{x}</li>
                 ))}
               </ul>
@@ -245,6 +277,11 @@ export function Basics() {
           </ol>
           <div className="s-install-cta">
             <DownloadButton size={20} />
+            {reposPublic ? (
+              <a className="link-arrow" href={links.linuxDownload} rel="noopener" title={copy.linux.note}>
+                {copy.linux.link} <ArrowRight size={16} aria-hidden />
+              </a>
+            ) : null}
             <a className="link-arrow" href={asset("docs/#install")}>
               Full install guide <ArrowRight size={16} aria-hidden />
             </a>
@@ -256,6 +293,7 @@ export function Basics() {
 }
 
 export function FaqIssues() {
+  const faqAnswers = linkFirst(copy.faq.map((f) => f.a), "RPCS3", links.rpcs3);
   // Known issues shrink as fixes ship; with none left the block and its heading are not rendered at all.
   const hasIssues = copy.issues.length > 0;
   return (
@@ -266,13 +304,13 @@ export function FaqIssues() {
             FAQ
           </h2>
           <div className="s-faq">
-            {copy.faq.map((f) => (
+            {copy.faq.map((f, i) => (
               <details key={f.q}>
                 <summary>
                   {f.q}
                   <PlusIcon size={18} aria-hidden className="s-faq-icon" />
                 </summary>
-                <p>{f.a}</p>
+                <p>{faqAnswers[i]}</p>
               </details>
             ))}
           </div>

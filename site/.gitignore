@@ -9,3 +9,6 @@ public/media/
 
 .vercel
 .env*
+
+# frames extracted for media.py (game footage, never committed)
+media-src/

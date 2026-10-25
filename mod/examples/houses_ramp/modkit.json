@@ -1,0 +1,47 @@
+{
+  "format": 1,
+  "id": "example.houses_ramp",
+  "name": "Example: kicker ramp and grind rail in Houses",
+  "version": "1.0.0",
+  "author": "Project 8 Plus modding kit",
+  "description": "Adds an original kicker ramp (1.2 x 0.5 x 1.5 m) and a 3 m grind rail to the Houses garage, in front of the free-skate start, with collision and a grind line.",
+  "license": "MIT",
+  "tags": ["example", "park", "static", "collision", "rail"],
+  "game": {"title_id": "BLUS30011", "disc_version": "01.02"},
+  "priority": 50,
+  "requires": [],
+  "conflicts": [],
+  "ops": [
+    {
+      "op": "static.add_object",
+      "zone": "z_houses",
+      "name": "modkit_kicker",
+      "source": "assets/ramp.glb",
+      "node": "modkit_kicker",
+      "position": [-61.05, 2.39, -64.52],
+      "rotation_y": 45,
+      "snap_to_ground": true
+    },
+    {
+      "op": "static.add_object",
+      "zone": "z_houses",
+      "name": "modkit_rail",
+      "source": "assets/ramp.glb",
+      "node": "modkit_rail",
+      "position": [-61.544, 2.386, -63.317],
+      "rotation_y": 45,
+      "snap_to_ground": true
+    },
+    {"op": "collision.add_mesh", "zone": "z_houses", "object": "modkit_kicker"},
+    {"op": "collision.add_box", "zone": "z_houses", "object": "modkit_rail", "yaw_deg": 45},
+    {
+      "op": "rails.add",
+      "zone": "z_houses",
+      "name": "modkit_rail_line",
+      "source": "assets/ramp.glb",
+      "node": "modkit_rail",
+      "position": [-61.544, 2.386, -63.317],
+      "rotation_y": 45
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "example.low_gravity",
+  "name": "Example: low gravity",
+  "version": "1.0.0",
+  "author": "Project 8 Plus",
+  "description": "Moon skating: scales the skater's air gravity (optionally rail and wall-ride gravity too). L2 + R2 toggles it in game. The game's own values come back when the mod is unloaded.",
+  "main": "scripts/main.lua",
+  "api": 1,
+  "config": { "scale": 0.45, "rails_too": false }
+}

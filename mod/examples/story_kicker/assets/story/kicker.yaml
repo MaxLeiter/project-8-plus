@@ -1,0 +1,179 @@
+# Project 8 Plus: The Kicker -- an example story (p8story/1, docs/modding/story.md).
+# Three chapters in Houses around the kicker ramp this mod builds in front of the free-skate start.
+story: kicker
+title: "Project 8 Plus: The Kicker"
+summary: >-
+  Rory built a kicker in the garage and says nobody in Houses can handle it. Warm up, prove him wrong, and earn
+  his respect -- and his secret deck.
+zone: z_houses
+start: {level_enter: z_houses}
+
+characters:
+  rory:
+    name: Rory
+    color: [255, 170, 60]
+    ped: kick_rory                  # peds.add op in modkit.json
+    talk: {radius: 4, prompt: "Talk to Rory"}
+    idle:
+      - rory: "The kicker's not going anywhere. Neither am I."
+
+chapters:
+  - id: challenge
+    title: "Chapter 1: The Challenge"
+    intro: cs_arrival
+    quests: [meet_rory]
+
+  - id: session
+    title: "Chapter 2: Kicker Session"
+    intro:
+      - rory: "Okay, new kid. Two things. First, warm up -- I want to see a real score."
+      - rory: "Then take the kicker. Three clean grabs. Don't bail on my ramp."
+    quests: [warm_up, three_airs]
+
+  - id: respect
+    title: "Chapter 3: Respect"
+    intro:
+      - rory: "One more. I hung three tapes over the kicker. Grab them all in one session."
+    quests: [high_flyer, payoff, pro_line]
+    on_complete:
+      - message:
+          title: "THE KICKER: COMPLETE"
+          text: "Rory's secret deck is in your shop list, and you earned a stat point. Thanks for playing!"
+      - lua: kicker_finished
+      - save
+
+quests:
+  meet_rory:
+    title: Meet Rory
+    description: Someone built a kicker in the garage. Find out who.
+    giver: rory
+    steps:
+      - dialogue: rory_intro
+
+  warm_up:
+    title: Warm Up
+    description: Show Rory a real score.
+    giver: rory
+    start: auto
+    steps:
+      - goal: kick_score             # goals.add_score in modkit.json
+      - dialogue:
+          - rory: "Not bad. Not bad at all."
+    reward: {goal_points: 25, title: "GOAL POINTS", text: "+25 goal points."}
+
+  three_airs:
+    title: Three Grabs
+    description: Three clean grabs off the kicker.
+    giver: rory
+    start: {talk: rory, prompt: "Ready for the kicker?"}
+    requires: {quest: warm_up}
+    steps:
+      - goal: kick_airs              # goals.add_trick in modkit.json
+      - do: [{add: {counter: kicker_sessions}}]
+
+  high_flyer:
+    title: High Flyer
+    description: Grab the three tapes over the kicker.
+    giver: rory
+    start: {talk: rory, prompt: "Go for the tapes?"}
+    steps:
+      - goal: kick_tapes             # goals.add_collect in modkit.json
+
+  payoff:
+    title: Respect
+    description: Rory has something to say.
+    giver: rory
+    start: auto
+    requires: {quest: high_flyer}
+    steps:
+      - cutscene: cs_respect
+      - dialogue: rory_payoff
+    reward:
+      stat_points: 1
+      deck: Decks_Birdhouse_Secret
+      title: "REWARD"
+      text: "+1 stat point. New deck unlocked."
+
+  pro_line:
+    title: Pro Line
+    description: Rory only shows his line to ranked skaters.
+    giver: rory
+    optional: true
+    requires: {rank: 150}
+    start: {talk: rory, prompt: "Show me the pro line?"}
+    steps:
+      - dialogue:
+          - rory: "Top 150, huh? Fine. Off the kicker, over the bench, into the street. Nobody's landed it."
+
+dialogues:
+  rory_intro:
+    - rory: "Whoa, careful -- that's my kicker you almost ran over."
+    - rory: "Built it myself. Every skater in Houses has bailed on it."
+    - choice:
+        - text: "I can handle it."
+          set: cocky
+          then:
+            - rory: "Big words. Let's see if your board agrees."
+        - text: "Show me how it's done?"
+          then:
+            - rory: "Ha! I don't skate it. I watch people eat it."
+    - rory: "Tell you what. Impress me and I'll make it worth your while."
+
+  rory_payoff:
+    - if: cocky
+      then:
+        - rory: "Okay. You said you could handle it. You actually could."
+      else:
+        - rory: "Not bad for someone who asked me for a demo."
+    - rory: "Here -- my secret deck. Don't scratch it."
+
+cutscenes:
+  # Rory stands 2 m left of the free-skate start (peds.add kick_rory); the kicker is 3 m ahead of the start.
+  cs_arrival:
+    letterbox: true
+    skippable: true
+    hide_skater: true
+    camera:
+      - {t: 0.0, pos: [-66.0, 4.4, -69.47], look_at: [-61.05, 2.7, -64.52], fov: 70}
+      - {t: 4.0, pos: [-63.9, 3.9, -66.4], look_at: [-61.05, 4.0, -67.35], fov: 60}
+      - {t: 7.0, pos: [-62.76, 3.95, -66.78], look_at: [-61.05, 4.05, -67.35], fov: 45}
+    actors:
+      - {character: rory, pos: [-61.05, 2.39, -67.35], yaw: -71.5, anim: PedM_ArmCrosIdle01_xx}
+    events:
+      - {t: 0.0, fade_in: 0.6}
+      - {t: 0.5, text: "Houses. Saturday afternoon."}
+      - {t: 4.2, line: {speaker: rory, text: "Somebody new. Let's see what you've got."}}
+      - {t: 6.4, fade_out: 0.6}
+    end: {pos: [-63.17, 2.39, -66.64], yaw: 45}
+
+  cs_respect:
+    letterbox: true
+    hide_skater: true
+    camera:
+      - {t: 0.0, pos: [-60.0, 3.6, -64.8], look_at: [-61.05, 3.9, -67.35], fov: 55}
+      - {t: 5.0, pos: [-63.4, 3.7, -65.5], look_at: [-61.05, 3.9, -67.35], fov: 45}
+    actors:
+      - {character: rory, pos: [-61.05, 2.39, -67.35], yaw: -71.5, anim: PedM_Clap01_xx}
+    events:
+      - {t: 0.0, fade_in: 0.5}
+      - {t: 0.3, walk: {character: rory, to: [-61.6, 2.39, -66.3], then: PedM_Clap01_xx}}   # steps up to you
+      - {t: 0.4, line: {speaker: rory, text: "Okay, okay. I see you."}}
+      - {t: 2.5, actor: {character: rory, anim: PedM_Cheer01_xx}}
+      - {t: 4.5, fade_out: 0.5}
+    end: {pos: [-63.17, 2.39, -66.64], yaw: 45}
+
+# Career-style gates (the stock atoms' depends_on GoalPoints / rank and their changenodeflag area unlocks):
+# Main Street stays fenced off (the stock Houses -> Shops gate) until Warm Up is done and you have 25 goal points;
+# Rory's pro line waits for a Top-150 rank and is optional (chapter 3 completes without it).
+areas:
+  main_street:
+    title: Main Street
+    locked: {NODEFLAG_Z_HOUSES_UNLOCKSHOPS_PRE: 1, NODEFLAG_Z_HOUSES_UNLOCKSHOPS_POST: 0}
+    unlocked: {NODEFLAG_Z_HOUSES_UNLOCKSHOPS_PRE: 0, NODEFLAG_Z_HOUSES_UNLOCKSHOPS_POST: 1}
+    unlock_when: {all: ["quest:warm_up", {goal_points: 25}]}
+    message: {title: "MAIN STREET", text: "The gate to Main Street is open."}
+
+triggers:
+  - when: chapter_start
+    chapter: session
+    do: [{hint: {text: "Rory's challenges are on your compass.", time: 4}}]

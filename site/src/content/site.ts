@@ -2,8 +2,18 @@
 // Placeholders are marked TODO and listed in README.md ("Before the first deploy").
 
 // The repositories, releases and issue tracker are not public yet. While false, the pages show no links to them:
-// download buttons read "coming soon", repo references in the docs render as plain text. Flip to true at launch.
+// download buttons read "coming soon", repo references in the docs render as plain text.
+// LAUNCH: flip this one line to true. Then Download goes to the v0.9.0 release, the GitHub links show, the Linux
+// (experimental) link appears and "Linux" leaves Coming soon. Then `npm.cmd run deploy`.
 export const reposPublic = false;
+
+/** The release the Download buttons point at. */
+export const release = {
+  version: "0.9.0",
+  windowsZip: "Project8Plus-0.9.0-windows-x64.zip",
+  hdPackZip: "Project8Plus-0.9.0-hd-pack-windows-x64.zip",
+  linuxTar: "Project8Plus-0.9.0-linux-x86_64.tar.xz",
+};
 
 export const links = {
   // The project's repository (Max, 2026-10-24); private until launch, so every link to it waits for reposPublic.
@@ -12,7 +22,8 @@ export const links = {
   modRepo: "https://github.com/MaxLeiter/project-8-plus",
   modBranch: "master",
   nativeRepo: "https://github.com/MaxLeiter/project-8-plus",
-  releases: "https://github.com/MaxLeiter/project-8-plus/releases",
+  releases: "https://github.com/MaxLeiter/project-8-plus/releases/tag/v0.9.0",
+  linuxDownload: "https://github.com/MaxLeiter/project-8-plus/releases/download/v0.9.0/Project8Plus-0.9.0-linux-x86_64.tar.xz",
   issues: "https://github.com/MaxLeiter/project-8-plus/issues",
   ps3recomp: "https://github.com/sp00nznet/ps3recomp",
   rpcs3: "https://rpcs3.net",

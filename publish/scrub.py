@@ -733,7 +733,15 @@ def load_private_terms(path):
     return out
 
 
+# Lines that name a maintainer ON PURPOSE (the owner's decision, 2026-10-25: his name in the MIT copyright line). Only these
+# exact lines are taken out before the private terms are matched; the name anywhere else still refuses. (Split so that
+# this file itself does not carry the line.)
+PUBLISHED_ON_PURPOSE = [b"Copyright (c) 2026 Max " + b"Leiter and the Project 8 Plus contributors"]
+
+
 def private_hits(terms, data):
+    for line in PUBLISHED_ON_PURPOSE:
+        data = data.replace(line, b"")
     return sum(len(t.findall(data)) for t in terms)
 
 

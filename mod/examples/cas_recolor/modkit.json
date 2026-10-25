@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "id": "example.cas_recolor",
+  "name": "Example: recoloured shirt and a cap",
+  "version": "1.0.0",
+  "author": "Project 8 Plus modding kit",
+  "description": "Recolours Tony Hawk's T-shirt at build time (from your own game files, nothing of the game is shipped) and adds an original six-panel cap.",
+  "license": "MIT",
+  "tags": ["example", "skater", "texture"],
+  "game": {"title_id": "BLUS30011", "disc_version": "01.02"},
+  "priority": 50,
+  "requires": [],
+  "conflicts": [],
+  "ops": [
+    {"op": "skin.recolor", "skin": "Pro_Hawk", "mesh": 4, "hue": 150, "saturation": 1.9, "value": 1.35},
+    {
+      "op": "skin.add_mesh",
+      "skin": "Pro_Hawk",
+      "gltf": "assets/cap.glb",
+      "node": "modkit_cap",
+      "rigid_bone": "Bone_Head",
+      "offset": [0, 0.03, -0.012],
+      "scale": 1.1
+    }
+  ]
+}

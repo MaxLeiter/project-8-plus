@@ -1,5 +1,5 @@
 """The HD pack: the HD textures' AI upscaler (ONNX Runtime with DirectML), its model and the two HD recipes, as a download
-of its own (THP8-HD-Pack-<version>.zip, made and hashed by packaging/make_release.py). The main download stays small; the
+of its own (Project8Plus-<version>-hd-pack-windows-x64.zip, made and hashed by packaging/make_release.py). The main download stays small; the
 pack is fetched only when HD textures are switched on (the background HD job, thp8_builder.hdjob, does it before its first
 phase), checked against the SHA-256 pinned in the builder's data/hdpack.json, and installed INTO the builder folder at the
 paths the HD tools always used (python\\Lib\\site-packages\\onnxruntime..., addons\\tex\\models, addons\\tex\\recipes). One
@@ -27,8 +27,9 @@ from .util import rmtree
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_BUNDLE = os.path.normpath(os.path.join(HERE, "..", ".."))
-# The release page the pack is published on. Not public yet: a placeholder that never resolves (.invalid, RFC 2606).
-RELEASE_PAGE = "https://release-page-not-set.invalid/thp8-native/releases/0.1.0"
+# The launch pin (LAUNCH_RUNBOOK.md): the v0.9.0 release's download path. Until the repository is public it answers 404,
+# which the HD job reports as "offline" and retries later.
+RELEASE_PAGE = "https://github.com/MaxLeiter/project-8-plus/releases/download/v0.9.0"
 MANIFEST = "hdpack_manifest.json"
 # what a pack may contain (paths inside the builder folder)
 ALLOWED = ("python/Lib/site-packages/onnxruntime/", "python/Lib/site-packages/onnxruntime_directml-",

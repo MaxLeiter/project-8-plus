@@ -1,0 +1,9 @@
+{
+  "id": "example.trick_counter",
+  "name": "Example: trick counter",
+  "version": "1.0.0",
+  "author": "Project 8 Plus",
+  "description": "Counts the tricks you land (this session and all time, kept in the mod's own save data) and shows your best combo on screen.",
+  "main": "scripts/main.lua",
+  "api": 1
+}

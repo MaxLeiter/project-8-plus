@@ -24,6 +24,8 @@
    "sub_35E210",
    "sub_38C300",
    "sub_41D5B8",
+   "sub_43DC9C",
+   "sub_43DE70",
    "sub_442E6C",
    "sub_443A78",
    "sub_4456B4",
@@ -264,6 +266,28 @@
       "fn": "sub_500E2C",
       "mode": "wrap",
       "what": "16:9 HUD for <aspect> (POS3D)"
+     }
+    ]
+   },
+   "hud_guard": {
+    "keys": [
+     "hud_guard"
+    ],
+    "hooks": [
+     {
+      "fn": "sub_43DE70",
+      "mode": "wrap",
+      "what": "HUD guard (native)"
+     },
+     {
+      "fn": "sub_43DC9C",
+      "mode": "wrap",
+      "what": "HUD guard (native)"
+     },
+     {
+      "fn": "sub_613A5C",
+      "mode": "wrap",
+      "what": "HUD guard (native)"
      }
     ]
    },

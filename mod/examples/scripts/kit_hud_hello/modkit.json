@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "id": "example.hud_hello",
+  "name": "Example: hello from the editor",
+  "version": "1.0.0",
+  "author": "Project 8 Plus",
+  "description": "A script-only mod built with the modding kit's script.add op.",
+  "license": "MIT",
+  "game": {"title_id": "BLUS30011", "disc_version": "01.02"},
+  "ops": [
+    {"op": "script.add", "name": "main", "source": "assets/main.lua", "events": ["level_ready"]},
+    {"op": "script.config", "values": {"greeting": true}}
+  ]
+}

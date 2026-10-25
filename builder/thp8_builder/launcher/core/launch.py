@@ -8,15 +8,18 @@ import subprocess
 
 CREATE_NO_WINDOW = 0x08000000
 VARIANTS = {"p8plus": "play_p8plus.cmd", "vanilla": "play.cmd", "mods": "play_mods.cmd"}
+# Linux installs (native or Proton): the same options on play.sh / play_p8plus.sh / play_mods.sh (templates/play_common.sh)
+VARIANTS_SH = {"p8plus": "play_p8plus.sh", "vanilla": "play.sh", "mods": "play_mods.sh"}
+IS_WIN = os.name == "nt"
 
 
 def launcher_script(inst, variant):
-    return os.path.join(inst, VARIANTS[variant])
+    return os.path.join(inst, (VARIANTS if IS_WIN else VARIANTS_SH)[variant])
 
 
 def command(inst, variant, fullscreen=False, stretch=False, window=None, audio=None):
     """The argv that runs the launcher script (cmd /c) with the chosen options."""
-    args = ["cmd", "/c", launcher_script(inst, variant)]
+    args = ["cmd", "/c", launcher_script(inst, variant)] if IS_WIN else ["bash", launcher_script(inst, variant)]
     if fullscreen:
         args.append("fullscreen")
         if stretch:
@@ -117,9 +120,11 @@ def start(inst, variant, extra_env=None, **opts):
         env[SCRIPT_OVERRIDES.get(k, k)] = str(v)
     cmd = command(inst, variant, **opts)
     os.makedirs(os.path.join(inst, "logs"), exist_ok=True)
+    # Windows: no console window; Linux: its own session (terminate() ends exactly that tree)
+    how = {"creationflags": CREATE_NO_WINDOW} if IS_WIN else {"start_new_session": True}
     with open(run_log_path(inst), "wb") as out:
         return GameProcess(subprocess.Popen(cmd, cwd=inst, env=env, stdin=subprocess.DEVNULL, stdout=out,
-                                            stderr=subprocess.STDOUT, creationflags=CREATE_NO_WINDOW))
+                                            stderr=subprocess.STDOUT, **how))
 
 
 def audio_devices():

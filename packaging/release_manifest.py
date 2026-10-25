@@ -4,8 +4,8 @@ The release's asset set, written next to the assets (deterministic: sorted, no t
   SHA256SUMS     "<sha256> *<file>" lines (sha256sum -c format) for every asset
   release.json   {"product", "version", "channel", "assets": [{"file", "kind", "platform", "size", "sha256",
                   "experimental"}], "sources": {...}, "pins": {...}}
-Assets: THP8-Native-Builder-<ver>.zip (windows), THP8-HD-Pack-<ver>.zip (hd_pack, windows), THP8-Native-Builder-<ver>-
-linux-x86_64.tar.xz (linux, experimental). A missing optional asset is left out; the Windows zip is required.
+Assets (thp8_builder.asset_name): Project8Plus-<ver>-windows-x64.zip (builder), Project8Plus-<ver>-hd-pack-windows-x64.zip
+(hd_pack), Project8Plus-<ver>-linux-x86_64.tar.xz (builder, linux, experimental). A missing optional asset is left out; the Windows zip is required.
 """
 import argparse
 import hashlib
@@ -15,9 +15,11 @@ import re
 import sys
 
 KINDS = [  # (regex, kind, platform, experimental, required)
-    (r"^THP8-Native-Builder-(?P<v>[0-9][^-]*(?:-[a-z0-9.]+)?)\.zip$", "builder", "windows-x86_64", False, True),
-    (r"^THP8-HD-Pack-(?P<v>[0-9][^-]*(?:-[a-z0-9.]+)?)\.zip$", "hd_pack", "windows-x86_64", False, False),
-    (r"^THP8-Native-Builder-(?P<v>[0-9][^-]*(?:-[a-z0-9.]+)?)-linux-x86_64(?:-offline)?\.tar\.xz$", "builder", "linux-x86_64",
+    (r"^Project8Plus-(?P<v>[0-9]+\.[0-9]+\.[0-9]+(?:-[a-z0-9.]+)?)-windows-x64(?:-offline)?\.zip$", "builder", "windows-x86_64",
+     False, True),
+    (r"^Project8Plus-(?P<v>[0-9]+\.[0-9]+\.[0-9]+(?:-[a-z0-9.]+)?)-hd-pack-windows-x64\.zip$", "hd_pack", "windows-x86_64", False,
+     False),
+    (r"^Project8Plus-(?P<v>[0-9]+\.[0-9]+\.[0-9]+(?:-[a-z0-9.]+)?)-linux-x86_64(?:-offline)?\.tar\.xz$", "builder", "linux-x86_64",
      True, False),
 ]
 
@@ -33,7 +35,7 @@ def sha256(p):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("dir")
-    ap.add_argument("--channel", default="early")
+    ap.add_argument("--channel", default="early release")
     ap.add_argument("--ps3recomp-tree")
     ap.add_argument("--thp8-mod")
     ap.add_argument("--installer")

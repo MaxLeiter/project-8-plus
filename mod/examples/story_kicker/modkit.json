@@ -1,0 +1,136 @@
+{
+  "format": 1,
+  "id": "example.story_kicker",
+  "name": "Project 8 Plus: The Kicker",
+  "version": "1.0.0",
+  "author": "Project 8 Plus modding kit",
+  "description": "An example story mod: three chapters in Houses around a kicker ramp built by the mod. Rory, a local skater, challenges you; finish his goals, watch the cutscene, earn a stat point and his secret deck.",
+  "license": "MIT",
+  "tags": [
+    "example",
+    "story",
+    "quests",
+    "dialogue",
+    "cutscene"
+  ],
+  "game": {
+    "title_id": "BLUS30011",
+    "disc_version": "01.02"
+  },
+  "priority": 50,
+  "requires": [],
+  "conflicts": [],
+  "ops": [
+    {
+      "op": "static.add_object",
+      "zone": "z_houses",
+      "name": "kick_kicker",
+      "source": "assets/ramp.glb",
+      "node": "modkit_kicker",
+      "position": [
+        -61.05,
+        2.39,
+        -64.52
+      ],
+      "rotation_y": 45,
+      "snap_to_ground": true
+    },
+    {
+      "op": "collision.add_mesh",
+      "zone": "z_houses",
+      "object": "kick_kicker"
+    },
+    {
+      "op": "peds.add",
+      "zone": "z_houses",
+      "name": "kick_rory",
+      "kind": "stand",
+      "profile": {"base": "RPed_M_SkaterTeens_NoBoard01", "parts": {"torso": "Skater_Teen_M_torso01", "head": "Skater_Teen_M_Head01", "legs": "Skater_Teen_M_Legs01"}},
+      "pos": [
+        -61.05,
+        2.39,
+        -67.35
+      ],
+      "yaw_deg": 45,
+      "anim": "PedM_ArmCrosIdle01_xx",
+      "look_at_skater": true
+    },
+    {
+      "op": "goals.add_score",
+      "zone": "z_houses",
+      "name": "kick_score",
+      "title": "Warm Up",
+      "text": "Get 5,000 points in 60 seconds.",
+      "time": 60,
+      "target": 5000,
+      "start": {
+        "trigger": "script"
+      },
+      "intro": "none",
+      "locked": true
+    },
+    {
+      "op": "goals.add_trick",
+      "zone": "z_houses",
+      "name": "kick_airs",
+      "title": "Three Grabs",
+      "text": "Land 3 grab tricks off Rory's kicker.",
+      "time": 90,
+      "trick": "any_grab",
+      "count": 3,
+      "start": {
+        "trigger": "script"
+      },
+      "intro": "none",
+      "locked": true,
+      "spot": {
+        "pos": [
+          -59.8,
+          2.39,
+          -63.27
+        ],
+        "radius": 5.0
+      },
+      "collect_text": "grabs"
+    },
+    {
+      "op": "goals.add_collect",
+      "zone": "z_houses",
+      "name": "kick_tapes",
+      "title": "High Flyer",
+      "text": "Grab the 3 tapes floating over the kicker.",
+      "time": 90,
+      "pickups": [
+        [
+          -59.46,
+          3.6,
+          -62.93
+        ],
+        [
+          -58.75,
+          3.8,
+          -62.22
+        ],
+        [
+          -58.04,
+          3.6,
+          -61.51
+        ]
+      ],
+      "model": "tape",
+      "start": {
+        "trigger": "script"
+      },
+      "intro": "none",
+      "locked": true
+    },
+    {
+      "op": "story.file",
+      "source": "assets/story/kicker.yaml"
+    },
+    {
+      "op": "script.dir",
+      "source": "assets/scripts"
+    }
+  ]
+}

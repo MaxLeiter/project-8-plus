@@ -25,6 +25,7 @@
  * returns r3 != 0 when found) and the global float default sub_00446148 (f1).
  */
 #include <stdint.h>
+#include <time.h>
 
 #include "p8plus.h"
 #include "p8plus_port.h"   /* p8_env */
@@ -399,4 +400,230 @@ P8_HOOK(p8_hook_splat_fade)
     (void)user; (void)entry_lr;
     g_host->call_next(ctx, next);
     g_host->guest_call(ctx, OPD_SPLAT_UPDATE, 0, NULL);
+}
+
+/* ------------------------------------------------------------------------ */
+/* HUD guard (native; hud_guard = on, default) -- user bug #4: the HUD gone in a long session.
+ *   The game hides its HUD with the QB script hide_all_hud_sprites (from hide_all_hud_items: goal intros and
+ *   presentations, IGC cam scenes, cutscenes, the video phone, CAS launch, the telescope cam, the pause menu, ...)
+ *   and only the matching show_all_hud_sprites brings it back (show_all_hud_items -- which skips it while an IGC
+ *   cam anim runs -- an IGC scene's ExitScript, a goal's end, ...). A hiding sequence that ends without its show
+ *   (killed, interrupted, skipped) leaves the HUD hidden until some later show happens to run.
+ *   Tracked here: every start of hide_all_hud_sprites / show_all_hud_sprites, called (CScript::call_script
+ *   sub_43DE70) or spawned / goto'd (CScript::SetScript sub_43DC9C), with the script that did it. Checked about
+ *   4x a second from the frame step (sub_613A5C post): while the HUD has been hidden for HUD_GUARD_S seconds and
+ *   none of the game's hiding contexts is active -- not paused (byte 0x10141605, GameIsPaused), the UI state machine
+ *   in uistate_gameplay (ui_change_state_internal {state}: menus, video phone, stats, ...), not in the front
+ *   end / CAS (InFrontEnd), no skater cam anim (SkaterCamAnimFinished: goal intros, IGC scenes, transition cams),
+ *   no cutscene (CutsceneFinished Name = Cutscene), no movie (IsMoviePlaying TextureSlot = 0), not in the telescope
+ *   cam (in_telescope_cam), no menu or goal dialog on screen (ScreenElementExists current_menu_anchor /
+ *   goal_start_dialog / videophone_menu_item) -- for two checks in a row, the game's own show_all_hud_items is
+ *   spawned (SpawnScriptNow sub_375790) and one line is logged. At most once per HUD_GUARD_COOLDOWN_S; hidden again
+ *   right after is fine (the next hide simply starts over). A hide still waiting on a context after 10 s logs that
+ *   context once. P8PLUS_TEST_HUD_GUARD=log: decide + log, never show; =say: the waiting line after 3 s. */
+#define HG_F_CALL_SCRIPT   0x0043DE70u
+#define HG_F_SET_SCRIPT    0x0043DC9Cu
+#define HG_F_SPAWN_NOW     0x00375790u
+#define HG_F_NEW           0x000449C0u
+#define HG_F_STRUCT_CTOR   0x00444B9Cu
+#define HG_F_STRUCT_CLEAR  0x0044A39Cu
+#define HG_F_DELETE        0x00044B30u
+#define HG_F_ADD_INT       0x0044CB14u
+#define HG_F_ADD_CHECKSUM  0x0044C9B4u
+#define HG_TOC             0x00C78390u
+#define HG_SYM_TABLE_PTR   0x10134948u
+#define HG_PAUSED_BYTE     0x10141605u
+#define HUD_GUARD_S          2.0
+#define HUD_GUARD_COOLDOWN_S 5.0
+
+static uint32_t k_hide, k_show, k_show_items, k_ui_internal, k_state, k_ui_gameplay;
+static volatile uint32_t s_hg_ui;           /* UI state last set (ui_change_state_internal {state}), 0 = not seen */
+static volatile int s_hg_hidden;            /* last of the two sprite scripts to start: hide */
+static volatile long s_hg_since;            /* clock() of that hide */
+static volatile uint32_t s_hg_hider;        /* name key of the script that ran it */
+static int s_hg_clear;                      /* consecutive checks with no hiding context */
+static long s_hg_next_check, s_hg_cooldown;
+static uint32_t s_hg_fake;                  /* zeroed CScript-sized block for CFunction calls (no object) */
+static int s_hg_log_only = -1;
+static int s_hg_n_shown;
+static int s_hg_said;                       /* the waiting line of this hide episode is out */
+static double s_hg_say_s = 10.0;            /* ... after this long (P8PLUS_TEST_HUD_GUARD=say: 3 s) */
+
+static uint64_t hg_call(ps3mod_ctx* ctx, uint32_t code, uint32_t n, uint64_t a0, uint64_t a1, uint64_t a2)
+{
+    ps3mod_call c;
+    memset(&c, 0, sizeof c);
+    c.size = (uint32_t)sizeof c;
+    c.code = code;
+    c.toc = HG_TOC;
+    c.n_gpr = n;
+    c.gpr[0] = a0; c.gpr[1] = a1; c.gpr[2] = a2;
+    if (g_host->guest_call_ex(ctx, &c) != PS3MOD_OK) return 0;
+    return c.ret_r3;
+}
+
+static uint32_t hg_sym(uint32_t key)
+{
+    uint32_t tab = g_host->read32(HG_SYM_TABLE_PTR), e, guard = 0;
+    if (!tab) return 0;
+    for (e = g_host->read32(tab + (key & 0x7FFFu) * 4u); e && guard < 100000; e = g_host->read32(e + 0x10), guard++)
+        if (g_host->read32(e + 4) == key) return e;
+    return 0;
+}
+
+static uint32_t hg_struct(ps3mod_ctx* ctx)
+{
+    const uint32_t s = (uint32_t)hg_call(ctx, HG_F_NEW, 2, 8, 1, 0);
+    if (s) hg_call(ctx, HG_F_STRUCT_CTOR, 1, s, 0, 0);
+    return s;
+}
+
+static void hg_struct_free(ps3mod_ctx* ctx, uint32_t s)
+{
+    if (!s) return;
+    hg_call(ctx, HG_F_STRUCT_CLEAR, 1, s, 0, 0);
+    hg_call(ctx, HG_F_DELETE, 1, s, 0, 0);
+}
+
+/* run a QB CFunction by name with {name1 = checksum1} (or {name1 = int1} when is_int): its bool; -1 = not callable */
+static int hg_cfunc(ps3mod_ctx* ctx, const char* fn, const char* name1, const char* val1, int is_int, int ival)
+{
+    const uint32_t e = hg_sym(p8_qbkey(fn));
+    uint32_t ps, opd;
+    uint64_t a[2];
+    int r;
+    if (!e || g_host->read8(e + 2) != 8 || !s_hg_fake) return -1;      /* type 8 = CFunction */
+    opd = g_host->read32(e + 0xC);
+    if (!opd) return -1;
+    ps = hg_struct(ctx);
+    if (!ps) return -1;
+    if (name1 && is_int) hg_call(ctx, HG_F_ADD_INT, 3, ps, p8_qbkey(name1), (uint64_t)(uint32_t)ival);
+    else if (name1) hg_call(ctx, HG_F_ADD_CHECKSUM, 3, ps, p8_qbkey(name1), p8_qbkey(val1));
+    a[0] = ps; a[1] = s_hg_fake;
+    r = (int)(g_host->guest_call(ctx, opd, 2, a) & 1u);
+    hg_struct_free(ctx, ps);
+    return r;
+}
+
+static int hg_global_int(const char* name)
+{
+    const uint32_t e = hg_sym(p8_qbkey(name));
+    return e && g_host->read8(e + 2) == 1 ? (int)g_host->read32(e + 0xC) : 0;
+}
+
+/* the first hiding context that is active, NULL = none */
+static const char* hg_context(ps3mod_ctx* ctx)
+{
+    if (g_host->read8(HG_PAUSED_BYTE)) return "paused";
+    if (s_hg_ui && s_hg_ui != k_ui_gameplay) return "ui state";      /* menus, video phone, stats, CAS, ... */
+    if (hg_cfunc(ctx, "GameIsPaused", NULL, NULL, 0, 0) == 1) return "GameIsPaused";
+    if (hg_cfunc(ctx, "InFrontEnd", NULL, NULL, 0, 0) == 1) return "front end";
+    if (hg_cfunc(ctx, "SkaterCamAnimFinished", NULL, NULL, 0, 0) == 0) return "skater cam anim";
+    if (hg_cfunc(ctx, "CutsceneFinished", "Name", "Cutscene", 0, 0) == 0) return "cutscene";
+    if (hg_cfunc(ctx, "IsMoviePlaying", "TextureSlot", NULL, 1, 0) == 1) return "movie";
+    if (hg_global_int("in_telescope_cam")) return "telescope cam";
+    if (hg_cfunc(ctx, "ScreenElementExists", "id", "current_menu_anchor", 0, 0) == 1) return "menu";
+    if (hg_cfunc(ctx, "ScreenElementExists", "id", "goal_start_dialog", 0, 0) == 1) return "goal dialog";
+    if (hg_cfunc(ctx, "ScreenElementExists", "id", "videophone_menu_item", 0, 0) == 1) return "video phone";
+    return NULL;
+}
+
+static void hg_note(ps3mod_ctx* ctx)
+{
+    const uint32_t key = (uint32_t)ctx->gpr[4];
+    if (key == k_hide) {
+        if (!s_hg_hidden) { s_hg_since = (long)clock(); s_hg_said = 0; }
+        s_hg_hidden = 1;
+        s_hg_hider = ctx->gpr[3] ? g_host->read32((uint32_t)ctx->gpr[3] + 0xCCu) : 0;   /* CScript +0xCC: its script */
+        s_hg_clear = 0;
+    } else if (key == k_show) {
+        s_hg_hidden = 0;
+        s_hg_clear = 0;
+    } else if (key == k_ui_internal && ctx->gpr[6]) {   /* params {state = <ui state>}: CStruct, components +4 */
+        uint32_t c = g_host->read32((uint32_t)ctx->gpr[6] + 4u), guard = 0;
+        for (; c && guard < 64; c = g_host->read32(c + 0xCu), guard++)
+            if (g_host->read32(c + 4u) == k_state) {
+                const uint32_t st = g_host->read32(c + 8u);
+                if (st != s_hg_ui && s_hg_say_s < 10.0) P8_INFO("hud guard: ui state %08X", st);
+                s_hg_ui = st;
+                break;
+            }
+    }
+}
+
+/* CScript::call_script(s, key, code, params, object, 0) / CScript::SetScript(s, key, code, params, object): pre */
+P8_HOOK(p8_hook_hud_track)
+{
+    (void)user; (void)entry_lr;
+    if (k_hide) hg_note(ctx);
+    g_host->call_next(ctx, next);
+}
+
+int p8_hudguard_init(void)
+{
+    char e[16];
+    k_hide = p8_qbkey("hide_all_hud_sprites");
+    k_show = p8_qbkey("show_all_hud_sprites");
+    k_show_items = p8_qbkey("show_all_hud_items");
+    k_ui_internal = p8_qbkey("ui_change_state_internal");
+    k_state = p8_qbkey("state");
+    k_ui_gameplay = p8_qbkey("uistate_gameplay");
+    s_hg_log_only = p8_env("P8PLUS_TEST_HUD_GUARD", e, sizeof e) && !strcmp(e, "log");
+    if (p8_env("P8PLUS_TEST_HUD_GUARD", e, sizeof e) && !strcmp(e, "say")) s_hg_say_s = 3.0;
+    if (!PS3MOD_HAS(g_host, guest_alloc) || !g_host->guest_alloc) {
+        P8_WARN("hud guard: no guest heap (plugin ABI 1.2 guest_alloc): off");
+        return -1;
+    }
+    s_hg_fake = g_host->guest_alloc(g_host, 0x100, 16);
+    if (!s_hg_fake) { P8_WARN("hud guard: guest heap full: off"); return -1; }
+    P8_INFO("hud guard: on (a HUD left hidden for %.0f s with no hiding context is shown again)%s", HUD_GUARD_S,
+            s_hg_log_only ? " -- P8PLUS_TEST_HUD_GUARD=log: decide and log only" : "");
+    return 0;
+}
+
+/* frame step (sub_613A5C) post: the check */
+P8_HOOK(p8_hook_hud_guard)
+{
+    long now;
+    (void)user; (void)entry_lr;
+    g_host->call_next(ctx, next);
+    if (!s_hg_hidden || !s_hg_fake) { s_hg_clear = 0; return; }
+    /* only in gameplay: nothing is checked (no CFunction is called) in the front end, while a level loads or in a
+     * menu -- the UI state machine must have entered uistate_gameplay */
+    if (s_hg_ui != k_ui_gameplay) { s_hg_clear = 0; return; }
+    now = (long)clock();
+    if (now < s_hg_next_check || now < s_hg_cooldown) return;
+    s_hg_next_check = now + CLOCKS_PER_SEC / 4;
+    if ((double)(now - s_hg_since) < HUD_GUARD_S * CLOCKS_PER_SEC) return;
+    {
+        const char* why = hg_context(ctx);
+        if (why) {
+            /* one line per hide episode once it passes 10 s: what keeps the HUD hidden (field diagnosis) */
+            if (!s_hg_said && (double)(now - s_hg_since) >= s_hg_say_s * CLOCKS_PER_SEC) {
+                s_hg_said = 1;
+                P8_INFO("hud guard: HUD hidden %.0f s (by script %08X), left alone: %s",
+                        (double)(now - s_hg_since) / CLOCKS_PER_SEC, s_hg_hider, why);
+            }
+            s_hg_clear = 0;
+            return;
+        }
+    }
+    if (++s_hg_clear < 2) return;
+    s_hg_clear = 0;
+    s_hg_cooldown = now + (long)(HUD_GUARD_COOLDOWN_S * CLOCKS_PER_SEC);
+    {
+        char hider[16];
+        snprintf(hider, sizeof hider, "%08X", s_hg_hider);
+        P8_INFO("hud guard: HUD hidden %.1f s (by script %s) with no hiding context active -> %s show_all_hud_items",
+                (double)(now - s_hg_since) / CLOCKS_PER_SEC, hider, s_hg_log_only ? "WOULD run" : "running");
+    }
+    if (s_hg_log_only) return;
+    {
+        const uint32_t ps = hg_struct(ctx);
+        if (!ps) return;
+        hg_call(ctx, HG_F_ADD_CHECKSUM, 3, ps, 0, k_show_items);
+        hg_call(ctx, HG_F_SPAWN_NOW, 3, ps, s_hg_fake, 1);
+        hg_struct_free(ctx, ps);
+        s_hg_n_shown++;
+    }
 }

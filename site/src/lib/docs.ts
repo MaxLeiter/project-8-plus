@@ -14,6 +14,7 @@ import { unified } from "unified";
 import { visit, SKIP } from "unist-util-visit";
 import { p8Theme } from "./shiki-theme";
 import { links, reposPublic } from "@/content/site";
+import monorepoTree from "@/generated/monorepo-tree.json";
 
 export const REPO_ROOT = path.resolve(process.cwd(), "..");
 
@@ -71,8 +72,31 @@ function tableDescriptions(): Map<string, string> {
   return out;
 }
 
+// The public monorepo (github.com/MaxLeiter/project-8-plus) keeps this repository's files under mod/ (a few, such as
+// CONTRIBUTING.md, at the root). Its file list (scripts/monorepo-tree.py) decides where a link goes; a file that is not
+// in the monorepo is not linked at all.
+const monoFiles = new Set<string>((monorepoTree as { files: string[] }).files);
+const monoDirs = new Set<string>();
+for (const f of monoFiles) {
+  const parts = f.split("/");
+  for (let i = 1; i < parts.length; i++) monoDirs.add(parts.slice(0, i).join("/"));
+}
+
+/** Where a path of this repository lives in the monorepo, or null when it isn't there. */
+export function monorepoPath(repoPath: string, isDir = false): string | null {
+  const p = repoPath.replace(/\/$/, "");
+  for (const cand of [`mod/${p}`, p]) if (isDir ? monoDirs.has(cand) : monoFiles.has(cand)) return cand;
+  return null;
+}
+
+/** The GitHub URL of a file or folder of this repository in the monorepo, or null when it isn't there. */
+export function sourceUrl(repoPath: string, isDir = false, frag = ""): string | null {
+  const m = monorepoPath(repoPath, isDir);
+  return m ? `${links.modRepo}/${isDir ? "tree" : "blob"}/${links.modBranch}/${m}${frag ? "#" + frag : ""}` : null;
+}
+
 function githubUrl(repoPath: string, isDir: boolean, frag = ""): string {
-  return `${links.modRepo}/${isDir ? "tree" : "blob"}/${links.modBranch}/${repoPath}${frag ? "#" + frag : ""}`;
+  return sourceUrl(repoPath, isDir, frag) ?? `missing:${repoPath}`; // "missing:" -> plain text (unlinkPrivate)
 }
 
 /** rehype plugin: drop the title, shift heading levels, prefix ids, rewrite links, wrap tables. */
@@ -146,7 +170,7 @@ function unlinkPrivate(a: Element) {
   const unresolved = !!href && !/^(https?:|mailto:|#)/.test(href);
   if ((intoRepo && !reposPublic) || unresolved) {
     a.tagName = "span";
-    a.properties = { className: ["repo-ref"] };
+    a.properties = href.startsWith("missing:") ? { className: ["repo-ref"], dataNotInRepo: href.slice(8) } : { className: ["repo-ref"] };
   }
 }
 

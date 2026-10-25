@@ -5,8 +5,8 @@ go to `dst + ".part"` first; a later call continues that file where it stopped (
 the range answers 200 and the file starts over). file:// URLs work the same way (offset read), which is how the acceptance
 tests serve a pack without anything public. No identity in the request: a generic User-Agent only.
 
-Errors: Offline (no URL could be reached: no network, DNS, refused, timeout) and BadDownload (the bytes are not the pinned
-ones, or the server answered with an error) so the caller can tell "try again later" from "this source is broken".
+Errors: Offline (no URL could give the file now: no network, DNS, refused, timeout, an HTTP error such as 404) and
+BadDownload (bytes that are not the pinned ones) so the caller can tell "try again later" from "the download is damaged".
 """
 import hashlib
 import os
@@ -85,7 +85,9 @@ def _from_http(url, part, size, progress, cancel, timeout):
         if e.code == 416 and have:                        # range beyond the end: our .part is stale
             os.remove(part)
             return _from_http(url, part, size, progress, cancel, timeout)
-        raise BadDownload(f"{url}: HTTP {e.code}") from e
+        # not there (404, a private or missing release), forbidden, server trouble: this source cannot give the file now --
+        # "try again later", like no network; BadDownload stays for bytes that are not the pinned ones
+        raise Offline(f"{url}: HTTP {e.code}") from e
     except (urllib.error.URLError, socket.timeout, ConnectionError, OSError) as e:
         raise Offline(f"{url}: {getattr(e, 'reason', e)}") from e
     with r:

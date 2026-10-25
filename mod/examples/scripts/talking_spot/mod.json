@@ -1,0 +1,10 @@
+{
+  "id": "example.talking_spot",
+  "name": "Example: talking spot",
+  "version": "1.0.0",
+  "author": "Project 8 Plus",
+  "description": "A character who talks when you skate near: roll up to the spot (by default next to the kicker in the Houses garage) and a speech box with the next of a few lines appears. Uses the built-in peds library to stand a pedestrian there when it is available.",
+  "main": "scripts/main.lua",
+  "api": 1,
+  "config": { "spot": [-58.5, 2.39, -62.0], "radius": 3.5, "name": "Old-school local" }
+}

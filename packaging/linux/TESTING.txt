@@ -1,0 +1,47 @@
+Project 8 Plus on Linux / Steam Deck -- the one-page test (EXPERIMENTAL)
+=========================================================================
+Thank you for testing. Linux is experimental: this project has only run it on a PC without a real Linux GPU. Your run is
+the first real one. It takes about 2 hours, most of it waiting for the build. You send back ONE file at the end.
+
+What you need
+  - Your own copy of Tony Hawk's Project 8 for PS3 (North America, BLUS30011), as a game folder (the one with PS3_GAME).
+  - RPCS3 (https://rpcs3.net): the AppImage (EmuDeck puts it in ~/Applications) or the Flatpak (Discover).
+  - On a Deck: Desktop Mode, the charger plugged in, about 10 GB free.
+
+1. Build (Konsole / a terminal, in the folder you unpacked this package into)
+     ./thp8-builder.sh --cli --game "<game folder>" --install ~/Games/THP8 --addons p8plus
+   This is the Proton build (the Windows game through Proton): the recommended one. If you have time, build the
+   native Linux one as well, into its own folder:
+     ./thp8-builder.sh --cli --game "<game folder>" --install ~/Games/THP8-native --addons p8plus --target native
+   A Deck takes about 1-1.5 h per build (a desktop 10-20 min). Ctrl+C stops it; the same command continues it.
+   Note the time it took. The last lines must say the build finished.
+
+2. First start (Desktop Mode), with the report script running it for you
+     ./thp8_linux_collect.sh ~/Games/THP8 --run 300
+   (and ./thp8_linux_collect.sh ~/Games/THP8-native --run 300 for the native one)
+   The very first start prepares the game for a few minutes ("Preparing the game" screen with a progress bar, or the
+   intro); then the main menu. The script quits the game after 300 s and writes ~/thp8_report_<...>.tar.gz.
+
+3. Play in Game Mode (20 minutes)
+   Add it to Steam:  ~/Games/THP8/play_p8plus.sh steam-options  prints exactly what to put in Steam (Desktop Mode:
+   Steam > Games > Add a Non-Steam Game; the same text is in ~/Games/THP8/steam_launch_options.txt). Proton build: force
+   Proton 10 or newer and paste the printed Launch Options line. Native build: no compatibility tool, no launch options.
+   Then in Game Mode, check and note:
+     a. Controls (Steam Input "Gamepad" layout): menus with d-pad and stick, A accepts, B goes back; in a level ollie (A),
+        flip (X), grab (B), grind (Y). The on-screen prompts show the PS3 symbols (cross = A, circle = B, square = X,
+        triangle = Y): the Xbox prompt pack is made by Windows tools for now.
+     b. Free Skate, any level, 10 minutes: crashes? stutters (other than the first visit of a place)? sound in sync?
+        Press Steam + R1 a few times (screenshots: the report script collects them).
+     c. Career: start, save, quit from the menu, start again, load the save.
+     d. The picture fills the 1280x800 screen (Project 8 Plus) -- or 16:9 with black bars (vanilla play.sh).
+     e. Suspend with the power button inside a level, resume: does it continue, with sound?
+     f. The frame rate the Steam performance overlay shows in a level.
+
+4. Collect and send (Desktop Mode)
+     ./thp8_linux_collect.sh ~/Games/THP8          (and ~/Games/THP8-native)
+   Send the newest ~/thp8_report_*.tar.gz with your notes on 1-3 (build time, a-f). Look inside first: it holds logs,
+   system facts and screenshots -- no game files, no saves -- but paths contain your user name.
+
+If something fails: send the report anyway; that IS the useful result. Things worth trying on the native build:
+  ./play_p8plus.sh log            (more logging)       PS3_VKD3D_PRESENT_WAIT=1 ./play_p8plus.sh    (older present path)
+Deck specifics (paths on the SD card, controls, logs): STEAM_DECK.txt. Build options: README.txt.

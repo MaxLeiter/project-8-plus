@@ -10,13 +10,14 @@ export const draftBanner =
   "Draft for review. The words on this page are placeholders for Max to rewrite. Local preview only.";
 
 export const hero = {
-  kicker: "Unofficial fan project",
   // FACTS: What it is
   line: "Tony Hawk's Project 8 on PC. 60+ fps, HD textures and mods.",
   download: "Download for Windows",
   downloadSoon: "Download — coming soon",
-  // COPY(Max): add the zip size at the release (repin27/28 zips are ~93 MB).
-  downloadNote: "Free · Windows 10/11",
+  // Project8Plus-0.9.0-windows-x64.zip: repin33 candidate 39,600,839 B = 37.8 MiB (Windows shows "37.8 MB"); the HD pack
+  // (45,628,001 B = 43.5 MiB) is fetched by the launcher when HD is on. Re-check at the final 0.9.0 pin.
+  // Items of the note under the download button; drawn with slanted separators (no "/" or "|" characters).
+  downloadNote: ["Free", "Windows 10/11", "about 38 MB", "Unofficial fan project"],
   trailer: "Watch the trailer",
 };
 
@@ -56,8 +57,6 @@ export const mods = {
     { name: "Button prompts", text: "Keyboard and controller support, with matching on-screen prompts." },
   ],
   onLabel: "On when you install",
-  original:
-    "The Original look switch turns off just the HD textures and smoothed skaters, and keeps the frame rate and widescreen.",
   docsLink: "Make your own mods",
 };
 
@@ -90,7 +89,16 @@ export const run = {
 // Max's list (2026-10-18): no dates.
 export const comingSoon = {
   title: "Coming soon",
+  // 0.9.0 ships an experimental Linux package: at launch (reposPublic) Linux moves from here to the Linux download link.
+  // Steam Deck stays here (coordinator 2026-10-25); the release notes call the package "Linux (experimental)" only.
   items: ["Linux", "Steam Deck", "Mac", "Online play"],
+  itemsAtLaunch: ["Steam Deck", "Mac", "Online play"],
+};
+
+export const linux = {
+  link: "Linux (experimental)",
+  // shown next to the Windows button only once the release is public
+  note: "No HD textures on Linux yet.",
 };
 
 export const install = {
@@ -98,7 +106,7 @@ export const install = {
   steps: [
     {
       t: "Download and open",
-      d: "Unzip the download anywhere and run THP8 Launcher. If Windows says it protected your PC, choose More info, then Run anyway.",
+      d: "Unzip the download anywhere and run THP8 Launcher.",
     },
     {
       t: "Point it at your game",
@@ -114,8 +122,11 @@ export const install = {
 export type QA = { q: string; a: string };
 
 export const faq: QA[] = [
-  // Max 2026-10-24: facts only, no legal claim (installer README "Legal", FACTS.md "Legal points").
-  { q: "Is this legal?", a: "Project 8 Plus includes none of the game: no game files, code or keys, and it downloads none. You use your own copy, which your own RPCS3 decrypts, and the launcher builds the PC version from it on your PC, where it stays. It's a free, unofficial fan project, not affiliated with Activision or Neversoft." },
+  // Max 2026-10-25. Facts: the builder translates the game's code and compiles a Windows exe on the player's PC; RPCS3 only
+  // runs `--decrypt` during setup (installer README "Is this an emulator?", rpcs3.py; FACTS.md "What you need").
+  { q: "Is this using an emulator?", a: "No. The launcher turns the game into a real PC program on your machine, so it runs natively, with no emulator while you play. RPCS3 is only used once, during setup, to decrypt your copy." },
+  // Max's wording, word for word (2026-10-25). Facts behind it: installer README "Legal", FACTS.md "Legal points".
+  { q: "Is this legal?", a: "Project 8 Plus includes and downloads none of the original game. You provide your own copy, which your own RPCS3 decrypts, and the launcher builds the PC copy on your PC. It's a free, unofficial fan project, not affiliated with Activision or Neversoft." },
   { q: "I have the European or Japanese disc. Will it work?", a: "No. Only the US disc, BLUS30011, works for now. The launcher checks your copy and tells you if it is a different one." },
   { q: "Does it matter which drive I install to?", a: "Installing on the same drive as your game files saves space. On a different drive the game data is copied, which needs about 5 GB more." },
   { q: "Where are my saves?", a: "In the install folder, under hdd0\\home\\00000001\\savedata. Copy that folder to back them up." },
