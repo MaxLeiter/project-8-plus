@@ -162,7 +162,7 @@ def detail(w, h):
     ui.button("Open in editor", "secondary", icon="external-link", width=row_w)
     row.end()
     ui.gap(SP["stack_lg"])
-    ui.section_header("Recolour", "palette")
+    ui.section_header("Recolor", "palette")
     ui.gap(SP["stack_sm"])
     for key, lab, lo, hi, suf in (("hue", "Hue", -180, 180, "\u00b0"), ("sat", "Saturation", 0, 200, "%"),
                                    ("bri", "Brightness", 0, 200, "%")):

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assemble NOTICE from the licence files of everything that reaches the player.
+"""Assemble NOTICE from the license files of everything that reaches the player.
 
     python publish/make_notice.py \
         --ps3recomp <ps3recomp checkout the shipped runtime is built from> \
@@ -17,7 +17,7 @@
     HD pack (packaging/make_release.py ships it as NOTICE_HD.txt inside Project8Plus-<ver>-hd-pack-windows-x64.zip):
     python publish/make_notice.py --hd [--thp8-mod <clean thp8-mod export>] -o NOTICE_HD
 
-Licence texts are read from those trees, never typed in here, so regenerating
+License texts are read from those trees, never typed in here, so regenerating
 after a version bump picks up the new texts. What is listed is a judgement
 about what is in the player download and in the thp8.exe the builder links,
 not a tree walk; the tables below say why each entry is there.
@@ -74,7 +74,7 @@ def run(cmd, cwd=None):
 
 
 def leading_comment(path, max_lines=60):
-    """The first /* ... */ block of a C file (a per-file licence notice)."""
+    """The first /* ... */ block of a C file (a per-file license notice)."""
     text = read(path)
     m = re.search(r"/\*+(.*?)\*+/", text, re.S)
     if not m:
@@ -93,7 +93,7 @@ def stb_mit(path):
 
 
 def musl_mit(path):
-    """musl's COPYRIGHT up to the end of its MIT licence text (not the author list)."""
+    """musl's COPYRIGHT up to the end of its MIT license text (not the author list)."""
     text = read(path)
     m = re.search(r"(musl as a whole is licensed.*?SOFTWARE\.\s*\n-{10,})", text, re.S)
     if not m:
@@ -240,8 +240,8 @@ def linux_notice(args):
     o.append(para("""
         Third-party software in the THP8 native port's Linux / Steam Deck player download, and in the game
         that its builder compiles and links on the player's own PC (thp8 for the native Linux target, thp8.exe
-        for the Proton target), with the licence texts those licences require to be reproduced. The port's own
-        code is under the MIT licence in LICENSE."""))
+        for the Proton target), with the license texts those licenses require to be reproduced. The port's own
+        code is under the MIT license in LICENSE."""))
     o.append("\n" + para("""
         Nothing here is game content. The download contains no disc image, game
         executable, decrypted binary, extracted asset, platform key or generated
@@ -264,7 +264,7 @@ def linux_notice(args):
         lib/libps3recomp_runtime.a for the Proton target), all from ps3recomp {pr_rev} with
         this repository's patches (patches/ps3recomp-thp8) applied. Contributions
         merged into ps3recomp, including the live RSX draw engine brought upstream
-        from the Yakuza: Dead Souls EX port, are under ps3recomp's licence as stated
+        from the Yakuza: Dead Souls EX port, are under ps3recomp's license as stated
         in its CONTRIBUTORS.md."""))
     o.append("\n" + read(need(os.path.join(pr, "LICENSE"))) + "\n")
 
@@ -272,14 +272,14 @@ def linux_notice(args):
     o.append(para("""
         By Sean Barrett and contributors. Vendored in ps3recomp's libs/codec and
         libs/font and compiled into the runtime libraries. Offered under either the MIT
-        licence below or the Unlicense (public domain); used here under MIT."""))
+        license below or the Unlicense (public domain); used here under MIT."""))
     o.append("\n" + stb_mit(need(os.path.join(pr, "libs", "codec", "stb_image.h"))) + "\n")
 
     o.append(sub("xxHash - BSD-2-Clause"))
     o.append(para("""
         By Yann Collet. ps3recomp's third_party/xxhash/xxhash.h (header-only), compiled
         into the runtime libraries (the host side of the texture replacement hashes
-        texture contents with XXH3). The licence text is the comment at the top of the
+        texture contents with XXH3). The license text is the comment at the top of the
         header:"""))
     xxh = read(need(os.path.join(pr, "third_party", "xxhash", "xxhash.h"))).split("\n")
     lic = []
@@ -298,7 +298,7 @@ def linux_notice(args):
         {pr_rev}, ships in the download beside the prebuilt libraries. The library is linked into the game on the
         player's own PC by the builder, so relinking against a modified version of these
         decoders needs nothing more than rebuilding libps3recomp_runtime.a and running
-        the builder again (LGPL-2.1 section 6). The full licence follows."""))
+        the builder again (LGPL-2.1 section 6). The full license follows."""))
     o.append("\n" + read(need(os.path.join(at3, "COPYING.LGPLv2.1"))) + "\n")
 
     # ------------------------------------------------------------------ 2
@@ -337,7 +337,7 @@ def linux_notice(args):
         and a link-time stub with no SDL code (linux/sdl2/lib, made by packaging/linux/make_sdl2_kit.sh), used to
         compile and link the game on the player's PC; if a build of the SDL2 library itself is ever included
         (linux/lib/fallback), it is the unmodified release built with packaging/linux/build_sdl2_zig.sh. SDL's
-        licence (LICENSE.txt of the release):"""))
+        license (LICENSE.txt of the release):"""))
     o.append("\n" + sd.get("LICENSE.txt") + "\n")
 
     # ------------------------------------------------------------------ 4
@@ -345,8 +345,8 @@ def linux_notice(args):
     o.append(para(f"""
         The builder compiles and links the game with zig {zig_ver} (clang): target x86_64-linux-gnu.2.31 for the
         native build, x86_64-windows-gnu for the Proton build. The builder fetches the pinned
-        zig-x86_64-linux-{zig_ver} from ziglang.org and checks its SHA-256 before use; the offline flavour of the
-        download carries that same official tarball unmodified in toolchain/, with zig's own licence files inside
+        zig-x86_64-linux-{zig_ver} from ziglang.org and checks its SHA-256 before use; the offline flavor of the
+        download carries that same official tarball unmodified in toolchain/, with zig's own license files inside
         it (zig is MIT; the LLVM, clang and lld code built into the zig program is Apache-2.0 WITH
         LLVM-exception). The produced game and the Project 8 Plus plugins the download carries
         (thp8_mod_p8plus.so for native, thp8_mod_p8plus.dll for Proton, built with the same pinned zig) statically
@@ -356,7 +356,7 @@ def linux_notice(args):
     o.append(para("""
         https://ziglang.org. Includes compiler_rt, zig's implementation of the
         compiler support routines (statically linked), parts of which are ported from
-        LLVM's compiler-rt (licence below, with libc++) and from musl (licence
+        LLVM's compiler-rt (license below, with libc++) and from musl (license
         below)."""))
     o.append("\n" + zt.get("LICENSE") + "\n")
     seen = {}
@@ -366,14 +366,14 @@ def linux_notice(args):
         digest = hashlib.sha256(text.encode()).hexdigest()
         o.append(sub(f"{name} - Apache-2.0 WITH LLVM-exception"))
         if digest in seen:
-            o.append(f"Same licence text as {seen[digest]} above.\n")
+            o.append(f"Same license text as {seen[digest]} above.\n")
             continue
         seen[digest] = name
         role = {"libc++": "the C++ standard library", "libc++abi": "the C++ ABI support library",
                 "libunwind": "the stack unwinder used for C++ exceptions"}[name]
         o.append(para(f"""
             LLVM's {name}, {role}: shipped in zig's lib/ tree, compiled by zig and
-            statically linked into the game. The same licence covers the parts of zig's
+            statically linked into the game. The same license covers the parts of zig's
             compiler_rt ported from LLVM's compiler-rt."""))
         o.append("\n" + text + "\n")
     o.append(sub("musl - MIT (portions of zig's compiler_rt)"))
@@ -416,8 +416,8 @@ def linux_notice(args):
         launcher's fonts, shipped in builder/p8ui/assets/fonts and installed next to the plugin
         (mods/plugins/p8plus_ui): Barlow Condensed ExtraBold and Bold, Inter SemiBold and Regular. They are Latin
         subsets of the upstream fonts (neither declares a Reserved Font Name). The keyboard prompts and, without
-        these files, the screen use the player's own system fonts (not distributed). The plugin rasterises text
-        with stb_truetype (public domain / MIT, licence in section 1 with stb_image)."""))
+        these files, the screen use the player's own system fonts (not distributed). The plugin rasterizes text
+        with stb_truetype (public domain / MIT, license in section 1 with stb_image)."""))
     o.append("\n" + read(need(os.path.join(ui_assets, "VERSIONS.txt"))) + "\n")
     for title, lic, role in (
             ("Barlow Condensed - SIL Open Font License 1.1", "BarlowCondensed-OFL.txt",
@@ -469,21 +469,21 @@ def hd_notice(args):
         "  onnxruntime-directml 1.24.4 (python/Lib/site-packages/onnxruntime, from the hash-pinned PyPI wheel, unmodified)",
         "                          MIT (onnxruntime/LICENSE; third-party notices in onnxruntime/ThirdPartyNotices.txt). The",
         "                          HD textures' AI upscaler. It carries DirectML.dll, Microsoft's DirectML redistributable,",
-        "                          under Microsoft's DirectML licence terms (https://www.nuget.org/packages/Microsoft.AI.DirectML,",
+        "                          under Microsoft's DirectML license terms (https://www.nuget.org/packages/Microsoft.AI.DirectML,",
         "                          License). Its python-only tool packages (transformers, quantization, tools, datasets) are",
         "                          left out; the upscaler turns ONNX Runtime's telemetry events off.",
     ]) + "\n")
     o.append(rule("2. The HD textures' AI model"))
     o.append(para("""
         addons/tex/models/4xTextureDAT2_otf_fp16.onnx, used only on the player's PC to upscale textures of the
-        player's own copy of the game (the upscaled textures are not distributed). Its licence file
+        player's own copy of the game (the upscaled textures are not distributed). Its license file
         addons/tex/models/LICENSE.txt (in the pack, next to the model) is reproduced here."""))
     if args.thp8_mod:
         o.append("\n" + read(need(os.path.join(args.thp8_mod, "tools", "tex", "models", "LICENSE.txt"))) + "\n")
     else:
         o.append("\n" + "\n".join([
             "  \"4xTextureDAT2_otf\" by Philip Hofmann (Phhofm), https://github.com/Phhofm/models, licensed under the",
-            "  Creative Commons Attribution 4.0 International licence (CC BY 4.0), https://creativecommons.org/licenses/by/4.0/ .",
+            "  Creative Commons Attribution 4.0 International license (CC BY 4.0), https://creativecommons.org/licenses/by/4.0/ .",
             "  Converted to ONNX with half-precision weights by Project 8 Plus. Network architecture: DAT (Zheng Chen et al.,",
             "  https://github.com/zhengchen1999/DAT), Apache License 2.0 -- see addons/tex/models/LICENSE.txt.",
         ]) + "\n")
@@ -513,7 +513,7 @@ def main():
                          "--zig may be the pinned zig-x86_64-linux tarball or any unpacked zig of that version")
     ap.add_argument("--vkd3d-tar", help="--linux: the vkd3d release tarball the shipped libvkd3d*.so.1 are built from")
     ap.add_argument("--sdl2-tar", help="--linux: the SDL2 release tarball the shipped headers come from")
-    ap.add_argument("--thp8-mod", help="clean thp8-mod export (native/ is read for the creator add-on's Lua licence)")
+    ap.add_argument("--thp8-mod", help="clean thp8-mod export (native/ is read for the creator add-on's Lua license)")
     ap.add_argument("-o", "--output", default="-", help="output file (default stdout)")
     args = ap.parse_args()
     if args.hd:
@@ -553,8 +553,8 @@ def main():
     o.append(para("""
         Third-party software in the THP8 native port's player download, and in the
         thp8.exe that the builder compiles and links on the player's own PC, with the
-        licence texts those licences require to be reproduced. The port's own code is
-        under the MIT licence in LICENSE."""))
+        license texts those licenses require to be reproduced. The port's own code is
+        under the MIT license in LICENSE."""))
     o.append("\n" + para("""
         Nothing here is game content. The download contains no disc image, game
         executable, decrypted binary, extracted asset, platform key or generated
@@ -576,7 +576,7 @@ def main():
         library prebuilt as libps3recomp_runtime.a, all from ps3recomp {pr_rev} with
         this repository's patches (patches/ps3recomp-thp8) applied. Contributions
         merged into ps3recomp, including the live RSX draw engine brought upstream
-        from the Yakuza: Dead Souls EX port, are under ps3recomp's licence as stated
+        from the Yakuza: Dead Souls EX port, are under ps3recomp's license as stated
         in its CONTRIBUTORS.md."""))
     o.append("\n" + read(need(os.path.join(pr, "LICENSE"))) + "\n")
 
@@ -584,14 +584,14 @@ def main():
     o.append(para("""
         By Sean Barrett and contributors. Vendored in ps3recomp's libs/codec and
         libs/font and compiled into the runtime library. Offered under either the MIT
-        licence below or the Unlicense (public domain); used here under MIT."""))
+        license below or the Unlicense (public domain); used here under MIT."""))
     o.append("\n" + stb_mit(need(os.path.join(pr, "libs", "codec", "stb_image.h"))) + "\n")
 
     o.append(sub("xxHash - BSD-2-Clause"))
     o.append(para("""
         By Yann Collet. ps3recomp's third_party/xxhash/xxhash.h (header-only), compiled
         into the runtime library (the host side of the texture replacement hashes
-        texture contents with XXH3). The licence text is the comment at the top of the
+        texture contents with XXH3). The license text is the comment at the top of the
         header:"""))
     xxh = read(need(os.path.join(pr, "third_party", "xxhash", "xxhash.h"))).split("\n")
     lic = []
@@ -608,7 +608,7 @@ def main():
         o.append(sub("Lua " + ".".join(ver.groups()) + " - MIT"))
         o.append(para("""
             By Lua.org, PUC-Rio. Embedded in the script-mod host plugin (thp8_mod_modapi.dll) of the
-            creator add-on, which runs the Lua scripts of mods. The licence text is the notice at the
+            creator add-on, which runs the Lua scripts of mods. The license text is the notice at the
             end of lua.h:"""))
         txt = read(luah).split("\n")
         at = max(i for i, ln in enumerate(txt) if ln.startswith("* Copyright (C)"))
@@ -626,8 +626,8 @@ def main():
             o.append(para("""
                 By Sean Barrett, unmodified. Compiled into p8audio.exe (addons\\modkit\\bin), the converter of
                 the launcher's "My soundtrack" card, which reads the player's own Ogg Vorbis files. It is
-                available under two licences, MIT or public domain (Unlicense); this project uses it under
-                either. The licence text, verbatim from the end of stb_vorbis.c:"""))
+                available under two licenses, MIT or public domain (Unlicense); this project uses it under
+                either. The license text, verbatim from the end of stb_vorbis.c:"""))
             body = [ln.rstrip() for ln in read(sv).split("\n")]
             if body and body[0].startswith("stb_vorbis.c"):
                 body = body[1:]
@@ -642,7 +642,7 @@ def main():
         {pr_rev}, ships in the download beside the prebuilt library. The library is linked into thp8.exe on the player's
         own PC by the builder, so relinking against a modified version of these
         decoders needs nothing more than rebuilding libps3recomp_runtime.a and running
-        the builder again (LGPL-2.1 section 6). The full licence follows."""))
+        the builder again (LGPL-2.1 section 6). The full license follows."""))
     o.append("\n" + read(need(os.path.join(at3, "COPYING.LGPLv2.1"))) + "\n")
 
     # ------------------------------------------------------------------ 2
@@ -659,7 +659,7 @@ def main():
     o.append(para("""
         https://ziglang.org. Includes compiler_rt, zig's implementation of the
         compiler support routines (statically linked), parts of which are ported from
-        LLVM's compiler-rt (licence below, with libc++) and from musl (licence
+        LLVM's compiler-rt (license below, with libc++) and from musl (license
         below)."""))
     o.append("\n" + read(need(os.path.join(zg, "LICENSE"))) + "\n")
 
@@ -669,7 +669,7 @@ def main():
         digest = hashlib.sha256(text.encode()).hexdigest()
         if digest in seen:
             o.append(sub(f"{name} - Apache-2.0 WITH LLVM-exception"))
-            o.append(f"Same licence text as {seen[digest]} above.\n")
+            o.append(f"Same license text as {seen[digest]} above.\n")
             continue
         seen[digest] = name
         o.append(sub(f"{name} - Apache-2.0 WITH LLVM-exception"))
@@ -677,7 +677,7 @@ def main():
                 "libunwind": "the stack unwinder used for C++ exceptions"}[name]
         o.append(para(f"""
             LLVM's {name}, {role}: shipped in zig's lib/ tree, compiled by zig and
-            statically linked into thp8.exe. The same licence covers the parts of zig's
+            statically linked into thp8.exe. The same license covers the parts of zig's
             compiler_rt ported from LLVM's compiler-rt."""))
         o.append("\n" + text + "\n")
 
@@ -702,12 +702,12 @@ def main():
     o.append(para(f"""
         The download bundles the python.org Windows embeddable package of CPython
         {py_ver}. It runs the launcher window, the builder and the ps3recomp lifter.
-        Components with their own licences, as
+        Components with their own licenses, as
         built into that package: OpenSSL ({ossl}), zlib {zlib_v}, expat ({expat}),
         libmpdec {mpdec}, libffi, bzip2, liblzma from XZ Utils (public domain / BSD
         Zero Clause). Its SQLite and winsound modules are left out. The package also contains
         vcruntime140.dll, Microsoft Distributable Code redistributed under the terms
-        quoted in Python's licence below. Python's LICENSE.txt, as shipped with the
+        quoted in Python's license below. Python's LICENSE.txt, as shipped with the
         package, follows verbatim; after it, the CPython documentation's
         acknowledgements for software incorporated into Python."""))
     o.append(sub(f"CPython {py_ver} - PSF-2.0 (LICENSE.txt, verbatim)"))
@@ -716,7 +716,7 @@ def main():
     o.append(python_incorporated(need(os.path.join(py, "Doc", "html", "license.html"))) + "\n")
 
     # ------------------------------------------------------------------ 4
-    # The launcher's fonts and icon font (builder/p8ui/assets), read from this repository: the licence files sit
+    # The launcher's fonts and icon font (builder/p8ui/assets), read from this repository: the license files sit
     # next to the fonts and VERSIONS.txt names the upstream releases (packaging/make_ui_assets.py makes both).
     ui_assets = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "builder", "p8ui", "assets")
     o.append(rule("4. Fonts and icons of the launcher"))
@@ -743,7 +743,7 @@ def main():
     o.append(para("""
         Installed unmodified into the download's python/Lib/site-packages by packaging/make_release.py from the
         hash-pinned wheels of packaging/launcher_requirements.txt (64-bit CPython 3.13 on Windows, from PyPI). Each
-        package keeps its own licence files in its python/Lib/site-packages/<name>-<version>.dist-info folder
+        package keeps its own license files in its python/Lib/site-packages/<name>-<version>.dist-info folder
         (licenses/ or LICENSE), which is where the full texts are. Test suites, C headers, import libraries and demo
         programs of the wheels are left out of the download, and so are their type stubs (.pyi)."""))
     o.append("\n" + "\n".join([

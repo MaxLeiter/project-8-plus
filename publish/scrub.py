@@ -104,7 +104,7 @@ GAME_EXT = {
     ".self": "SELF executable", ".sprx": "PRX module", ".prx": "PRX module",
     ".elf": "ELF executable (decrypted game binary?)", ".sfo": "PARAM.SFO",
     ".sfb": "PS3_DISC.SFB", ".pkg": "PSN package", ".pup": "firmware update",
-    ".edat": "EDAT", ".sdat": "SDAT", ".rap": "licence file", ".rif": "licence file",
+    ".edat": "EDAT", ".sdat": "SDAT", ".rap": "license file", ".rif": "license file",
     ".chk": "file from THP8's disc (DATA/**/*.CHK)", ".pak": "game asset pack",
     ".pab": "game asset pack", ".bik": "Bink video", ".fsb": "FMOD sound bank",
     ".at3": "ATRAC3 audio", ".iso": "disc image", ".pkl": "Python pickle (analysis dump)",
@@ -846,7 +846,7 @@ def main():
     ap.add_argument("--repo", help="repository root (default: the one containing the cwd)")
     ap.add_argument("--manifest", default=DEFAULT_MANIFEST)
     ap.add_argument("--manifest-for-scan", action="store_true",
-                    help="--scan: honour the manifest's [exempt] rules (paths relative to DIR)")
+                    help="--scan: honor the manifest's [exempt] rules (paths relative to DIR)")
     ap.add_argument("--image-allow", metavar="GLOB", action="append", default=[],
                     help="more of OUR OWN image assets that may be published (repeatable; every other image is refused)")
     ap.add_argument("--max-size", type=lambda s: int(s, 0), help="--scan: size limit in bytes (default 8 MiB)")

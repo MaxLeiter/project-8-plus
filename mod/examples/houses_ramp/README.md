@@ -17,7 +17,7 @@ the game.
 | `assets/ramp.glb` | glTF binary, 134 triangles / 204 vertices, 61 KB, two textures embedded (256x256 wood, 128x128 steel) |
 | `make_assets.py` | regenerates `assets/ramp.glb` and `preview.png` (`--preview`); `--origin x,y,z` moves the scene |
 
-`ramp.glb` (Y up, metres, the skater rolls along +Z):
+`ramp.glb` (Y up, meters, the skater rolls along +Z):
 
 | node | size | triangles | vertices | material |
 |---|---|---|---|---|
@@ -45,7 +45,7 @@ ended up at (the build prints `snap_to_ground: ground at y=2.386, moved by +0.00
 written out.
 
 The placement was checked offline against the zone's geometry: the floor over the whole footprint is flat to within
-a few centimetres, nothing stands in the way, and the driveway slopes down from about 6 m ahead of the spawn.
+a few centimeters, nothing stands in the way, and the driveway slopes down from about 6 m ahead of the spawn.
 
 ## Build
 

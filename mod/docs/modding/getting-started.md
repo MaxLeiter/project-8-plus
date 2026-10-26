@@ -77,7 +77,7 @@ shadowed).
 Use `--dry-run` to run a whole build without installing anything: the output, warnings and budgets are the same.
 
 The ramp example puts a kicker and a rail in the garage in front of the free-skate start (the Houses zone is where free
-skate begins); the other two change Tony Hawk's deck graphic and give him a recoloured T-shirt and a cap.
+skate begins); the other two change Tony Hawk's deck graphic and give him a recolored T-shirt and a cap.
 
 ## Enable, disable, remove
 
@@ -101,7 +101,7 @@ A mod folder holds only your own work, so it can be shared as a folder or, with 
 before you do:
 
 - no game content anywhere: not a file the exporters wrote from your copy, not a texture or model derived from the
-  game (a `texture.recolor` / `skin.recolor` manifest is fine, a recoloured copy of the picture is not);
+  game (a `texture.recolor` / `skin.recolor` manifest is fine, a recolored copy of the picture is not);
 - the manifest has the mod's `id`, `version` and `author`, and a `license` for your own files.
 
 See [packaging.md](packaging.md). Whoever installs your mod builds it against their own game copy.

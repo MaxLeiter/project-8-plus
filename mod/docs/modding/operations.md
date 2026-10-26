@@ -15,7 +15,7 @@ Rules that hold for every operation:
   each one sees the files as the earlier ones left them. Collision operations that name a static object
   (`"object": "modkit_kicker"`) must come after the `static.add_object` that made it.
 - **Failure writes nothing.** The first error stops the build; the installed pack stays as it was.
-- **Coordinates** are game world space: Y up, right-handed, metres. `rotation_y` and `yaw_deg` are degrees about +Y; a
+- **Coordinates** are game world space: Y up, right-handed, meters. `rotation_y` and `yaw_deg` are degrees about +Y; a
   yaw of 0 leaves local +Z pointing at world +Z, and a positive yaw turns local +Z towards +X (local +Z becomes
   `(sin yaw, 0, cos yaw)`).
 - Budgets are checked after the operation and recorded in the build report ([limits.md](limits.md)).
@@ -46,7 +46,7 @@ dictionary entries it needs, and the zone's node entry out. Library: `tools/mode
 
 How an import turns glTF into game data: each glTF primitive (one per material) becomes one game mesh, split
 automatically when it exceeds 32,767 vertices or 65,535 strip indices. The vertex format is the template mesh's
-(position, packed normal, tangents, colour, half-float UVs). A glTF material gets a game material cloned from a
+(position, packed normal, tangents, color, half-float UVs). A glTF material gets a game material cloned from a
 template of the same kind (opaque, cut-out, blended), its own texture is added to the zone's texture dictionary, and a
 neutral normal map fills any normal-map slot. See [blender.md](blender.md#what-the-kit-reads-from-a-mesh).
 
@@ -68,7 +68,7 @@ Adds a new object to a zone: a ramp, a rail, a box.
 | `zone` | required | zone pak, e.g. `z_houses` |
 | `name` | required | the new object's name, used as it is for its node and its collision body (no zone prefix is added) |
 | `source`, `node`, `materials`, `role` | see above | |
-| `game_model` | none | instead of `source`: a model of the game itself, read from the player's own game files when the mod is built, so the mod ships no game data. `"GO_PropaneTank"`: a prop (`.mdl`) by name; `"z_houses:Z_Houses_Street_JG_MailBox04"`: an object of a zone's own geometry (or the name of a node that places an instanced one), as it stands in the world, moved so that its origin is the bottom centre of its bounding box |
+| `game_model` | none | instead of `source`: a model of the game itself, read from the player's own game files when the mod is built, so the mod ships no game data. `"GO_PropaneTank"`: a prop (`.mdl`) by name; `"z_houses:Z_Houses_Street_JG_MailBox04"`: an object of a zone's own geometry (or the name of a node that places an instanced one), as it stands in the world, moved so that its origin is the bottom center of its bounding box |
 | `game_model_pak` | the first pak holding it | for a prop that several paks hold in different versions: which one (pak name or `DATA` path) |
 | `position` | none | `[x, y, z]` world position of the node's local origin |
 | `rotation_y` | 0 | degrees about +Y |
@@ -90,11 +90,11 @@ follow it.
 ```
 
 **Game models.** With `game_model` the kit exports the model from your game files to a temporary glTF at build time
-(base-colour textures embedded, the material references kept) and imports it like any other source; the file never
-enters the mod folder. A prop needs `position` (its model space is around its own pivot, usually the bottom centre). A
+(base-color textures embedded, the material references kept) and imports it like any other source; the file never
+enters the mod folder. A prop needs `position` (its model space is around its own pivot, usually the bottom center). A
 zone object without `position` / `rotation_y` / `scale` is duplicated in place, at its original spot. Materials the
 target zone already has (a zone object copied within its own zone) are reused as they are; others (every prop
-material) become clones of a zone material of the same kind with the model's own base-colour texture, which adds that
+material) become clones of a zone material of the same kind with the model's own base-color texture, which adds that
 texture to the zone (the budgets show the growth). Collision is not copied: add it with a `collision.*` operation.
 
 ```json
@@ -196,13 +196,13 @@ fails if the texture is not there.
 
 ### texture.recolor
 
-A build-time colour edit of a game texture, so a mod ships parameters instead of game pixels. The texture is
+A build-time color edit of a game texture, so a mod ships parameters instead of game pixels. The texture is
 decoded from the player's own game files, changed, and encoded again.
 
 | parameter | default | meaning |
 |---|---|---|
 | `pak`, `texture`, `dict`, `format`, `max_size` | as `texture.replace` | |
-| `image` | none | recolour the mod's own picture instead of the game's texture |
+| `image` | none | recolor the mod's own picture instead of the game's texture |
 | `hsv` | | `[hue shift in degrees, saturation factor, value factor]`, e.g. `[120, 1.0, 1.0]` |
 | `tint` | | `[r, g, b]` multiplier 0..1 (or `"#rrggbb"`) |
 | `colormap` | | `[{"from": [r, g, b], "to": [r, g, b], "tolerance": 40}, ...]`: texels near `from` (RGB distance, soft edge) move towards `to` and keep their shading |
@@ -239,7 +239,7 @@ The level editor's texture tools write this op ("Paint over...").
 ## skin
 
 Skinned models: skaters, create-a-skater (CAS) clothing and accessories, boards, deck graphics. Library:
-`tools/models/import_skin.py`. Units and axes are the kit's export space: game model space, Y up, metres, the skater
+`tools/models/import_skin.py`. Units and axes are the kit's export space: game model space, Y up, meters, the skater
 faces +Z, the board's nose is +Z.
 
 ### Common parameters
@@ -265,13 +265,13 @@ Replaces game meshes with glTF meshes, normally ones exported by the kit and edi
 | `node` | all mesh nodes | a node name or a list of names |
 | `skeleton` | the model's own | skeleton name |
 | `min_weight` | 0.001 | weights below this are dropped |
-| `textures` | true | a changed base-colour image replaces that material's diffuse texture |
+| `textures` | true | a changed base-color image replaces that material's diffuse texture |
 | `texture_size` | `keep` | `keep` the game texture's size, or `image` to take the picture's size |
 | `allow_ppu` | false | allow a mesh over the SPU skinning budget (slower CPU skinning) |
-| `offset`, `scale` | none | `[x, y, z]` and a number, applied to the imported positions about the centre of the imported geometry, to fit a part made for another skater |
+| `offset`, `scale` | none | `[x, y, z]` and a number, applied to the imported positions about the center of the imported geometry, to fit a part made for another skater |
 
 Bones are matched by name (case-insensitive; `bone_<crc8>` for unnamed bones); weighted joints the game skeleton does
-not have fail the import with the list. At most 3 weights per vertex are kept (the largest, renormalised). Meshes whose
+not have fail the import with the list. At most 3 weights per vertex are kept (the largest, renormalized). Meshes whose
 vertices, normals, weights and triangles did not change keep their bytes. A changed mesh is rebuilt; if it is over the
 SPU skinning budget it is split automatically unless `allow_ppu`.
 
@@ -296,7 +296,7 @@ Adds a mesh to a skinned model.
 | `node` | the only mesh node | |
 | `rigid_bone` (alias `bone`) | none | the bone that an unskinned mesh (or unweighted vertices) follows, e.g. `Bone_Head` |
 | `template` | the largest mesh on the same bone | a game mesh whose descriptor (vertex format) the new mesh copies |
-| `material` | `auto` | `auto` (a new material and texture when the glTF material has a base-colour image), `new`, `template` |
+| `material` | `auto` | `auto` (a new material and texture when the glTF material has a base-color image), `new`, `template` |
 | `offset`, `scale`, `min_weight`, `allow_ppu` | as above | |
 
 ```json
@@ -309,11 +309,11 @@ model's texture dictionary.
 
 ### skin.recolor
 
-Recolours the texture(s) of a skinned model at build time.
+Recolors the texture(s) of a skinned model at build time.
 
 | parameter | default | meaning |
 |---|---|---|
-| `mesh` (index or list), `material` (checksum), `texture` (checksum) | every colour texture of the model | what to recolour |
+| `mesh` (index or list), `material` (checksum), `texture` (checksum) | every color texture of the model | what to recolor |
 | `hue` (alias `hue_shift`) | 0 | degrees |
 | `saturation` (alias `sat`) | 1 | factor |
 | `value` (alias `val`) | 1 | factor |
@@ -407,7 +407,7 @@ A box.
 
 | parameter | meaning |
 |---|---|
-| `center` + `size` | `[x, y, z]` and the full size `[sx, sy, sz]` in metres |
+| `center` + `size` | `[x, y, z]` and the full size `[sx, sy, sz]` in meters |
 | `yaw_deg` or `rotation_deg` | turn about +Y, or `[x, y, z]` in the game's order (Ry Rx Rz) |
 | `source` + `node` | the box is the node mesh's local bounding box, placed by the node's world transform |
 | `object` [+ `yaw_deg`] | the bounding box of a `static.add_object` object, measured in the frame turned by `yaw_deg` (default 0 = the world axes) |
@@ -423,7 +423,7 @@ A parametric kicker, without needing a mesh.
 | parameter | default | meaning |
 |---|---|---|
 | `pos` | required | `[x, y, z]` middle of the ramp's base |
-| `width`, `height`, `length` | required | metres (0.01 to 100) |
+| `width`, `height`, `length` | required | meters (0.01 to 100) |
 | `yaw_deg` or `rotation_deg` | 0 | the surface rises along local +Z; the yaw turns it towards +X |
 | `shape` | `arc` | `arc` (a circle tangent to the ground, like the example ramp) or `straight` |
 | `segments` | 12 | |
@@ -442,7 +442,7 @@ contrast, goes before your `rails.add` ops.)
 ### collision.copy
 
 Copies the collision of an existing node as a new body: `zone`, `from` (the node, e.g. `Z_Houses_g_nuclear_kicker`),
-`name`, `offset` `[dx, dy, dz]`, `rotation_y` (degrees about `pivot`, default the source's base centre), `pivot`.
+`name`, `offset` `[dx, dy, dz]`, `rotation_y` (degrees about `pivot`, default the source's base center), `pivot`.
 Boxes and cylinders of the source become convex hulls. Useful to clone a stock ramp where you want one.
 
 ---
@@ -504,10 +504,10 @@ Removes rails from a zone's baked rails (the records the game grinds on). `zone`
 |---|---|
 | `name` / `names` | the complete rail through each named point: a rail node name (with or without the zone prefix), the `name` of a `rails.add` (all its `<name>_<n>` points), or a cluster name |
 | `cluster` | every rail of that trick object |
-| `within` | `{"center": [x, y, z], "radius": metres}`: the rail points inside that sphere (a rail loses those points and is cut there; a segment whose two ends lie outside stays); with `"whole": true` the complete rails that have a point inside |
+| `within` | `{"center": [x, y, z], "radius": meters}`: the rail points inside that sphere (a rail loses those points and is cut there; a segment whose two ends lie outside stays); with `"whole": true` the complete rails that have a point inside |
 | `all` | `true`: every rail of the zone, except the rails named in `keep` (`[names or clusters]`, as for `names`). For a park built from scratch where the stock level is hidden |
 
-The points' neighbours are unlinked, so what is left of a cut rail ends there. The nodes stay in the node array
+The points' neighbors are unlinked, so what is left of a cut rail ends there. The nodes stay in the node array
 (scripts may name them; the game builds no rail from them). Order matters as everywhere: `all` removes the rails added
 by earlier operations unless `keep` names them, and does not touch rails added after it.
 

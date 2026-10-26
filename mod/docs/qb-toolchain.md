@@ -6,7 +6,7 @@ compiles them back, rebuilds paks, and patches a game copy.
 ## Results on BLUS30011
 
 - Paks: 822/822 rebuild byte-identical (819 combined + 3 header/data pairs).
-- QB-format files: 1873/1873 parse and re-serialise identically (1617 .qb,
+- QB-format files: 1873/1873 parse and re-serialize identically (1617 .qb,
   203 .nqb, 53 .mqb).
 - Script CRC: 17634/17634 reproduced. It is the qbkey-style CRC32 of the
   bytecode with every 0x01 newline token and the final 0x24 removed.
@@ -47,7 +47,7 @@ python tools/qbc/harvest_dbg.py --game "<game folder>"
 For BLUS30011 disc 01.02 it produces 118,759 names from 1,212 `.dbg` files in
 822 paks, identical on every machine. `qbkeys_extra.json` and `qbpaths.json`
 add names that were recovered by guessing and hash matching (only 131 of the
-1873 QB file paths are known; the rest are labelled by checksum). Without the
+1873 QB file paths are known; the rest are labeled by checksum). Without the
 dictionary most tools still work, with checksums where names would be;
 `tools/tex/chknames.py` needs it and says so. The HD texture and boot-screen
 installers do not use it.

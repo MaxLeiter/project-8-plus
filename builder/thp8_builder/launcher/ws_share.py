@@ -446,8 +446,8 @@ class ShareWorkspace(Workspace):
         ui.gap(SP["stack_sm"])
         for line in (["The park's layout: each piece's kind, size and place", "Your own models and pictures, if "
                       "you added any", "A picture of the layout, drawn by the launcher"] if self.tab == 0 else
-                     ["Which items and colours the look uses, by the game's own id numbers",
-                      "A picture of its colours, drawn by the launcher"]):
+                     ["Which items and colors the look uses, by the game's own id numbers",
+                      "A picture of its colors, drawn by the launcher"]):
             ui.status_line("success", line, "small")
             ui.gap(SP["stack_xs"])
         ui.status_line("muted", "Never: game files, game textures or models, scripts or other code", "small")

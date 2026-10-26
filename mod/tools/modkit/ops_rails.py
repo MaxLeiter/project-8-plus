@@ -459,7 +459,7 @@ def _match(ctx, zone, rnb, op):
             rad = float(w['radius'])
             assert len(c) == 3 and rad > 0
         except (KeyError, TypeError, ValueError, AssertionError):
-            ctx.fail('"within": {"center": [x, y, z], "radius": metres > 0}')
+            ctx.fail('"within": {"center": [x, y, z], "radius": meters > 0}')
         inside = [i for i, r in enumerate(rnb.recs) if math.dist(r.pos[:3], c) <= rad]
         if not inside:
             ctx.warn(f'{zone}: no rail point within {rad} m of {c}')

@@ -34,7 +34,7 @@ def main(argv=None):
                     help="compile the translated game code with FMA3 (faster; needs an FMA3 CPU, i.e. any AVX2 PC). "
                          "auto = decide from this PC")
     ap.add_argument("--pgo", default="on", choices=["on", "off"],
-                    help="profile-guided optimisation of the translated game code with the profile in the download "
+                    help="profile-guided optimization of the translated game code with the profile in the download "
                          "(faster in game; off = the plain build, for troubleshooting)")
     # cmd.exe splits "a,b" into two arguments when a batch file passes %1 %2 ..., so take
     # several values, each of which may itself be a comma list

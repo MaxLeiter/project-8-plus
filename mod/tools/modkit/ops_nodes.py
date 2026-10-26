@@ -225,7 +225,7 @@ class ZoneNodes:
         b = Q.serialize(self.q)
         q2 = Q.parse(b, strict=False)
         if Q.serialize(q2) != b:
-            self.ctx.fail('node array does not re-serialise identically (qbfile bug)')
+            self.ctx.fail('node array does not re-serialize identically (qbfile bug)')
         self.entry.data = b
         _remember_nqb(b, q2)                     # the next op on these bytes starts from this verified parse
         return b

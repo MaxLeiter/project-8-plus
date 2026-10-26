@@ -191,7 +191,7 @@ def _color(ctx, v):
     if isinstance(v, str):
         s = v.lstrip('#')
         if len(s) != 6:
-            ctx.fail(f'colour {v!r}: use "#rrggbb" or [r, g, b]')
+            ctx.fail(f'color {v!r}: use "#rrggbb" or [r, g, b]')
         return np.array([int(s[i:i + 2], 16) for i in (0, 2, 4)], np.float64)
     a = np.asarray(v, np.float64).reshape(-1)[:3]
     return a * 255 if a.max() <= 1.0 else a

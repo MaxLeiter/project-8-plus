@@ -530,9 +530,9 @@ class Properties:
             if imgui.small_button(f'select##{hexs}'):
                 ed.selection = [edits[0]]
         else:
-            if imgui.small_button(f'Recolour##{hexs}'):
+            if imgui.small_button(f'Recolor##{hexs}'):
                 ent = E.create(ed, 'texture.edit', [0, 0, 0], params=dict(mode='recolor', texture=hexs),
-                               name_base='tex', label=f'Recolour {hexs}')
+                               name_base='tex', label=f'Recolor {hexs}')
                 ed.selection = [ent]
             imgui.same_line()
             if imgui.small_button(f'Replace...##{hexs}'):

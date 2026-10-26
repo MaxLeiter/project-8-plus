@@ -28,11 +28,11 @@ export function Legal() {
           </p>
           <h3>Free</h3>
           <p>Project 8 Plus is non-commercial and accepts no payment.</p>
-          <h3>Licence</h3>
+          <h3>License</h3>
           <p>
             The project&rsquo;s own code, patches, tools, artwork and documentation are under the{" "}
-            <a href={links.mit} rel="noopener">MIT licence</a>, and third-party components keep their own licences.
-            The licence doesn&rsquo;t cover anything derived from the game. Files the tools build from the game
+            <a href={links.mit} rel="noopener">MIT license</a>, and third-party components keep their own licenses.
+            The license doesn&rsquo;t cover anything derived from the game. Files the tools build from the game
             aren&rsquo;t licensed by this project and may not be redistributed.
           </p>
           <h3>Game files</h3>
@@ -72,7 +72,7 @@ export function Legal() {
               </span>
             </li>
             <li>
-              <b>ONNX Runtime</b> (MIT) with <b>DirectML</b> (Microsoft&rsquo;s DirectML licence)
+              <b>ONNX Runtime</b> (MIT) with <b>DirectML</b> (Microsoft&rsquo;s DirectML license)
               <span className="what">Runs the upscaling model on your graphics card. Both ship with the HD textures tool.</span>
             </li>
             <li>

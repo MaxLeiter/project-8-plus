@@ -191,7 +191,7 @@ SCHEMA = {
             {'key': 'gltf', 'type': 'asset', 'ext': ['.glb', '.gltf'], 'required': True,
              'doc': 'skinned to the kit\'s skater skeleton (export a stock item with the kit to start from)'},
             {'key': 'template', 'type': 'str', 'doc': 'stock item of the list to clone (default: the first one)'},
-            {'key': 'colourable', 'type': 'bool', 'default': True, 'doc': 'colour rows work on it'},
+            {'key': 'colourable', 'type': 'bool', 'default': True, 'doc': 'color rows work on it'},
             {'key': 'rigid_bone', 'type': 'str', 'doc': 'an unskinned model follows this bone (e.g. Bone_Head)'},
         ],
     },

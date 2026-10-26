@@ -59,7 +59,7 @@ touches:
 | `GameObject` | a placed prop or trigger: a `Type` (such as `GO_MetalBarrelBlue`) and a position |
 | (others) | restart points, triggers, sound and particle emitters, ... |
 
-The free-skate start is the node `Z_Houses_TRG_Restart_Default`, at (-63.17, 2.39, -66.64) in world metres.
+The free-skate start is the node `Z_Houses_TRG_Restart_Default`, at (-63.17, 2.39, -66.64) in world meters.
 
 ### Collision
 
@@ -103,7 +103,7 @@ appearance is built. `skin.deck_graphic` edits that image.
 
 The game draws triangle strips (16-bit indices, a restart index) with counter-clockwise front faces; the kit turns
 your triangle lists into strips. Vertices are position, a packed normal (11:11:10 bits), optionally two more packed
-vectors (tangent, binormal), a colour and half-float UVs, so the exact layout is the layout of the mesh being replaced
+vectors (tangent, binormal), a color and half-float UVs, so the exact layout is the layout of the mesh being replaced
 or one of the layouts the game already uses. There are no per-mesh LODs.
 
 ## The overlay

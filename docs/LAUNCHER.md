@@ -9,7 +9,7 @@
 | **Settings** | A form for the Project 8 Plus plugin's settings file (frame rate, widescreen, picture quality, effects, button prompts, camera invert and the keyboard bindings: add a key and press it, remove it, add a mouse button or wheel; up to 4 keys per input). Every option says in plain words what it does and costs. Comments and keys of the file that the form does not know are kept. **Reset to recommended** and **Stock (PS3 look)** set every option at once (nothing is written until you press **Save**). |
 | **Mods** | Everything in the install's `mods\` folder (plugins, texture packs, file overlays, CAS items, parks, script mods, creator mods): enable, disable, order, per-mod settings, what a mod needs and what clashes, install from a file (picked or dropped on the window, after a review of every check), export, uninstall into *Removed* (restorable). |
 | **Share** | Your parks and Create-a-Skater Plus looks as single files (`.p8park`, `.p8look`) with a picture drawn from the data; import a friend's. A check proves a file holds only what a player made. |
-| **Textures** | The Texture Studio: browse every texture of your game, export it as PNG, replace it with your own picture or recolour it, and save the result into a mod. |
+| **Textures** | The Texture Studio: browse every texture of your game, export it as PNG, replace it with your own picture or recolor it, and save the result into a mod. |
 | **Setup** | The builder: pick your game folder and RPCS3, choose options (Project 8 Plus with its smoothed skaters and HD textures, creator tools, dark boot screens), build. Also used to rebuild or repair. |
 
 **Create** (the level editor and the other creator tools) is one more page in the same window when the download
@@ -78,11 +78,11 @@ accepted only under `plugins\` and only after an explicit warning that it runs i
 into a hidden folder and renamed into place, so a failed install leaves nothing behind.
 
 **Export** writes a deterministic zip (the same pack gives the same bytes) with a `mod.json`. It tells you when the
-pack contains game data files (do not share those) and that recoloured textures are derived artwork.
+pack contains game data files (do not share those) and that recolored textures are derived artwork.
 
 **Creator mods** are mods made with the creator tools (a zip that holds a `modkit.json`). They hold no game data:
 they are recipes that the creator tools build against your own game, on your PC, into one pack called `zz_modkit`.
-**Install from .zip** recognises them, stores the zip under `<install>\launcher\kitmods` and builds right away (a
+**Install from .zip** recognizes them, stores the zip under `<install>\launcher\kitmods` and builds right away (a
 progress bar and **Stop** appear above the list). They are listed in their own group with an enable switch; after
 you switch one on or off, **Apply** rebuilds the pack (or removes it when none is enabled). A failed build changes
 nothing and shows what the tools printed. The page says so when the creator tools are not part of the download,
@@ -122,7 +122,7 @@ The full format and the check are in thp8-mod `docs/modding/mod-packages.md`; in
 
 Parks (made in **Create** or the game's **Create-a-Park**, saved in `Documents\P8Plus Mods\<name>`) and **saved
 looks** (Create-a-Skater Plus *Save look*, `<mods>\_cas_presets\*.p8cas`, or the plugin's `user_data_dir`) are shown
-as cards with a picture the launcher draws from the data (a plan of the pieces, the look's colours: never a picture of
+as cards with a picture the launcher draws from the data (a plan of the pieces, the look's colors: never a picture of
 the game).
 
 * **Export to file** writes `<name>.p8park` or `<name>.p8look`: a zip with `p8share.json` (the SHA-256 of every
@@ -152,7 +152,7 @@ that you can search by name, container or key, filter by category and format, an
 * **Replace** takes a PNG (or JPG, BMP, TGA, WebP). Choose the size in the game (1x, 2x or 4x the original, up to 4096
   pixels), and, when the shapes differ, stretch or crop. The Studio makes a correct DDS in the same block format as
   the original, with every mip level generated from your picture.
-* **Recolour** shifts hue, saturation and brightness of the original with a live preview and saves it at the original
+* **Recolor** shifts hue, saturation and brightness of the original with a live preview and saves it at the original
   size.
 * **Saving into** is the mod your changes go to. **New mod** makes a folder with a `mod.json`; **Test in game** enables
   that mod and starts Project 8 Plus.

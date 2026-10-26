@@ -285,7 +285,7 @@ def properties_window():
     ui.gap(SP["stack_md"])
     if ui.begin_props("props"):
         if ui.prop_group("Transform", "move-3d"):
-            ui.prop_row("Position", "Metres from the level origin.", modified=True)
+            ui.prop_row("Position", "Meters from the level origin.", modified=True)
             ui.drag_vec3("pos", [41.20, 0.25, -12.80])
             ui.prop_row("Rotation", "Degrees around each axis.")
             ui.drag_vec3("rot", [0.0, 37.5, 0.0], fmt="%.1f\u00b0")

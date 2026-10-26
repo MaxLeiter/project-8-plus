@@ -16,7 +16,7 @@ Operations (OPS):
                        "ConcSmooth"), "flags" [names] | int,
                        "materials" {glTF material name: {"terrain", "flags"}} (optional per-material override; glTF
                        material extras thp8_terrain / thp8_flags work too)}
-  collision.add_box   {"zone", "name", "center" [x,y,z], "size" [sx,sy,sz] (full size, metres), "rotation_deg"
+  collision.add_box   {"zone", "name", "center" [x,y,z], "size" [sx,sy,sz] (full size, meters), "rotation_deg"
                        [x,y,z] (game Angles order R = Ry Rx Rz) | "yaw_deg", "terrain", "flags"}
                       or {"zone", "name", "source", "node"}: the box = the node mesh's local bounding box, placed by
                        the node's world transform (scale folded into the size)
@@ -257,7 +257,7 @@ def op_add_box(op, ctx):
         c = np.asarray(op.get('center') or ctx.fail('missing "center" (or "source" + "node")'), np.float64)
         size = np.asarray(op.get('size') or ctx.fail('missing "size" [sx, sy, sz]'), np.float64)
         if size.shape != (3,) or (size <= 0).any():
-            ctx.fail('"size" must be 3 positive numbers (metres)')
+            ctx.fail('"size" must be 3 positive numbers (meters)')
         h = size / 2
         R = rot_matrix(op['rotation_deg']) if 'rotation_deg' in op else rot_matrix((0, op.get('yaw_deg', 0), 0))
     if (np.asarray(h) < 0.005).any():
@@ -310,7 +310,7 @@ def op_add_ramp(op, ctx):
     import numpy as np
     op = _keys(ctx, op, 'collision.add_ramp')
     pos = np.asarray(op.get('pos') or ctx.fail('missing "pos" [x, y, z] (middle of the ramp base)'), np.float64)
-    dims = [float(op.get(k) or ctx.fail(f'missing "{k}" (metres)')) for k in ('width', 'height', 'length')]
+    dims = [float(op.get(k) or ctx.fail(f'missing "{k}" (meters)')) for k in ('width', 'height', 'length')]
     if min(dims) <= 0.01 or max(dims) > 100:
         ctx.fail('ramp width/height/length must be within 0.01..100 m')
     shape = op.get('shape', 'arc')

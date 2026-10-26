@@ -66,7 +66,7 @@ def build():
         "type": "plugin",
         "author": "Project 8 Plus",
         "description": "60 fps, ultrawide (Hor+) with a 16:9 HUD, the picture options, keyboard play and button "
-                       "prompts, CAS+ (looks, items, colours). Its settings are on the launcher's Settings page.",
+                       "prompts, CAS+ (looks, items, colors). Its settings are on the launcher's Settings page.",
         "license": "see LICENSE / NOTICE",
         "game": {"title_id": "BLUS30011"},
         "platform": {"abi": ">=1.2"},

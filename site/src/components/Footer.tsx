@@ -9,9 +9,6 @@ export function Footer() {
       <div className="footer-band">
         <div className="wrap">
           <Lockup />
-          <p className="tag-line">
-            Your game. <span>Your rules.</span>
-          </p>
         </div>
       </div>
       <div className="wrap footer-cols">
@@ -31,7 +28,7 @@ export function Footer() {
             </>
           ) : null}
           <a href={asset("docs/#legal")}>Legal</a>
-          <a href="#top">
+          <a href="#main">
             <ArrowUp size={13} aria-hidden className="inline-icon" /> Top
           </a>
         </nav>

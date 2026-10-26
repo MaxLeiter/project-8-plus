@@ -32,12 +32,12 @@ Screenshots: `thp8-native\docs\shots\livelink_*.png`.
 
 | feature | result |
 |---|---|
-| streaming | 3 s at 30 Hz: 40 skater + 39 camera events; spawn reads (-63.172, 2.395, -66.645) yaw 45 = the modkit's `Z_Houses_TRG_Restart_Default` (engine space = modkit space, metres) |
+| streaming | 3 s at 30 Hz: 40 skater + 39 camera events; spawn reads (-63.172, 2.395, -66.645) yaw 45 = the modkit's `Z_Houses_TRG_Restart_Default` (engine space = modkit space, meters) |
 | teleport | 4 m ahead + 180 degrees: exactly on target, no snap-back after 1.5 s (`01_start`, `02_teleport`) |
 | free camera | detach, `cam.set` with pitch / FOV, 1 s lerp (`03_freecam`, `04_freecam_orbit`) |
 | pause | skater position frozen over 1 s, rendering and free cam keep running |
 | overlay | engine rail renderer (retail stub re-enabled) + editor line set + skater axes (`05_overlay`) |
-| live textures | 300 DDS added, recoloured, removed while playing (`06_tex_before`, `07_tex_added`, `07_tex_changed`, `07_tex_removed`) |
+| live textures | 300 DDS added, recolored, removed while playing (`06_tex_before`, `07_tex_added`, `07_tex_changed`, `07_tex_removed`) |
 | modkit object | houses_ramp kicker + rail added, then moved 2 m, then moved back, without restarting (`08`..`11`) |
 
 ## Reload timings
@@ -47,7 +47,7 @@ Pool runs on a fully loaded machine (several game instances + builds): indicativ
 | change | path | time |
 |---|---|---|
 | texture pack: add 300 DDS | `reload textures` (texrepl rescan 1.7 ms) | 30 ms round trip, visible next frame |
-| texture pack: recolour 300 / remove 300 | rescan 0.9 ms | 8 ms round trip |
+| texture pack: recolor 300 / remove 300 | rescan 0.9 ms | 8 ms round trip |
 | data overlay rescan (2 zone paks) | `ps3_mods_rescan` | 3.8 - 4.1 ms |
 | modkit object moved, paks fit their link slots | `reload zone` (Quickview path: all 4 loaded zones re-read) | **3.4 s** (4.7 s from the CLI) |
 | modkit object added (z_houses_vram grew past its slot) | escalated to `reload level` (Change_Level) | **7.4 s** |

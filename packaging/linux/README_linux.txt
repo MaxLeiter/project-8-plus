@@ -50,4 +50,4 @@ window (use the command line). Project 8 Plus itself, its keyboard prompts and t
 Testing: TESTING.txt is the whole test on one page (about 2 hours, one report file to send).
 
 Legal: you must own the game. This project is not affiliated with Activision, Neversoft,
-Tony Hawk, Sony or Valve. See NOTICE.txt and linux/lib/LICENSES for third-party licences.
+Tony Hawk, Sony or Valve. See NOTICE.txt and linux/lib/LICENSES for third-party licenses.

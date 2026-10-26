@@ -151,7 +151,7 @@ export function Plus() {
             <h3>Graphics options</h3>
             <p>
               The launcher&rsquo;s Settings page covers render scale, FXAA, anisotropic filtering up to 16&times; and
-              soft-edged shadow maps at 2&times; or 4&times;. Bloom, colour grading, depth of field and draw distance
+              soft-edged shadow maps at 2&times; or 4&times;. Bloom, color grading, depth of field and draw distance
               can be tuned as well. <b>Reset to recommended</b> sets everything at once, and <b>PS3 look</b> puts it
               all back to stock.
             </p>

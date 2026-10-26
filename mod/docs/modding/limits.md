@@ -25,7 +25,7 @@ triangle lists you give are turned into strips by the kit.
 
 | limit | value |
 |---|---|
-| bone weights per vertex | 3: more are pruned to the 3 largest and renormalised; weights below `min_weight` (0.001) are dropped |
+| bone weights per vertex | 3: more are pruned to the 3 largest and renormalized; weights below `min_weight` (0.001) are dropped |
 | bones | the human skeleton has 101, the board 9. Bone indices are bytes; the SPU budget is reported for 101 bones and for a 128-bone worst case |
 | SPU skinning job | 99,999 bytes per mesh |
 
@@ -111,7 +111,7 @@ steps when a build needs more (verified in game with 240 extra points); the buil
 
 ## Zones: other things to know
 
-- An added object is in the full zone only: not in its `_lod` stand-in, so it is invisible from a neighbouring zone's
+- An added object is in the full zone only: not in its `_lod` stand-in, so it is invisible from a neighboring zone's
   distance view.
 - Static geometry is stored in world space; it is drawn only when its material has a shader block, which new objects
   get from a material the game already has (the kit clones one).

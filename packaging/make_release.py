@@ -254,7 +254,7 @@ def main():
                                        "the SHA-256 pinned in builder/thp8_builder/addons.py HD_MODEL)")
     ap.add_argument("--p8audio-exe", help="p8audio.exe (thp8-mod native/p8audio/build.sh with the pinned zig): the converter of "
                                           "the launcher's My soundtrack card, shipped as addons/modkit/bin/p8audio.exe")
-    ap.add_argument("--pgo-profile", help="the optimisation profile of the translated game code (perf-pgo's thp8.profdata): "
+    ap.add_argument("--pgo-profile", help="the optimization profile of the translated game code (perf-pgo's thp8.profdata): "
                                           "shipped as title/pgo/thp8.profdata; must match the SHA-256 pinned in "
                                           "builder/data/recipe.json options.pgo (a bundle without it builds without PGO)")
     ap.add_argument("--zig-zip")

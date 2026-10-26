@@ -1171,7 +1171,7 @@ class Panel:
                 f['radius'] = round(r, 1)
                 self.update(op, {key: SU.make_start('area', f)}, 'Start area')
             self.row('')
-            if P.button('Use the viewport centre', 'secondary', 'crosshair'):
+            if P.button('Use the viewport center', 'secondary', 'crosshair'):
                 f['pos'] = self.view_point()
                 self.update(op, {key: SU.make_start('area', f)}, 'Start area')
         elif kind == 'event':

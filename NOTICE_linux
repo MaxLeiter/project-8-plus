@@ -5,8 +5,8 @@ NOTICE (Linux download)
 Third-party software in the THP8 native port's Linux / Steam Deck player
 download, and in the game that its builder compiles and links on the player's
 own PC (thp8 for the native Linux target, thp8.exe for the Proton target),
-with the licence texts those licences require to be reproduced. The port's own
-code is under the MIT licence in LICENSE.
+with the license texts those licenses require to be reproduced. The port's own
+code is under the MIT license in LICENSE.
 
 Nothing here is game content. The download contains no disc image, game
 executable, decrypted binary, extracted asset, platform key or generated
@@ -35,7 +35,7 @@ prebuilt twice (lib/linux/libps3recomp_runtime.a for the native target,
 lib/libps3recomp_runtime.a for the Proton target), all from ps3recomp fb177812
 with this repository's patches (patches/ps3recomp-thp8) applied. Contributions
 merged into ps3recomp, including the live RSX draw engine brought upstream
-from the Yakuza: Dead Souls EX port, are under ps3recomp's licence as stated
+from the Yakuza: Dead Souls EX port, are under ps3recomp's license as stated
 in its CONTRIBUTORS.md.
 
 MIT License
@@ -66,7 +66,7 @@ stb_image, stb_image_write, stb_truetype - MIT (or public domain)
 
 By Sean Barrett and contributors. Vendored in ps3recomp's libs/codec and
 libs/font and compiled into the runtime libraries. Offered under either the
-MIT licence below or the Unlicense (public domain); used here under MIT.
+MIT license below or the Unlicense (public domain); used here under MIT.
 
 ALTERNATIVE A - MIT License
 Copyright (c) 2017 Sean Barrett
@@ -92,7 +92,7 @@ xxHash - BSD-2-Clause
 
 By Yann Collet. ps3recomp's third_party/xxhash/xxhash.h (header-only),
 compiled into the runtime libraries (the host side of the texture replacement
-hashes texture contents with XXH3). The licence text is the comment at the top
+hashes texture contents with XXH3). The license text is the comment at the top
 of the header:
 
 xxHash - Extremely Fast Hash algorithm
@@ -148,7 +148,7 @@ fb177812, ships in the download beside the prebuilt libraries. The library is
 linked into the game on the player's own PC by the builder, so relinking
 against a modified version of these decoders needs nothing more than
 rebuilding libps3recomp_runtime.a and running the builder again (LGPL-2.1
-section 6). The full licence follows.
+section 6). The full license follows.
 
                   GNU LESSER GENERAL PUBLIC LICENSE
                        Version 2.1, February 1999
@@ -1311,7 +1311,7 @@ carries only the SDL 2.32.10 headers (linux/sdl2/include) and a link-time stub
 with no SDL code (linux/sdl2/lib, made by packaging/linux/make_sdl2_kit.sh),
 used to compile and link the game on the player's PC; if a build of the SDL2
 library itself is ever included (linux/lib/fallback), it is the unmodified
-release built with packaging/linux/build_sdl2_zig.sh. SDL's licence
+release built with packaging/linux/build_sdl2_zig.sh. SDL's license
 (LICENSE.txt of the release):
 
 Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
@@ -1340,8 +1340,8 @@ freely, subject to the following restrictions:
 The builder compiles and links the game with zig 0.16.0 (clang): target
 x86_64-linux-gnu.2.31 for the native build, x86_64-windows-gnu for the Proton
 build. The builder fetches the pinned zig-x86_64-linux-0.16.0 from ziglang.org
-and checks its SHA-256 before use; the offline flavour of the download carries
-that same official tarball unmodified in toolchain/, with zig's own licence
+and checks its SHA-256 before use; the offline flavor of the download carries
+that same official tarball unmodified in toolchain/, with zig's own license
 files inside it (zig is MIT; the LLVM, clang and lld code built into the zig
 program is Apache-2.0 WITH LLVM-exception). The produced game and the Project
 8 Plus plugins the download carries (thp8_mod_p8plus.so for native,
@@ -1356,7 +1356,7 @@ zig 0.16.0 - MIT (Expat)
 
 https://ziglang.org. Includes compiler_rt, zig's implementation of the
 compiler support routines (statically linked), parts of which are ported from
-LLVM's compiler-rt (licence below, with libc++) and from musl (licence below).
+LLVM's compiler-rt (license below, with libc++) and from musl (license below).
 
 The MIT License (Expat)
 
@@ -1385,7 +1385,7 @@ libc++ - Apache-2.0 WITH LLVM-exception
 --------------------------------------------------------------------------------
 
 LLVM's libc++, the C++ standard library: shipped in zig's lib/ tree, compiled
-by zig and statically linked into the game. The same licence covers the parts
+by zig and statically linked into the game. The same license covers the parts
 of zig's compiler_rt ported from LLVM's compiler-rt.
 
 ==============================================================================
@@ -1705,7 +1705,7 @@ libc++abi - Apache-2.0 WITH LLVM-exception
 --------------------------------------------------------------------------------
 
 LLVM's libc++abi, the C++ ABI support library: shipped in zig's lib/ tree,
-compiled by zig and statically linked into the game. The same licence covers
+compiled by zig and statically linked into the game. The same license covers
 the parts of zig's compiler_rt ported from LLVM's compiler-rt.
 
 ==============================================================================
@@ -2026,7 +2026,7 @@ libunwind - Apache-2.0 WITH LLVM-exception
 
 LLVM's libunwind, the stack unwinder used for C++ exceptions: shipped in zig's
 lib/ tree, compiled by zig and statically linked into the game. The same
-licence covers the parts of zig's compiler_rt ported from LLVM's compiler-rt.
+license covers the parts of zig's compiler_rt ported from LLVM's compiler-rt.
 
 ==============================================================================
 The LLVM Project is under the Apache License v2.0 with LLVM Exceptions:
@@ -2940,8 +2940,8 @@ installed next to the plugin (mods/plugins/p8plus_ui): Barlow Condensed
 ExtraBold and Bold, Inter SemiBold and Regular. They are Latin subsets of the
 upstream fonts (neither declares a Reserved Font Name). The keyboard prompts
 and, without these files, the screen use the player's own system fonts (not
-distributed). The plugin rasterises text with stb_truetype (public domain /
-MIT, licence in section 1 with stb_image).
+distributed). The plugin rasterizes text with stb_truetype (public domain /
+MIT, license in section 1 with stb_image).
 
 Inter 4.1 (rsms/inter release zip), subset
 Barlow Condensed (google/fonts ofl/barlowcondensed), subset

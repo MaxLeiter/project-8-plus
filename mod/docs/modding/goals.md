@@ -267,7 +267,7 @@ the [houses_goals](../../examples/houses_goals/README.md) example, test goals an
 | real pad input | the driveway ollie gap (`air: true`) is won with X presses only; the same goal with no input fails on its timer |
 | results | won (via `GMan_HasWonGoalThisTry` in `<id>_post_deactivate`) and failed (via `<id>_chk1_fail`) are reported; the goal_info keys `goal_success_script` / `goal_fail_script` are never called |
 
-Things to know: a global initialised to the checksum `none` does not exist (the loader drops it); a won goal is
+Things to know: a global initialized to the checksum `none` does not exist (the loader drops it); a won goal is
 uninitialized by the game and only initializes again with `force_init` (`p8q_goal_start` sets it; `replay`, on by
 default, brings the marker back); a previous goal's end-of-run reset can move the skater after the next goal's
 restart when goals are started back to back.

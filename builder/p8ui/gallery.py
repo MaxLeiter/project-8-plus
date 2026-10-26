@@ -20,7 +20,7 @@ task.eta_s = 13 * 60
 
 
 def swatches():
-    ui.section_header("Colour")
+    ui.section_header("Color")
     ui.gap(T.SPACE["stack_md"])
     names = ["BG", "BG_DEEP", "PANEL", "RAISED", "OVERLAY", "FIELD", "BAND", "BORDER", "ACCENT", "TEXT", "MUTED",
              "SUCCESS", "WARNING", "ERROR", "INFO"]

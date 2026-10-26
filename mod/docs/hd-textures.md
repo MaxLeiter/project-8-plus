@@ -40,14 +40,14 @@ python tools/tex/texrepl.py install DIR --mods MODS --name hd_mix
 - Each DDS keeps the original format (BC1 for DXT1, BC3 for DXT5): the new top levels, then the game's original mip
   chain byte for byte.
 - The model is 4xTextureDAT2_otf by Philip Hofmann (CC BY 4.0), converted to ONNX with half-precision weights
-  (`tools/tex/export_onnx.py`); the attribution and the DAT licence are in `tools/tex/models/LICENSE.txt`.
+  (`tools/tex/export_onnx.py`); the attribution and the DAT license are in `tools/tex/models/LICENSE.txt`.
   `upscale_onnx.py` runs it with DirectML: one compiled session per tile shape, the tile size chosen from the GPU's
   memory, and a fallback to the CPU if DirectML fails during a run.
 
-## The colour pipeline ("colour2")
+## The color pipeline ("colour2")
 
-- Transparent texels whose colour is black get a push-pull fill before upscaling, so edges do not darken.
-  Textures whose colour is already premultiplied by alpha get no fill, and their colour is clamped to alpha
+- Transparent texels whose color is black get a push-pull fill before upscaling, so edges do not darken.
+  Textures whose color is already premultiplied by alpha get no fill, and their color is clamped to alpha
   afterwards (cache tag `colour2pm`).
 - DAT2 4x with a 32-texel wrap-around context for tiling textures, a box filter for 4x -> 2x, and a low-frequency
   anchor: `out = dat2 + Gauss_s(lanczos - dat2)` with sigma 1.0 (0.75 for masks and line art).
@@ -73,7 +73,7 @@ How the pipeline was tuned:
   normal maps; normal maps stay native).
 - Dithered-noise foliage (green-dominant sources made of pixel noise: high-pass lag-1 correlation below 0.05, a
   high-frequency share above 0.5, luminance standard deviation above 30) turns into a crawling high-contrast
-  pattern when upscaled, so it stays at 1x. Grey asphalt and gravel speckle, which looks better upscaled, is not
+  pattern when upscaled, so it stays at 1x. Gray asphalt and gravel speckle, which looks better upscaled, is not
   matched.
 - The ONNX model matches the PyTorch reference at 60.6-61.2 dB on [0, 1] RGB; upscaled images differ by at most
   5/255.

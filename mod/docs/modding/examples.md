@@ -51,7 +51,7 @@ The placement was chosen offline: the garage floor is flat and clear of walls ov
 the zone's triangles), and the driveway slopes down from about 6 m ahead of the spawn. To move the scene, change the
 `position` of the three operations (the rail's two entries must agree).
 
-The mesh is a good template for your own: Y up, metres, unit normals, `TEXCOORD_0` within 0..1, white `COLOR_0`, one
+The mesh is a good template for your own: Y up, meters, unit normals, `TEXCOORD_0` within 0..1, white `COLOR_0`, one
 material per node. Open `ramp.glb` in Blender to see it.
 
 ## cas_recolor
@@ -79,6 +79,6 @@ from code, and a mod does not need them.
 
 All three examples were built together into one pack and booted in the native port (free skate, Tony Hawk): the overlay
 served the 4 files, the kicker and rail stand on the garage floor in front of the spawn, and Tony Hawk wears the cap in
-skater select and in free skate, with the recoloured T-shirt. `modkit.py uninstall` brought the vanilla game back. Not
+skater select and in free skate, with the recolored T-shirt. `modkit.py uninstall` brought the vanilla game back. Not
 yet seen in game: the deck graphic (the board's underside never faced the camera), riding the kicker and grinding the
 rail. Screenshots of the game are not included here because they show game content.

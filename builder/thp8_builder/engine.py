@@ -371,16 +371,16 @@ class Engine:
         if c.pgo not in ("on", "off"):
             raise BuildError("--pgo must be on or off")
         if c.pgo == "off" or not opt or not opt.get("default", True):
-            self.log("[preflight] profile-guided optimisation: off" + (" (--pgo off)" if c.pgo == "off" else ""))
+            self.log("[preflight] profile-guided optimization: off" + (" (--pgo off)" if c.pgo == "off" else ""))
             return False
         path = os.path.join(c.bundle, "title", *opt["profile"].split("/"))
         if not os.path.isfile(path):
-            self.log("[preflight] WARNING: the profile for profile-guided optimisation is not in this builder package: building without it")
+            self.log("[preflight] WARNING: the profile for profile-guided optimization is not in this builder package: building without it")
             return False
         if sha256_file(path) != opt["sha256"]:
-            self.log("[preflight] WARNING: the optimisation profile is not the one this release was made with: building without it")
+            self.log("[preflight] WARNING: the optimization profile is not the one this release was made with: building without it")
             return False
-        self.log("[preflight] profile-guided optimisation of the translated code: on")
+        self.log("[preflight] profile-guided optimization of the translated code: on")
         return True
 
     def display_title(self, name):

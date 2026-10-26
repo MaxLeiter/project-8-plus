@@ -66,14 +66,14 @@ OPTS = [
         [("auto", "Automatic (follow the window)"), ("off", "Off (stock)"), ("21:9", "21:9"), ("32:9", "32:9")],
         extra="aspect"),
     Opt("hud169", "widescreen", "Display and widescreen", "16:9 HUD", "bool", "on", "off",
-        "Keeps the HUD, menus and text at 16:9 proportions, centred, while the 3D view is wider.",
+        "Keeps the HUD, menus and text at 16:9 proportions, centered, while the 3D view is wider.",
         needs="Only acts when Hor+ makes the picture wider than 16:9."),
     Opt("pillarbox", "widescreen", "Display and widescreen", "Pillarbox movies and loading screens", "bool", "on",
         "off", "Movies and the loading screen show at 16:9 in the middle with black bars at the sides instead of "
         "being stretched across a wide window.", needs="Only acts when Hor+ and the 16:9 HUD are active."),
     Opt("hor_plus_pip", "widescreen", "Display and widescreen", "Hor+ on picture-in-picture views", "bool", "off", "on",
         "off (recommended) = the camcorder panel of photo/film goals, goal intro camera views and the photo capture keep "
-        "the stock 16:9 picture on ultrawide. on = old behaviour: they get the wide field of view too and look squeezed.",
+        "the stock 16:9 picture on ultrawide. on = old behavior: they get the wide field of view too and look squeezed.",
         needs="Only acts when Hor+ makes the picture wider than 16:9."),
     # ---- Picture quality
     Opt("graphics_preset", "renderer", "Picture quality", "Quality preset", "choice", "high", "vanilla",
@@ -115,14 +115,14 @@ OPTS = [
     # ---- Effects
     Opt("bloom", "graphics", "Effects", "Bloom", "int", "50", "100",
         "Percent: 100 = stock, 50 = recommended, 0 = no bloom. Any 0-200.", lo=0, hi=200, unit="%"),
-    Opt("neutral_grading", "graphics", "Effects", "Neutral colour grading", "bool", "on", "off",
+    Opt("neutral_grading", "graphics", "Effects", "Neutral color grading", "bool", "on", "off",
         "Saturation and contrast 1.0 instead of the levels' washed-out 0.75-0.9 grade. The in-game Brightness "
         "option still works."),
     Opt("dof", "graphics", "Effects", "Depth of field", "bool", "on", "on",
         "Focus mode, Nail the Trick and some bail effects. Off = no depth of field."),
     Opt("screen_blur", "graphics", "Effects", "Screen blur", "choice", "on", "on",
         "Full-screen blur (retina burn, Chaplin film look, factory launcher). off disables it; tints removes the "
-        "radial blur but keeps the colour tint.", [("on", "On (stock)"), ("off", "Off"), ("tints", "No radial blur, keep tints")]),
+        "radial blur but keeps the color tint.", [("on", "On (stock)"), ("off", "Off"), ("tints", "No radial blur, keep tints")]),
     Opt("film_grain", "graphics", "Effects", "Film grain", "bool", "on", "on",
         "The Noise effect in a few scripted scenes. Off = no film grain."),
     Opt("draw_distance", "graphics", "Effects", "Pedestrian and object draw distance", "int", "2", "1",
@@ -157,7 +157,7 @@ OPTS = [
     Opt("camera_invert_y", "controls", "Controls", "Invert camera up / down", "bool", "off", "on",
         "Off (Project 8 Plus default): the view turns the way you push the stick. On: the stock game's setting. "
         "Same switch as the game's pause menu > Options > Control setup; a switch flipped there is written back here."),
-    Opt("center_button_glyphs", "controls", "Controls", "Centre button glyphs on the text", "bool", "on", "off",
+    Opt("center_button_glyphs", "controls", "Controls", "Center button glyphs on the text", "bool", "on", "off",
         "The game draws button glyphs a little low, hanging below the text next to them. On lifts them, for the PS3, "
         "Xbox and keyboard glyphs alike, at full size."),
     Opt("key_cross", "controls", "Keyboard", "Ollie / accept", "keys", "Space, Enter, K, MouseLeft", None,
@@ -218,16 +218,16 @@ OPTS = [
         "list does not rebuild the skater at every step.", lo=0, hi=1000, unit="ms", advanced=True,
         needs="Create-A-Skater preview on"),
     Opt("cas_plus", "menus", "Menus", "Create-a-Skater+", "bool", "on", "off",
-        "Every clothing piece, hat, glasses, shoes, socks and accessory can take a colour, with full colour, vibrance and "
-        "lightness ranges, a swatch row, and Square / Circle to copy / paste a colour between pieces. Skin tone on the FACE "
+        "Every clothing piece, hat, glasses, shoes, socks and accessory can take a color, with full color, vibrance and "
+        "lightness ranges, a swatch row, and Square / Circle to copy / paste a color between pieces. Skin tone on the FACE "
         "page, and BODY SHAPE and FACE SHAPE pages. Everything is saved with your skater. Off = the stock Create-a-Skater."),
     Opt("cas_items", "menus", "Menus", "Show all CAS items", "choice", "all", "stock",
         "All = every piece in every list: locked and secret pieces, and pieces of the other styles (for example combat "
         "boots for every style). The game's own rules still stop pieces that cannot go together. Stock = only what the "
         "game shows (locked pieces stay hidden until unlocked).",
         [("all", "All items"), ("stock", "Stock items only")]),
-    Opt("cas_color_all", "menus", "Menus", "Colour every CAS piece", "bool", "on", "off",
-        "Every clothing piece can take a colour. Off keeps only the colours the game already allows.",
+    Opt("cas_color_all", "menus", "Menus", "Color every CAS piece", "bool", "on", "off",
+        "Every clothing piece can take a color. Off keeps only the colors the game already allows.",
         needs="Create-a-Skater+ on"),
     # ---- Startup
     Opt("straight_to_menu", "startup", "Startup", "Straight to the main menu", "bool", "off", "off",

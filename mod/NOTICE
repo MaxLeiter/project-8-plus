@@ -3,7 +3,7 @@ NOTICE
 ================================================================================
 
 Project 8 Plus's own code, patches, artwork and documentation are under the MIT
-licence in LICENSE. This file lists everything else the project uses, and what
+license in LICENSE. This file lists everything else the project uses, and what
 reaches a player's PC in which way.
 
 Nothing here is game content. The repository and its downloads contain no disc
@@ -20,7 +20,7 @@ endorsed it.
 "4xTextureDAT2_otf" by Philip Hofmann (Phhofm)
   https://github.com/Phhofm/models
   https://openmodeldb.info/models/4x-TextureDAT2-otf
-Licensed under the Creative Commons Attribution 4.0 International licence
+Licensed under the Creative Commons Attribution 4.0 International license
 (CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
 
 The HD texture tool does not include the model. The player downloads it from
@@ -35,14 +35,14 @@ textures are distributed by this project.
 ================================================================================
 
 The tools are Python scripts. They use these packages, which the player
-installs with pip and which carry their own licence files:
+installs with pip and which carry their own license files:
 
   NumPy              BSD-3-Clause (and the bundled components it lists)
   Pillow             MIT-CMU (HPND)
   SciPy              BSD-3-Clause
   quicktex           Apache-2.0
   PyTorch            BSD-3-Clause; its CUDA wheels include NVIDIA CUDA/cuDNN
-                     libraries under NVIDIA's own licence terms (HD textures)
+                     libraries under NVIDIA's own license terms (HD textures)
   spandrel           MIT (HD textures)
   safetensors        Apache-2.0 (HD textures)
   capstone           BSD-3-Clause (developer tools: disassembly)
@@ -58,7 +58,7 @@ installs with pip and which carry their own licence files:
 The plugin is built against include/ps3mod.h, the plugin interface of
 ps3recomp (https://github.com/sp00nznet/ps3recomp). The header declares the
 interface only; no ps3recomp code is compiled into the plugin. ps3recomp is
-under the MIT licence:
+under the MIT license:
 
   MIT License
 
@@ -97,7 +97,7 @@ The script-mod host plugin embeds the Lua 5.4.7 interpreter, unmodified source
 from https://www.lua.org/ftp/lua-5.4.7.tar.gz (SHA-256
 9fbf5e28ef86c69858f6d3d34eccc32e911c1a28b4120ff3e84aaa70cfbf1e30, as published
 on lua.org; the stand-alone lua.c / luac.c are left out). Lua is distributed
-under the MIT licence:
+under the MIT license:
 
   Copyright (C) 1994-2024 Lua.org, PUC-Rio.
 
@@ -129,7 +129,7 @@ music operations) embeds stb_vorbis.c by Sean Barrett, unmodified, from
 https://raw.githubusercontent.com/nothings/stb/master/stb_vorbis.c (fetched
 2026-10-07; SHA-256 4c7cb2ff1f7011e9d67950446b7eb9ca044f2e464d76bfbb0b84dd2e23e65636,
 git blob 3e5c2504c08f76b9d04e4adfbce80818631e835e). It is available under two
-licences, MIT or public domain (Unlicense); this project uses it under either:
+licenses, MIT or public domain (Unlicense); this project uses it under either:
 
   This software is available under 2 licenses -- choose whichever you prefer.
   ------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ executable. The retired RPCS3 version of the project (a patch file in RPCS3's
 patch format and a PINE IPC client, both in the git history) used RPCS3 the
 same way. No RPCS3 code is included.
 
-Font. The overlay artwork in tools/boot/assets contains text rasterised in
+Font. The overlay artwork in tools/boot/assets contains text rasterized in
 Bahnschrift, a font that ships with Windows. Only the developer command
 `bootscreen.py render-overlay`, which regenerates those images, loads the font
 (from the Windows fonts folder). The font file is not distributed.

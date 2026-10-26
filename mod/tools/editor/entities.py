@@ -896,7 +896,7 @@ OP_NAMES = {'static.add_object': 'Object', 'static.replace_object': 'Replaced ob
             'collision.remove': 'Removed collision', 'collision.clear': 'Cleared collision',
             'rails.add': 'Rail', 'rails.remove': 'Removed rails', 'nodes.add_rail': 'Rail',
             'nodes.add_gameobject': 'Game object', 'nodes.add_restart': 'Restart', 'nodes.set': 'Moved node',
-            'nodes.move_node': 'Moved node', 'texture.replace': 'Texture', 'texture.recolor': 'Recoloured texture',
+            'nodes.move_node': 'Moved node', 'texture.replace': 'Texture', 'texture.recolor': 'Recolored texture',
             'texture.overlay': 'Painted texture', 'script.add': 'Script', 'script.file': 'Script file',
             'script.dir': 'Script folder', 'script.config': 'Script settings'}
 

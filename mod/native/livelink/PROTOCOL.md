@@ -44,7 +44,7 @@ in control.
 
 ## Coordinates
 
-Game world space = the modkit's: Y up, right-handed, metres (the engine itself uses these units).
+Game world space = the modkit's: Y up, right-handed, meters (the engine itself uses these units).
 
 - `pos` = [x, y, z].
 - `rot` = 3x3, row-major, rows = the object's local X, Y, Z axes in world space (an orthonormal rotation).
@@ -79,7 +79,7 @@ Game world space = the modkit's: Y up, right-handed, metres (the engine itself u
 | `screenshot` | `path` (`.png` or `.ppm`; default `<mods root>\livelink_<time>.png`), `guest` (true = the game's render target, no overlay) | `path`, `result` once written |
 | `debug.draw` | `rails`, `collision` (physics debug), `nodes`, `skater_axes`: bool | the engine's own debug renderers (retail stubs re-enabled by the plugin), drawn over the frame |
 | `debug.lines` | `lines`: [[x0,y0,z0, x1,y1,z1, rgba?, width_px?], ...] (rgba 0xRRGGBBAA, [] clears) | world-space lines over the frame (editor gizmos, selection) |
-| `debug.mesh` | `tris`: [[x0,y0,z0, x1,y1,z1, x2,y2,z2, rgba?, rgba1?, rgba2?], ...] ([] clears; one colour = flat, three = per vertex) | world-space translucent triangles over the frame, sorted back to front (Create-a-Park ghosts). Capability `debug.mesh`: only on hosts whose live overlay draws triangle sets (ps3mod `PS3MOD_LINES_TRIS`, kill switch `PS3_LIVE_TRIS=0`) |
+| `debug.mesh` | `tris`: [[x0,y0,z0, x1,y1,z1, x2,y2,z2, rgba?, rgba1?, rgba2?], ...] ([] clears; one color = flat, three = per vertex) | world-space translucent triangles over the frame, sorted back to front (Create-a-Park ghosts). Capability `debug.mesh`: only on hosts whose live overlay draws triangle sets (ps3mod `PS3MOD_LINES_TRIS`, kill switch `PS3_LIVE_TRIS=0`) |
 | `debug.mask` | `rects`: [[x0, y0, x1, y1], ...] in the game's UI space (640 x 450 over the 16:9 picture, y down), at most 16; [] clears | `debug.lines` / `debug.mesh` leave these rectangles free (lines are cut, triangles clipped), so a mod's in-game panels stay readable over the overlay |
 | `mem.read` | `addr` (number or "0x..."), `len` <= 4096 | `hex` (diagnostics) |
 | `ping` | | |

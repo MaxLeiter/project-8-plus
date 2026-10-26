@@ -40,7 +40,7 @@ error, never misread.
 Conventions:
 
 - Names (ids) are lower-case `a-z0-9_`, starting with a letter.
-- Positions are world metres in the game's frame (Y up, right-handed), the same as the modding kit and the editor.
+- Positions are world meters in the game's frame (Y up, right-handed), the same as the modding kit and the editor.
 - `yaw` is in degrees about +Y; 0 faces +Z.
 - `pitch` is in degrees, positive looks up.
 
@@ -69,7 +69,7 @@ triggers: [{when: ..., do: [...]}, ...]
 ```yaml
 rory:
   name: Rory                        # shown as the dialogue box title (upper-case, the game's style)
-  color: [255, 170, 60]             # title colour
+  color: [255, 170, 60]             # title color
   ped: kick_rory                    # a person placed with peds.add (object id = the op name) ...
   spawn: {profile: Profile_Greg_Skater, pos: [x, y, z], yaw: 45, anim: PedM_ArmCrosIdle01_xx, zone: z_houses,
           when: <condition>}        # ... or created by the story when the zone loads
@@ -420,9 +420,9 @@ actors and camera keys.
 
 - **Story** (`story.py`):
   - **Flow**: start, chapters and quests as a node graph at real text size (pan with the mouse). Each node has a
-    coloured header and two lines of plain summary ("Talk to Rory", "2 steps: goal, dialogue"). Drag a chapter's
+    colored header and two lines of plain summary ("Talk to Rory", "2 steps: goal, dialogue"). Drag a chapter's
     quests pin onto a quest to move the quest into that chapter.
-  - **Dialogue**: the conversation tree: lines, choices (one pin per choice, labelled with its text), branches
+  - **Dialogue**: the conversation tree: lines, choices (one pin per choice, labeled with its text), branches
     (one pin per case plus "otherwise"), actions and ends. Drag pins to link, press Delete to remove links or
     nodes, use Add node or right-click to add.
   - **Problems**: the compiler's errors and warnings as sentences ("Quest “Warm Up”, step 1: there is no goal
@@ -599,7 +599,7 @@ event `goal_presentation_finished` (`goal_presentation_ok` / `goal_presentation_
 * Camera keyframes inside a control script: `CCam_DoMorph { LockTo = world Pos = (x,y,z) Quat = (qx,qy,qz) FOV = 72
   time = s motion = smooth }`, `CCam_SplineMorph { motion = smooth keyframes = [ {LockTo Pos Quat FOV time} ... ] }`,
   `CCam_WaitMorph`, `CCam_Yaw deg time = s Block`, `CCam_Orbit`. `Quat` stores x, y, z of a unit quaternion (w >= 0 is
-  implied). Positions are world metres. Examples: `m_film_school_intro_cam` (5-key spline), `chapter_info_e3_intro_flyin_cam`.
+  implied). Positions are world meters. Examples: `m_film_school_intro_cam` (5-key spline), `chapter_info_e3_intro_flyin_cam`.
 * `IGC_Camera_MoveToPlayer time = s` morphs back to the gameplay camera (`skatercam0`).
 * Stock generic control script: `goal_instruction_cam_control params = { camera_points = [ { Pos Quat FOV time motion
   text } ] }` morphs through the points showing `text` (font `text_a1`) under each, with a 1 s hold per point.
@@ -633,9 +633,9 @@ time alpha` (sprite `black` at z 9000), `igc_fadeout` / `igc_fadein`, `igc_ped_w
 All in `9758d39f.q` unless noted.
 
 * `create_dialog_box { title text buttons = [ { text pad_choose_script pad_choose_params } ] no_helper_text }` ->
-  `create_snazzy_dialog_box`: centred box (pos (320, 230), z 40), title font `text_a1` scale 0.7 `[90 90 70 255]`,
+  `create_snazzy_dialog_box`: centered box (pos (320, 230), z 40), title font `text_a1` scale 0.7 `[90 90 70 255]`,
   text `text_a1` 0.6 `[90 70 50 255]` in a 530-wide block, background `[8 15 24 170]`, buttons in a `VMenu`
-  (`create_dialog_button`: focus/unfocus colours, `pad_choose` -> `button_choose_script` destroys the box, then runs
+  (`create_dialog_button`: focus/unfocus colors, `pad_choose` -> `button_choose_script` destroys the box, then runs
   the button's script with its params). `dialog_box_exit` / `destroy_dialog_box` remove it and restore input.
   Several buttons = a multiple-choice prompt for free.
 * `goal_dialog_box { title text }` (`ff82ffd6.q`) is the stock NPC-dialogue look: `pauseskaters`,

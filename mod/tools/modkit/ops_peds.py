@@ -149,7 +149,7 @@ class ZoneScripts:
     def store(self):
         b = Q.serialize(self.q)
         if Q.serialize(Q.parse(b, strict=False)) != b:
-            self.ctx.fail('zone scripts qb does not re-serialise identically (qbfile bug)')
+            self.ctx.fail('zone scripts qb does not re-serialize identically (qbfile bug)')
         self.entry.data = b
 
 

@@ -66,7 +66,7 @@ export function Trailer({ clip, draft, label = "Watch the trailer" }: { clip: Cl
           <div className="trailer-placeholder" style={{ aspectRatio: `${clip.w} / ${clip.h}` }} />
         )}
         <footer>
-          All gameplay was recorded in real time on the native PC port. The slow-motion replay is labelled, and
+          All gameplay was recorded in real time on the native PC port. The slow-motion replay is labeled, and
           live-edit waits are fast-forwarded with a note on screen. Music: &ldquo;Your Game, Your Rules&rdquo;, an
           original score for Project 8 Plus (CC BY 4.0).
         </footer>

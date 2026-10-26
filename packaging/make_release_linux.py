@@ -91,7 +91,7 @@ def main():
     ap.add_argument("--vkd3d-source", required=True,
                     help="the official vkd3d release tarball (vkd3d-X.Y.tar.xz) the --vkd3d-lib libraries are built from, "
                          "unmodified: shipped in linux/lib/source with packaging/linux/build_vkd3d_zig.sh")
-    ap.add_argument("--vkd3d-license", help="(optional, older packages) a licence file for LICENSES/; default: COPYING "
+    ap.add_argument("--vkd3d-license", help="(optional, older packages) a license file for LICENSES/; default: COPYING "
                                             "and LICENSE read from --vkd3d-source")
     ap.add_argument("--notice", default=os.path.join(PROJECT, "NOTICE_linux"),
                     help="NOTICE of the Linux download (default: the repository's NOTICE_linux, made by "
@@ -230,9 +230,9 @@ def main():
                f"Complete source: ../source/{vk_base} (the official release tarball, SHA-256 {vk_sha}, also at "
                "https://dl.winehq.org/vkd3d/source/) and ../source/build_vkd3d_zig.sh (the build script used). "
                "The game loads these libraries at run time (dlopen): any interface-compatible build can replace them.\n"
-               "linux/sdl2/include: the SDL2 headers (zlib licence, https://libsdl.org); linux/sdl2/lib/libSDL2-2.0.so.0 is "
+               "linux/sdl2/include: the SDL2 headers (zlib license, https://libsdl.org); linux/sdl2/lib/libSDL2-2.0.so.0 is "
                "a link-time stub with no code (packaging/linux/make_sdl2_kit.sh): the game loads the system's SDL2.\n"
-               "linux/lib/fallback/libSDL2-2.0.so.0 (when present): upstream SDL2 (zlib licence, SDL2-LICENSE.txt), "
+               "linux/lib/fallback/libSDL2-2.0.so.0 (when present): upstream SDL2 (zlib license, SDL2-LICENSE.txt), "
                "built with zig for glibc 2.31 (packaging/linux/build_sdl2_zig.sh); only used where the system has no SDL2.\n")
     if a.zig_tar:
         pin = json.load(open(os.path.join(PROJECT, "builder", "data", "toolchain.json")))["zig_linux"]

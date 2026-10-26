@@ -377,7 +377,7 @@ def validate(m, where='modkit.json', known_op=None, mod_dir=None):
             try:
                 json.dumps(op)
             except (TypeError, ValueError) as e:
-                iss.err(path, f'not JSON-serialisable: {e}')
+                iss.err(path, f'not JSON-serializable: {e}')
             if known_op is not None:
                 msg = known_op(name)
                 if msg:

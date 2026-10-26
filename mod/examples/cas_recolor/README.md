@@ -1,4 +1,4 @@
-# Example: recoloured shirt and a cap (`example.cas_recolor`)
+# Example: recolored shirt and a cap (`example.cas_recolor`)
 
 A skater mod in two parts:
 
@@ -31,10 +31,10 @@ A skater mod in two parts:
   operation changes only the texels the shirt's UVs cover (`uv_mask`, on by default). Hue +150 degrees turns the
   shirt and its print to green and blue; the saturation and value factors make it stand out, since the shirt is dark.
   Free skate, skater select and create-a-skater draw Tony Hawk from the `cas_shared` pak, which is where the edit goes.
-- **The cap.** `cap.glb` (Y up, metres, in the human skeleton's bind pose, the skater faces +Z): one node `modkit_cap`, one
+- **The cap.** `cap.glb` (Y up, meters, in the human skeleton's bind pose, the skater faces +Z): one node `modkit_cap`, one
   material `modkit_cap_cloth`, normals, `TEXCOORD_0` (inside 0..1), white `COLOR_0`. Crown base at y = 1.765 m, apex at
   1.883 m, the brim reaches z = +0.16 m; `Bone_Head` is near y = 1.65 m. `offset` and `scale` (about the cap's own
-  centre) settle it on his head. Texture: v < 0.78 is the crown (panel seams at u = k/6, one at the front centre
+  center) settle it on his head. Texture: v < 0.78 is the crown (panel seams at u = k/6, one at the front center
   u = 0.5, an emblem on it), v >= 0.78 the brim. The crown is open at the bottom (the head hides it) and the brim is a
   thin closed sheet. The new mesh gets a material and a texture of its own.
 
@@ -48,11 +48,11 @@ Measured on the stock game: 2 files change (`cas_shared.pak` 4,380,928 B and `ca
 `.skin` 188,768 -> 200,320 B, its video memory part 111,316 -> 117,756 B; the largest SPU skinning job 83,552 B
 (101 bones) / 85,280 B (128 bones), under the 99,999 B limit; the skater geometry heap 306,000 / 614,400 B main and
 1,467,390 / 3,145,728 B video; about 24 s. A render of the built Tony Hawk (the kit's `import_skin.py render`) shows
-the cap on his head and the recoloured shirt.
+the cap on his head and the recolored shirt.
 
 Not yet tested in the running game ([docs/modding/operations.md](../../docs/modding/operations.md)).
 ## In game
 
 Verified in the native port: Tony Hawk wears the cap in skater select and in free skate, sitting on his hair at the
-offset and scale given in `modkit.json`, and the T-shirt shows the shifted colours (the jacket covers most of it in
+offset and scale given in `modkit.json`, and the T-shirt shows the shifted colors (the jacket covers most of it in
 free skate).

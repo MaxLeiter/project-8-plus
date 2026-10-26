@@ -386,7 +386,7 @@ class TexturesWorkspace(Workspace):
         inner = W - 2 * x0
         imgui.set_cursor_pos(v2(x0, y0))
         p = imgui.get_cursor_screen_pos()
-        ui.title("Textures", "Every texture of your game. Replace or recolour one and save it into a mod.")
+        ui.title("Textures", "Every texture of your game. Replace or recolor one and save it into a mod.")
         head_h = imgui.get_item_rect_size().y
         if self.state == "ready":
             self._pack_bar(app, p, inner)
@@ -698,7 +698,7 @@ class TexturesWorkspace(Workspace):
         if row is None:
             imgui.dummy(v2(1, px(SP["section"])))
             ui.empty_state("mouse-pointer-click", "Pick a texture", "Click one on the left to see it large, export it, "
-                           "replace it with your own picture or recolour it.")
+                           "replace it with your own picture or recolor it.")
             return
         pv = self.preview or {}
         ui.text(_title(row), "h2", wrap=True)
@@ -718,7 +718,7 @@ class TexturesWorkspace(Workspace):
             ui.gap(SP["stack_lg"])
             self._facts(row)
             return
-        self.tab = ui.tabs("dtab", ["Info", "Replace", "Recolour"] if row["kind"] != 6 else ["Info", "Replace"],
+        self.tab = ui.tabs("dtab", ["Info", "Replace", "Recolor"] if row["kind"] != 6 else ["Info", "Replace"],
                            self.tab)[1]
         ui.gap(SP["stack_md"])
         if self.tab == 0:
@@ -842,7 +842,7 @@ class TexturesWorkspace(Workspace):
         SP = T.SPACE
         if not self._target_note(app):
             return
-        ui.text("Shift the colours of the original. The result is saved at the original size.", "small",
+        ui.text("Shift the colors of the original. The result is saved at the original size.", "small",
                 T.TEXT_SECONDARY, wrap=True)
         ui.gap(SP["stack_lg"])
         changed = False

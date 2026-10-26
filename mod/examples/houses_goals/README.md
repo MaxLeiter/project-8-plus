@@ -11,7 +11,7 @@ free-skate start: walk up to it, the prompt appears, press square.
 | `example_street_tokens` Street Tokens | `goals.add_collect` | chalk marker in the street | pick up 5 tokens along the street in 60 s |
 | `example_block_race` Block Race | `goals.add_race` | get-there poster left of the driveway | pass 5 flags in order within 90 s; the timer counts up |
 
-Positions are world coordinates (metres, Y up). They were chosen from the zone's own surface: the free-skate start
+Positions are world coordinates (meters, Y up). They were chosen from the zone's own surface: the free-skate start
 `Z_Houses_TRG_Restart_Default` is at `[-63.17, 2.39, -66.64]` facing +X +Z; the garage floor runs about 6 m ahead of
 it, the driveway drops to the street (y 0.19) between 6 and 12 m.
 

@@ -4,8 +4,8 @@ NOTICE
 
 Third-party software in the THP8 native port's player download, and in the
 thp8.exe that the builder compiles and links on the player's own PC, with the
-licence texts those licences require to be reproduced. The port's own code is
-under the MIT licence in LICENSE.
+license texts those licenses require to be reproduced. The port's own code is
+under the MIT license in LICENSE.
 
 Nothing here is game content. The download contains no disc image, game
 executable, decrypted binary, extracted asset, platform key or generated
@@ -33,7 +33,7 @@ scaffold sources that are compiled on the player's PC, and the runtime library
 prebuilt as libps3recomp_runtime.a, all from ps3recomp fb177812 with this
 repository's patches (patches/ps3recomp-thp8) applied. Contributions merged
 into ps3recomp, including the live RSX draw engine brought upstream from the
-Yakuza: Dead Souls EX port, are under ps3recomp's licence as stated in its
+Yakuza: Dead Souls EX port, are under ps3recomp's license as stated in its
 CONTRIBUTORS.md.
 
 MIT License
@@ -64,7 +64,7 @@ stb_image, stb_image_write, stb_truetype - MIT (or public domain)
 
 By Sean Barrett and contributors. Vendored in ps3recomp's libs/codec and
 libs/font and compiled into the runtime library. Offered under either the MIT
-licence below or the Unlicense (public domain); used here under MIT.
+license below or the Unlicense (public domain); used here under MIT.
 
 ALTERNATIVE A - MIT License
 Copyright (c) 2017 Sean Barrett
@@ -90,7 +90,7 @@ xxHash - BSD-2-Clause
 
 By Yann Collet. ps3recomp's third_party/xxhash/xxhash.h (header-only),
 compiled into the runtime library (the host side of the texture replacement
-hashes texture contents with XXH3). The licence text is the comment at the top
+hashes texture contents with XXH3). The license text is the comment at the top
 of the header:
 
 xxHash - Extremely Fast Hash algorithm
@@ -129,7 +129,7 @@ Lua 5.4.7 - MIT
 
 By Lua.org, PUC-Rio. Embedded in the script-mod host plugin
 (thp8_mod_modapi.dll) of the creator add-on, which runs the Lua scripts of
-mods. The licence text is the notice at the end of lua.h:
+mods. The license text is the notice at the end of lua.h:
 
 Copyright (C) 1994-2024 Lua.org, PUC-Rio.
 
@@ -159,8 +159,8 @@ stb_vorbis 1.22 - MIT or public domain
 
 By Sean Barrett, unmodified. Compiled into p8audio.exe (addons\modkit\bin),
 the converter of the launcher's "My soundtrack" card, which reads the player's
-own Ogg Vorbis files. It is available under two licences, MIT or public domain
-(Unlicense); this project uses it under either. The licence text, verbatim
+own Ogg Vorbis files. It is available under two licenses, MIT or public domain
+(Unlicense); this project uses it under either. The license text, verbatim
 from the end of stb_vorbis.c:
 
 This software is available under 2 licenses -- choose whichever you prefer.
@@ -225,7 +225,7 @@ fb177812, ships in the download beside the prebuilt library. The library is
 linked into thp8.exe on the player's own PC by the builder, so relinking
 against a modified version of these decoders needs nothing more than
 rebuilding libps3recomp_runtime.a and running the builder again (LGPL-2.1
-section 6). The full licence follows.
+section 6). The full license follows.
 
                   GNU LESSER GENERAL PUBLIC LICENSE
                        Version 2.1, February 1999
@@ -749,7 +749,7 @@ zig 0.16.0 - MIT (Expat)
 
 https://ziglang.org. Includes compiler_rt, zig's implementation of the
 compiler support routines (statically linked), parts of which are ported from
-LLVM's compiler-rt (licence below, with libc++) and from musl (licence below).
+LLVM's compiler-rt (license below, with libc++) and from musl (license below).
 
 The MIT License (Expat)
 
@@ -778,7 +778,7 @@ libc++ - Apache-2.0 WITH LLVM-exception
 --------------------------------------------------------------------------------
 
 LLVM's libc++, the C++ standard library: shipped in zig's lib/ tree, compiled
-by zig and statically linked into thp8.exe. The same licence covers the parts
+by zig and statically linked into thp8.exe. The same license covers the parts
 of zig's compiler_rt ported from LLVM's compiler-rt.
 
 ==============================================================================
@@ -1098,7 +1098,7 @@ libc++abi - Apache-2.0 WITH LLVM-exception
 --------------------------------------------------------------------------------
 
 LLVM's libc++abi, the C++ ABI support library: shipped in zig's lib/ tree,
-compiled by zig and statically linked into thp8.exe. The same licence covers
+compiled by zig and statically linked into thp8.exe. The same license covers
 the parts of zig's compiler_rt ported from LLVM's compiler-rt.
 
 ==============================================================================
@@ -1419,7 +1419,7 @@ libunwind - Apache-2.0 WITH LLVM-exception
 
 LLVM's libunwind, the stack unwinder used for C++ exceptions: shipped in zig's
 lib/ tree, compiled by zig and statically linked into thp8.exe. The same
-licence covers the parts of zig's compiler_rt ported from LLVM's compiler-rt.
+license covers the parts of zig's compiler_rt ported from LLVM's compiler-rt.
 
 ==============================================================================
 The LLVM Project is under the Apache License v2.0 with LLVM Exceptions:
@@ -1876,12 +1876,12 @@ mingw-w64 winpthreads - MIT (if the threading library is linked)
 
 The download bundles the python.org Windows embeddable package of CPython
 3.13.15. It runs the launcher window, the builder and the ps3recomp lifter.
-Components with their own licences, as built into that package: OpenSSL
+Components with their own licenses, as built into that package: OpenSSL
 (OpenSSL 3.0.21 9 Jun 2026), zlib 1.3.1, expat (expat_2.8.2), libmpdec 4.0.0,
 libffi, bzip2, liblzma from XZ Utils (public domain / BSD Zero Clause). Its
 SQLite and winsound modules are left out. The package also contains
 vcruntime140.dll, Microsoft Distributable Code redistributed under the terms
-quoted in Python's licence below. Python's LICENSE.txt, as shipped with the
+quoted in Python's license below. Python's LICENSE.txt, as shipped with the
 package, follows verbatim; after it, the CPython documentation's
 acknowledgements for software incorporated into Python.
 
@@ -3744,7 +3744,7 @@ SOFTWARE.
 Installed unmodified into the download's python/Lib/site-packages by
 packaging/make_release.py from the hash-pinned wheels of
 packaging/launcher_requirements.txt (64-bit CPython 3.13 on Windows, from
-PyPI). Each package keeps its own licence files in its python/Lib/site-
+PyPI). Each package keeps its own license files in its python/Lib/site-
 packages/<name>-<version>.dist-info folder (licenses/ or LICENSE), which is
 where the full texts are. Test suites, C headers, import libraries and demo
 programs of the wheels are left out of the download, and so are their type

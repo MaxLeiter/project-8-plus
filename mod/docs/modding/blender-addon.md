@@ -57,7 +57,7 @@ Select objects and press Mark as mod target. The dialog asks for the operation a
 | Replace skinned meshes (`skin.replace_mesh`) | edit meshes of a skater, CAS part or board | yes (with its armature) |
 | Replace skinned model (`skin.replace_part`) | the object is the whole model | yes (with its armature) |
 | Add mesh to skinned model (`skin.add_mesh`) | a cap, a backpack, ... | yes |
-| Recolour skinned mesh (`skin.recolor`) | hue / saturation / value of the game mesh the object came from (skin, pak and mesh are prefilled from the import's custom properties) | no |
+| Recolor skinned mesh (`skin.recolor`) | hue / saturation / value of the game mesh the object came from (skin, pak and mesh are prefilled from the import's custom properties) | no |
 | Add grind rail (`nodes.add_rail`) | a rail along this object: a chain of connected edges (or `thp8_rail_points`) | yes (loose edges included) |
 | Add collision (mesh) (`collision.add_mesh`) | this object's triangles as collision | yes |
 | Add collision (box) (`collision.add_box`) | the object's bounding box as collision | yes |

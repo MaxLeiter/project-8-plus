@@ -224,7 +224,7 @@ def _foreign_materials(ctx, ed, prims, op):
             n += 1
     if n:
         ctx.info(f"game_model {op['game_model']}: {n} material(s) not in {ed.name}: cloned from {ed.name} templates "
-                 f"with the model's base-colour texture")
+                 f"with the model's base-color texture")
 
 
 def _pick_node(ctx, doc, want, fallback=None):

@@ -31,14 +31,14 @@ Features (all in thp8_mod_p8plus.ini)
   cutscenes60                   60 FPS Cutscenes (experimental)
   hor_plus = auto | off | 21:9  Hor+ ultrawide. auto follows the game window's aspect
                                 live, replacing the four fixed-aspect yml variants
-  hud169                        16:9 HUD: HUD/menus/text stay 16:9 and centred on ultrawide
+  hud169                        16:9 HUD: HUD/menus/text stay 16:9 and centered on ultrawide
   pillarbox                     (native only) movies and the boot / loading screens at 16:9
                                 with black side bars instead of stretched
   hor_plus_pip                  off (default) = picture-in-picture views (goal camcorder
                                 panel, goal intro cameras, photo capture) keep the stock
-                                16:9 projection; on = old behaviour (widened, squeezed)
+                                16:9 projection; on = old behavior (widened, squeezed)
   bloom = 0..200 (percent)      No Bloom (0) / Bloom 25% / Bloom 50% / stock (100)
-  neutral_grading               Neutral Colour Grading
+  neutral_grading               Neutral Color Grading
   dof                           off = No Depth of Field
   screen_blur = on | off | tints   No Screen Blur / No Radial Blur (keep tints)
   film_grain                    off = No Film Grain
@@ -54,7 +54,7 @@ Features (all in thp8_mod_p8plus.ini)
                                 live (keyboard <-> Xbox controller)
   key_<input> = keys            (native only) keyboard bindings of the port's keyboard play
                                 (one line per PS3 input; first key = the one prompts show)
-  center_button_glyphs          (native only) button glyphs centred on the text next to them
+  center_button_glyphs          (native only) button glyphs centered on the text next to them
                                 (the game hangs them ~3 px low); all prompt sets, full size
   skip_intro                    (native only) straight to the main menu (no logos / PRESS START
                                 / intro; the first start still builds its data cache); off =
@@ -83,7 +83,7 @@ equivalent -- see "Graphics quality" below):
   shadow_filter = hw | pcf | pcss            shadow edge filtering
 
 Defaults are the recommended set from the RPCS3 release: 60 FPS, 60 FPS Menus,
-Hor+ auto + 16:9 HUD, Bloom 50%, Neutral Colour Grading, Draw Distance x2.
+Hor+ auto + 16:9 HUD, Bloom 50%, Neutral Color Grading, Draw Distance x2.
 DOF, blur, grain and shadow distance stay stock, and cutscenes stay at 30.
 The renderer keys ship as graphics_preset = high and render_scale = auto; aa, aniso,
 kick, supersample, sharpen and the two shadow keys are left to the preset (high: fxaa,
@@ -133,7 +133,7 @@ the look the list was opened with (or the last item chosen in it). Only X change
 so only chosen items reach a save. The game's own item rules apply to a preview exactly as to
 a choice (e.g. a hat swaps the hair for its hat-hair version, a shirt fixes the bare-torso and
 lower-leg parts). Lists show only items the game lets you pick, so locked items are never
-previewed. The colour, logo position and size sliders were already live in the stock game.
+previewed. The color, logo position and size sliders were already live in the stock game.
 
 How: the logic is QB script of our own (qb/cas_preview.q; tools/gen_caspreview.py compiles it
 with thp8-mod tools/qbc into src/p8plus_caspreview_qb.h, no game code). The plugin wraps the QB

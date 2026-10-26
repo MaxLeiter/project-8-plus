@@ -25,7 +25,7 @@ ffmpeg on the PATH.
 To hear only your own music, add `{"op": "music.options", "stock": false}`. To use your own files without copying them
 into a mod, see `@music` paths and the launcher's Music folder in [soundtrack.md](../../docs/modding/soundtrack.md).
 
-## Licence
+## License
 
 Music: 'Your Game, Your Rules', original score for Project 8 Plus, CC BY 4.0
 (https://creativecommons.org/licenses/by/4.0/). It is synthesized from code (tools/trailer/music_punk); it uses no

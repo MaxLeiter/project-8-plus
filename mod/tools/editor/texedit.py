@@ -106,7 +106,7 @@ def properties(panel, ent, m):
     changes = {}
     imgui.text(f"Texture {p.get('texture')}")
     modes = ['recolor', 'replace', 'overlay']
-    labels = ['Recolour', 'Replace', 'Paint over']
+    labels = ['Recolor', 'Replace', 'Paint over']
     i = modes.index(p.get('mode', 'recolor')) if p.get('mode') in modes else 0
     if ui is not None:
         ch, i = ui.segmented('##texmode', labels, i, size='sm')
@@ -120,7 +120,7 @@ def properties(panel, ent, m):
         tint = p.get('tint') or [1.0, 1.0, 1.0]
         c1 = c2 = c3 = c4 = False
         if ui is not None and ui.begin_props('##recolour'):
-            ui.prop_group('Recolour', 'palette')
+            ui.prop_group('Recolor', 'palette')
             ui.prop_row('Hue shift', modified=abs(h) > 1e-3)
             c1, h = ui.slider('hue', float(h), -180.0, 180.0, '{:+.0f}', suffix='\u00b0', ticks=[0])
             ui.prop_row('Saturation', modified=abs(s - 1) > 1e-3)
@@ -128,7 +128,7 @@ def properties(panel, ent, m):
             ui.prop_row('Brightness', modified=abs(v - 1) > 1e-3)
             c3, v100 = ui.slider('val', float(v) * 100, 0.0, 300.0, '{:.0f}', suffix='%', ticks=[100])
             s, v = s100 / 100.0, v100 / 100.0
-            ui.prop_row('Tint', 'Multiplies the colours; white = no tint', modified=any(abs(x - 1) > 1e-3 for x in tint))
+            ui.prop_row('Tint', 'Multiplies the colors; white = no tint', modified=any(abs(x - 1) > 1e-3 for x in tint))
             c4, t2 = ui.color_swatch('tint', [float(x) for x in tint[:3]] + [1.0])
             t2 = list(t2)[:3]
             ui.end_props()

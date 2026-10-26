@@ -98,7 +98,7 @@ Notes:
   or off, songs added or removed), a choice can move to another song. Check the MUSIC PLAYLIST menu once after such
   a change.
 - Cutscenes that play a specific stock song stay silent when that song is not in the playlist. That is the game's
-  own behaviour.
+  own behavior.
 - `PlayTrack` and skip use the same table, so everything the game does with music works with your songs.
 
 ## Verified in the game

@@ -16,5 +16,5 @@ works), [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md), [CONTRIBUTING.md](CONTRIBU
 | `mod/` | Project 8 Plus: the plugin, the script host, the live link and the add-on tools |
 | `docs/`, `site/` | documentation and the website's source |
 
-Licence: MIT (LICENSE). Third-party notices: NOTICE (Windows download), NOTICE_linux (Linux download), NOTICE_HD (the HD
+License: MIT (LICENSE). Third-party notices: NOTICE (Windows download), NOTICE_linux (Linux download), NOTICE_HD (the HD
 pack).

@@ -10,7 +10,7 @@ A new item for the Create-a-Skater lists, made from your own model. It needs Pro
 - a band with a rounded section and a stitched pad underneath.
 
 It has 9,544 triangles and one 256 x 256 texture: matte surfaces with baked ambient occlusion. The shell is light so
-the colour rows tint it; the cushions and pads stay dark. The model is left unskinned and the op attaches it to the
+the color rows tint it; the cushions and pads stay dark. The model is left unskinned and the op attaches it to the
 head bone. It is fitted to the CAS heads' ear position and skull, and `preview.png` is a render of the file alone.
 
 ![the headphones](preview.png)
@@ -23,7 +23,7 @@ head bone. It is fitted to the CAS heads' ear position and skull, and `preview.p
 What the build does, on your machine, from your own game files:
 
 1. It copies a stock item of the punk style as a container (for an accessory slot, the style's first hat: a cloth
-   material that takes colour, where the metal accessories' material would not) into a new model file,
+   material that takes color, where the metal accessories' material would not) into a new model file,
    `models/skater_male/p8m_example_cas_headphones_headphones.skin`, inside the punk Create-a-Skater pak.
 2. It imports the glTF into that copy, the way `skin.replace_part` does: the stock item's meshes are hidden, and the
    headphones and their texture are added.
@@ -31,7 +31,7 @@ What the build does, on your machine, from your own game files:
    the list (`CAS_PUNK_Accessory03`) when the game loads it.
 
 In the game, the item appears as **HEADPHONES** under TORSO > MISC > CHOOSE MISC ITEMS. It previews on focus, and its
-colour row (MISC ITEM COLOR) tints the shell. If you disable the mod, the item is gone. A skater who wore it keeps
+color row (MISC ITEM COLOR) tints the shell. If you disable the mod, the item is gone. A skater who wore it keeps
 the slot's default instead.
 
 Fields of `cas.add_item`: see the docstring of [tools/modkit/ops_cas.py](../../tools/modkit/ops_cas.py). The `style`

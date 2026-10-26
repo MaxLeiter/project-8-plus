@@ -31,7 +31,7 @@ incl. cross-TOC stubs, owner, fn) and `tools/ebootq.py consts`.
 - Mesh record (0x80): +0x14 material, +0x18 vertex key (sub_5F57A0), +0x24 u16
   index count, +0x26 u16 vertex count, +0x40 vram vertex offset, +0x5A stride,
   +0x5C vram index offset, +0x60 skin block. Vertex key bits: 0 position,
-  3 (+5) normal (CMP 11:11:10), 10-11 tangent/binormal, 4 colour, 6 half UVs,
+  3 (+5) normal (CMP 11:11:10), 10-11 tangent/binormal, 4 color, 6 half UVs,
   16-31 UV slot sizes, 7 skinned (stream 1). Draws are u16 triangle strips, CCW.
 - Skin block CAFEBAB4: 1/2/3-bone groups, 32-byte records (bind position, wB,
   wA, 3 CMP vectors, BAADF00D). The human skeleton (`.ske`) has 101 bones.
@@ -59,7 +59,7 @@ boards 1.9k. 2,140 faceted round world parts detected (mostly 6-16 segments).
 
 ## World smoothing
 
-`smooth_world.py` finds round parts (wheels, drums, tyres, columns, rails,
+`smooth_world.py` finds round parts (wheels, drums, tires, columns, rails,
 light rings), welds them with the shell they belong to, applies adaptive PN
 refinement at up to 3x, moves attached detail with the shell, and picks objects
 greedily by instances x size x faceting / added bytes under a per-zone budget

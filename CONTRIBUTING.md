@@ -69,7 +69,7 @@ made with the patched tools, so the series has to be exact.
   series again and remove numbers that no longer exist. A patch edited in place
   stops matching the branch it came from.
 - **Generic first.** Fix ps3recomp the way any title would want it fixed, and
-  offer it upstream. Behaviour only THP8 needs goes behind an environment switch
+  offer it upstream. Behavior only THP8 needs goes behind an environment switch
   or a title default that is off for other titles; title code that cannot be
   generic belongs in `src/title/`, not in the runtime.
 - **Line endings.** ps3recomp has files with mixed line endings. Use

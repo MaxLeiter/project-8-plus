@@ -59,7 +59,7 @@ unload).
   blocks reserved for permanent objects outside classic mode; `ShouldSpawnPed Priority = $COIM_Priority_PedLife` asks
   it whether a life ped fits.
 
-### Profiles (appearance and behaviour)
+### Profiles (appearance and behavior)
 
 A profile is a global struct in the main script pak (`8fc6e6ce.qb`) that merges a creation-params struct:
 
@@ -105,11 +105,11 @@ BlockUntilEvent Type = playanim_finished                                        
 AI_giveorder Name = Behavior_PlayAnim params = { anim = X event_id = Y }  +  BlockUntilEvent Type = Y
 ```
 
-### Movement and behaviour (the agent system)
+### Movement and behavior (the agent system)
 
-Peds are "agents" with behaviour hierarchies (`order`, `logic`, `life`, `animation`, `reaction`, ...):
+Peds are "agents" with behavior hierarchies (`order`, `logic`, `life`, `animation`, `reaction`, ...):
 
-- `AI_giveorder Name = <behaviour> params = {...}` (`Agent_GiveOrder`); `Bv_Agent` = the default life behaviour,
+- `AI_giveorder Name = <behavior> params = {...}` (`Agent_GiveOrder`); `Bv_Agent` = the default life behavior,
   `behavior_stand`, `Behavior_Blank`, `Behavior_LookAt { Object = Skater }`.
 - Walking: `AI_giveorder Name = Behavior_MoveTo params = { Waypoint = <node> movement_desc = { movement = WALK_SLOW |
   WALK_FAST | run_slow | run_fast } finished_event_id = Move_Finished }`, then `BlockUntilEvent anytypes = [
@@ -119,9 +119,9 @@ Peds are "agents" with behaviour hierarchies (`order`, `logic`, `life`, `animati
 - Life mode: `AI_giveorder Name = Bv_Agent` + `Agent_SetInteractAreas interact_mode = life interact_areas = [ <area> ]`
   sends a ped to wander between the `Interaction` points of that area (how `m_story_skateshop` drives its peds).
 - Reactions (bails, dodges): `agent_stats` (registered by `RegisterAgentStatsStructures`, `1412978d.qb`) picks a
-  damage block (`323fbf71.qb`) and a life behaviour (`ee7b176c.qb`):
+  damage block (`323fbf71.qb`) and a life behavior (`ee7b176c.qb`):
 
-  | stats | can be trampled | can be bumped | life behaviour | used by |
+  | stats | can be trampled | can be bumped | life behavior | used by |
   |---|---|---|---|---|
   | `stats_civilian`, `stats_civilian_kid` | yes | yes (dodge, `Bumped_Small/Big_*`, knock-down) | `Bv_LifePed` | random peds |
   | `stats_goal_ped` | no | knock-down only | `Bv_GoalPed` | goal peds |
@@ -173,7 +173,7 @@ Houses has one: the spawner `Z_Peds_Houses_S_Sk8Ped01a00` (`ProfileName = Skater
   [JumpHeight = 0.5]  [ManualType = manual]  [TerrainType = TERRAIN_DEFAULT]  Links = [<next node index>] }
 ```
 
-The skater ped (a profile with `skateboard_profile`; `Bv_FixedPathSkaterPed` behaviours, `Task_Skater`) picks a line
+The skater ped (a profile with `skateboard_profile`; `Bv_FixedPathSkaterPed` behaviors, `Task_Skater`) picks a line
 of its area, skates it doing the actions, and picks again at the end. `m_story_skateshop` puts a placed skater ped
 (`Type = Ped_Global_Skater`, `IsSkaterPed`, `PedAI_Type = Skater`) on a line of a mission area with `AI_giveorder
 Name = Bv_Agent` + `Agent_SetInteractAreas interact_mode = life interact_areas = [ skateshop_school ]`. Pros as skater
@@ -217,7 +217,7 @@ with five people: +5,120 B).
 
 ## The operations
 
-All in `tools/modkit/ops_peds.py` (PHASE 50: before the goals ops). Coordinates are world space (Y up, metres); yaw in
+All in `tools/modkit/ops_peds.py` (PHASE 50: before the goals ops). Coordinates are world space (Y up, meters); yaw in
 degrees about +Y, local +Z -> (sin yaw, 0, cos yaw), the same as every other op. A person's `name` is its node name
 and its run-time object id (Lua: `qb.call(fn, params, name)`), used as given: give it your own prefix.
 
@@ -246,7 +246,7 @@ What each kind makes (in the zone's `<zone>_scripts` qb, plus path nodes in its 
   (run by `levels.qb` after the zone's node array is parsed, each time the zone streams in; the kit adds the call,
   or the script if the zone has none): `if not isCreated <name>` -> `CreatePedAtPos Pos Quat Ped = <name> profile
   TriggerScript = <name>_Script [CompassBlipType = goal] [ped_skates = 1]`. `<name>_Script` (run on the new ped)
-  spawns `<name>_Life`: stats, look-at, then the kind's behaviour;
+  spawns `<name>_Life`: stats, look-at, then the kind's behavior;
 - **stand**: `<name>_Life` plays the idle animation loop (or the random sequence);
 - **walker**, `mode: follow` (default): `Waypoint` nodes `<name>_wp<i>` linked in order (and back to the first for a
   loop); `<name>_Life` stops the agent's AI (`Behavior_Blank`) and calls `<name>_WalkTo waypoint = <node>` for each:
@@ -300,7 +300,7 @@ of a `z_peds` area; `{"zone", "ambient": true}`: all of them (edits `z_peds`, ch
 "<pedlife table>", "profiles": [{"profile", "weight"}]}`: what a `z_peds` pedlife table spawns (e.g. make every Houses
 street kid a tourist: `kid_pedlife_profiles`).
 
-### Editor and catalogue
+### Editor and catalog
 
 `ops_peds.SCHEMA` (property panels, gizmos: `pos` position, `yaw_deg` yaw, `path.points` path, marker `ped`) and
 `QUERIES`:

@@ -152,7 +152,7 @@ def recolor(op, ctx):
     out = I.edit_texture(ctx, skin, fn, mesh=op.get('mesh'), material=_crc(op.get('material')), texture=_crc(tex),
                          paks=paks, copies=op.get('copies', 'drawn'), label=op['op'],
                          mask_to_meshes=bool(op.get('uv_mask', True)))
-    ctx.info(f'recoloured {len(out)} texture(s): ' + ', '.join(f"{r['crc']} {r['size'][0]}x{r['size'][1]} in {r['copy']}"
+    ctx.info(f'recolored {len(out)} texture(s): ' + ', '.join(f"{r['crc']} {r['size'][0]}x{r['size'][1]} in {r['copy']}"
                                                             for r in out))
     return out
 

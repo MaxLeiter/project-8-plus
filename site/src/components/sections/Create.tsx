@@ -88,17 +88,17 @@ export function Create() {
           title="Texture Studio"
           flip
           media={
-            <Framed caption={<><b>Recolouring</b> a texture</>} note="screen recording" lb={lightboxVideo("ui-tex-recolour", "Recolouring a texture in the Texture Studio")}>
-              <MediaClip id="ui-tex-recolour" label="Recolouring a texture in the Texture Studio" />
+            <Framed caption={<><b>Recoloring</b> a texture</>} note="screen recording" lb={lightboxVideo("ui-tex-recolour", "Recoloring a texture in the Texture Studio")}>
+              <MediaClip id="ui-tex-recolour" label="Recoloring a texture in the Texture Studio" />
             </Framed>
           }
         >
           <p>
             All 7,805 of the game&rsquo;s textures can be searched and filtered here. Export any of them as a PNG, swap
-            in your own picture or recolour it, then save the change into a pack that the game draws instead. The
+            in your own picture or recolor it, then save the change into a pack that the game draws instead. The
             texture library is made locally from your game files.
           </p>
-          <Facts items={[<>Replace at 1&times;, 2&times; or 4&times; the original size</>, <>Recolour by hue, saturation and brightness, with a live preview</>, <>Test in game from the same page</>]} />
+          <Facts items={[<>Replace at 1&times;, 2&times; or 4&times; the original size</>, <>Recolor by hue, saturation and brightness, with a live preview</>, <>Test in game from the same page</>]} />
         </Tool>
 
         <Tool

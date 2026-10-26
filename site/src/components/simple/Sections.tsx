@@ -348,9 +348,6 @@ export function LegalFooter() {
       <div className="footer-band">
         <div className="wrap">
           <Lockup />
-          <p className="tag-line">
-            Your game. <span>Your rules.</span>
-          </p>
         </div>
       </div>
       <div className="wrap s-footer-body">

@@ -34,7 +34,7 @@ def load(ed, thumbnails=True):
     def done(cat):
         ed.peds_catalog = cat
         ed._peds_task = None
-    ed._peds_task = ed.run_task('People catalogue', work, done)
+    ed._peds_task = ed.run_task('People catalog', work, done)
 
 
 def asset_items(ed):

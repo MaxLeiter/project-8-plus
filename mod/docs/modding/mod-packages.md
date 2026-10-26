@@ -175,7 +175,7 @@ Both are deterministic zips:
 p8share.json        {"p8share": 1, "kind": "park" | "look", "name", "author", "description", "created",
                      "made_with", "game": {"title_id"}, "thumbnail": "thumb.png", "park" | "look": {summary},
                      "files": {"<entry>": {"sha256", "size"}}}
-thumb.png           drawn by the launcher from the data: a plan of the pieces, or the look's colours
+thumb.png           drawn by the launcher from the data: a plan of the pieces, or the look's colors
 park/modkit.json    the park document: pieces and their parameters, raw operations, x_editor / x_cap
 park/assets/...     the creator's own imported models (.glb .gltf .bin) and pictures (.png .jpg)
 park/README.md ...  the creator's notes
@@ -199,7 +199,7 @@ in the editor or built. Tool data other than `x_editor` and `x_cap` is removed. 
 ### The content check
 
 `sharecheck` runs on export (a file that fails is never written) and on import (nothing is copied). It uses an allow
-list: anything it does not recognise is refused.
+list: anything it does not recognize is refused.
 
 - **Every entry** must be listed in `p8share.json` with the right size and SHA-256. Nothing can be hidden, added or
   swapped after the file was made.

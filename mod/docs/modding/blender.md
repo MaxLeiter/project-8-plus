@@ -12,7 +12,7 @@ Anything that writes glTF works, not only Blender: the example mods' `.glb` file
 
 ## Axes and units
 
-- The game's world is Y up, right-handed, 1 unit = 1 metre (Tony Hawk is 1.88 m tall). glTF is the same.
+- The game's world is Y up, right-handed, 1 unit = 1 meter (Tony Hawk is 1.88 m tall). glTF is the same.
   Blender is Z up; its glTF importer and exporter convert on the way in and out, so with the exporter's default
   +Y Up the file has game coordinates and the kit does no conversion of its own.
 - The skater faces +Z in the file, which is -Y in Blender (the front view, numpad 1, looks at the skater's face).
@@ -52,7 +52,7 @@ File > Export > glTF 2.0 (names as in Blender 4.2; earlier 4.x versions place a 
 | Include > Data > Custom Properties | on (the kit reads object custom properties) |
 | Transform > +Y Up | on (default) |
 | Data > Mesh > Apply Modifiers | on |
-| Data > Mesh > UVs, Normals, Vertex Colors | on. Blender 4.2 and newer export vertex colours only when a material uses them, unless the vertex-colour option is set to *Active*; a missing colour layer is read as white |
+| Data > Mesh > UVs, Normals, Vertex Colors | on. Blender 4.2 and newer export vertex colors only when a material uses them, unless the vertex-color option is set to *Active*; a missing color layer is read as white |
 | Data > Mesh > Loose Edges | on for a rail drawn as connected edges |
 | Data > Material > Images | Automatic (PNG, or JPEG where the source is JPEG) |
 | Data > Armature | on for skinned parts; the armature's bones keep the game's names |
@@ -64,18 +64,18 @@ Put the file in your mod's `assets/` folder and name it in the manifest ([packag
 
 | data | what the game wants |
 |---|---|
-| positions | metres. Zone objects in world space, props and skinned parts in model space. An added object is placed by the operation's `position` / `rotation_y` / `scale`, or by its glTF transform |
+| positions | meters. Zone objects in world space, props and skinned parts in model space. An added object is placed by the operation's `position` / `rotation_y` / `scale`, or by its glTF transform |
 | triangles | any glTF triangle list; the kit strips it for the game ([limits.md](limits.md) for the size limits) |
 | normals | unit vectors (computed if absent); the game stores them at 11:11:10 bits, so very small normal detail is lost |
-| UV set 0 (`TEXCOORD_0`) | the colour texture. Keep it within 0..1: the game stores UVs as half floats (about 3 decimal digits near 1, fewer further out) |
+| UV set 0 (`TEXCOORD_0`) | the color texture. Keep it within 0..1: the game stores UVs as half floats (about 3 decimal digits near 1, fewer further out) |
 | other UV sets | zone meshes use sets 4 and 5 for the two zone lightmap atlases. Added objects get theirs from the zone surface below them (`lightmap` parameter), so you never draw lightmap UVs |
-| vertex colour (`COLOR_0`) | multiplied with the texture. White = no change |
+| vertex color (`COLOR_0`) | multiplied with the texture. White = no change |
 | tangents | computed from `TEXCOORD_0` (skinned imports use a glTF `TANGENT` when there is one) |
-| material | one game mesh per material. The base colour texture and factor are read; the alpha mode picks the shader template: `OPAQUE` an opaque one, `MASK` (alpha-tested cut-out, the way the game's own fences and foliage work) a cut-out one, `BLEND` a blended one. A normal texture is used if the material has one, else a flat normal map fills the slot |
-| skin weights | at most 3 bones per vertex; more are pruned to the 3 largest and renormalised |
+| material | one game mesh per material. The base color texture and factor are read; the alpha mode picks the shader template: `OPAQUE` an opaque one, `MASK` (alpha-tested cut-out, the way the game's own fences and foliage work) a cut-out one, `BLEND` a blended one. A normal texture is used if the material has one, else a flat normal map fills the slot |
+| skin weights | at most 3 bones per vertex; more are pruned to the 3 largest and renormalized |
 
 Check the budgets before you build: in Blender turn on Statistics (the overlay menu) to see triangles and vertices of
-the selection. A vertex is counted per unique combination of position, normal, UV and colour, so hard edges and UV
+the selection. A vertex is counted per unique combination of position, normal, UV and color, so hard edges and UV
 seams add vertices; the exported file's vertex count is the number the game sees.
 
 ## Custom properties
@@ -85,7 +85,7 @@ Custom properties on objects, meshes and materials (Object Properties > Custom P
 
 | property | on | meaning | who sets it |
 |---|---|---|---|
-| `thp8_rail_points` | an object | the grind line of a rail: a flat list `x, y, z, x, y, z, ...` in the object's local space, metres, in the direction of travel (read by `nodes.add_rail`; see the [houses_ramp example](../../examples/houses_ramp/README.md)). A mesh of connected edges (loose edges exported) works too | you |
+| `thp8_rail_points` | an object | the grind line of a rail: a flat list `x, y, z, x, y, z, ...` in the object's local space, meters, in the direction of travel (read by `nodes.add_rail`; see the [houses_ramp example](../../examples/houses_ramp/README.md)). A mesh of connected edges (loose edges exported) works too | you |
 | `thp8_terrain`, `thp8_flags` | a material | collision terrain and face flags for the triangles that use it (`collision.add_mesh` from glTF) | you |
 | `thp8_template` | a material | clone the game material of this checksum or name for it (otherwise a template is chosen by alpha mode) | you |
 | `thp8_material` | a material | reuse the game material with this checksum as it is | the exporters (and you, to reuse a game material) |

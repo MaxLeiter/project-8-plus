@@ -29,7 +29,7 @@ export const hd = {
   // change (the textures are already near screen resolution there, and fonts are not upscaled), so they have no tab.
   pairs: [
     { id: "graffiti", tab: "Graffiti", off: "v4-hd-graffiti-off", on: "v4-hd-graffiti-on", alt: "Tagged concrete wall in Cretepark, close up", cap: "Cretepark: a tagged wall, close up (cropped, not enlarged)." },
-    { id: "ground", tab: "Ground", off: "v4-hd-ground-off", on: "v4-hd-ground-on", alt: "Dirt, old tyres and a grind rail in a Houses backyard", cap: "Houses: the backyard dirt, tyres and rail." },
+    { id: "ground", tab: "Ground", off: "v4-hd-ground-off", on: "v4-hd-ground-on", alt: "Dirt, old tires and a grind rail in a Houses backyard", cap: "Houses: the backyard dirt, tires and rail." },
     { id: "rail", tab: "Rail", off: "v4-hd-rail-off", on: "v4-hd-rail-on", alt: "A grind rail over dirt and a rusty barrel lid, close up", cap: "Houses: a grind rail and a rusty barrel lid, close up." },
   ],
 };
@@ -51,7 +51,7 @@ export const mods = {
   // Source: installer builder/thp8_builder/launcher/ws_setup.py:67-68 (defaults), addons.py, the shipped P8Plus ini.
   on: [
     { name: "Project 8 Plus", text: "60, 120 or 144 fps, and ultrawide support." },
-    { name: "Create-a-Skater Plus", text: "Colour any piece of clothing, set a skin tone, shape the body and face, and use every item, locked ones too." },
+    { name: "Create-a-Skater Plus", text: "Color any piece of clothing, set a skin tone, shape the body and face, and use every item, locked ones too." },
     { name: "HD textures", text: "Sharper world, skaters and menus, made on your PC in the background." },
     { name: "Smoothed skaters", text: "Rounder pro skaters and character heads, made from your game files during the install." },
     { name: "Button prompts", text: "Keyboard and controller support, with matching on-screen prompts." },
@@ -142,10 +142,11 @@ export type Issue = { t: string; d: string };
 export const issues: Issue[] = [];
 
 export const footer = {
+  // Max's wording (2026-10-25). /docs keeps the fuller Legal section.
   legal: [
-    "You must own Tony Hawk's Project 8 for PlayStation 3 to use this project. The download contains no game files: no disc image, no game program, no extracted assets and no keys. Everything made from the game is made on your PC, from your copy, and may not be shared.",
-    "Project 8 Plus is a free, unofficial fan project. It is not affiliated with, sponsored by or endorsed by Activision, Neversoft, Tony Hawk, Sony or any other rights holder. Tony Hawk's Project 8 is a trademark of Activision Publishing, Inc. Tony Hawk is a trademark of Tony Hawk, Inc. The game was developed by Neversoft Entertainment. PlayStation and PS3 are trademarks of Sony Interactive Entertainment Inc. Screenshots and footage of the game are shown to document the project.",
-    "This project's own code and art are under the MIT licence. Third-party parts keep their own licences.",
+    "You need your own copy of Tony Hawk's Project 8 for PS3. Nothing from the game is included or downloaded.",
+    "Unofficial and not affiliated with Activision, Neversoft, Tony Hawk or Sony. Tony Hawk's Project 8 is a trademark of Activision Publishing, Inc. PlayStation is a trademark of Sony Interactive Entertainment.",
+    "Our code and art are MIT-licensed. Third-party parts keep their own licenses.",
   ],
-  credits: "Credits and full licences",
+  credits: "Credits and full licenses",
 };

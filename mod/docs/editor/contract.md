@@ -8,7 +8,7 @@ script mods, the live link).
 
 One app: the launcher, built on **imgui-bundle 1.92.900** (hello_imgui docking, ImGuizmo, imgui-node-editor,
 ImGuiColorTextEdit, implot) with **moderngl 5.12.0** for 3D viewports. The theme, fonts, icons and widgets come from the
-`p8ui` design system; do not hand-roll styles or colours. Panels are Python modules drawn every frame.
+`p8ui` design system; do not hand-roll styles or colors. Panels are Python modules drawn every frame.
 
 ## 1. The document is a modkit mod
 
@@ -41,7 +41,7 @@ Generated assets go to `assets/gen/<uid>.*` (meshes from parametric pieces) and 
 | `script` | ops_script.py (Lua files in the mod, events/hooks) | [scripting.md](../modding/scripting.md) |
 
 Same rules as the existing ops: `OPS = {"goals.add": fn(op, ctx)}`, every user error through `ctx.fail`, budgets through
-`ctx.budget`, paths through `ctx.asset`, no game data in a mod. World space: Y up, right-handed, metres; yaw in degrees
+`ctx.budget`, paths through `ctx.asset`, no game data in a mod. World space: Y up, right-handed, meters; yaw in degrees
 about +Y, local +Z becomes (sin yaw, 0, cos yaw). Names you create are prefixed by the creator (`<prefix>_...`).
 
 ## 3. What the editor reads from an ops module (optional attributes)
@@ -72,7 +72,7 @@ SCHEMA = {"goals.add": {
   `"class": "Restart"` etc. and offers the zone's nodes; `ref` offers the document's entities made by that op.
 - Roles drive the viewport: `position` (translate gizmo, click-to-place), `yaw`, `rotation` (vec3 degrees), `scale`,
   `path` (editable polyline), `points` (separate points, each drawn with the field's `marker`), `radius` (sphere),
-  `box` (centre + size), `camera` (pos + yaw/pitch/roll + fov: a camera frustum, "snap to view").
+  `box` (center + size), `camera` (pos + yaw/pitch/roll + fov: a camera frustum, "snap to view").
   Fields inside `object` fields and inside `list` items carry their own roles; the gizmo path is dotted
   (`start.pos`, `camera.3.pos`), so keyframes and actor marks get gizmos from the generic code.
 - Viewport camera access: `ed.viewport.get_camera()` -> `{pos, yaw, pitch, roll, fov}`, `ed.viewport.set_camera(...)`.
@@ -147,7 +147,7 @@ the desktop editor, so a park made in either one opens in the other.
 - What a piece becomes (`entities.PrimKind.ops`): `static.add_object` (visual glb, `lightmap` `surface`, or `ground`
   over a blanked level), `collision.add_mesh` (the same piece as solid world triangles, vert faces flagged), and one
   `rails.add` per coping / edge (`cluster` = the piece's name). The build is `tools/modkit/modkit.py build`.
-- Conventions: Y up, right-handed, metres; yaw in degrees about +Y, local +Z -> (sin yaw, 0, cos yaw); vertex colour
+- Conventions: Y up, right-handed, meters; yaw in degrees about +Y, local +Z -> (sin yaw, 0, cos yaw); vertex color
   1.0 = lit like the level; UVs stay within +-16 (half floats); at most 32,000 vertices per part.
 - Limits enforced by the build (refuse, not warn): the zone video-memory link slots (8 MiB of free VRAM kept), the
   rail node heap (`RailNodeHeap`), the collision and node structural limits ([limits.md](../modding/limits.md)).

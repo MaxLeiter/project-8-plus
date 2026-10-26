@@ -30,7 +30,7 @@ Use
      continue later. "Low priority" keeps the PC usable meanwhile.
   6. Play: the launcher opens on Play once the game is built (or run play.cmd /
      play_p8plus.cmd in the install folder). The launcher also has Settings (Project 8 Plus
-     options), Mods (install, enable, order, share) and Textures (replace or recolour any
+     options), Mods (install, enable, order, share) and Textures (replace or recolor any
      texture of the game); see docs\LAUNCHER.md in the project.
 
 Command line
@@ -48,4 +48,4 @@ folder's game\ subfolder -- use the mods\ folder for mods.
 
 Legal: you must own the game. This project is not affiliated with Activision,
 Neversoft, Tony Hawk or Sony. Do not share the exe or the files the builder generates:
-they are a translation of the game's code. See NOTICE.txt for third-party licences.
+they are a translation of the game's code. See NOTICE.txt for third-party licenses.

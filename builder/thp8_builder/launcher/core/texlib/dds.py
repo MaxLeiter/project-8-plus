@@ -33,7 +33,7 @@ def replace_problem(raw_fmt, mips, width, height, dimension=2, cubemap=0, pitch=
     if cubemap:
         return "cube maps are not replaced by the game's renderer"
     if raw_fmt & UN:
-        return "stored with unnormalised coordinates, which the renderer does not replace"
+        return "stored with unnormalized coordinates, which the renderer does not replace"
     if not width or not height or width > MAX_DIM or height > MAX_DIM:
         return "larger than 4096 pixels"
     name = FORMATS.get(raw_fmt & 0x9F)

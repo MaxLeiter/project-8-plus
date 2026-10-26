@@ -88,7 +88,7 @@ A record:
 |---|---|
 | 0x00 | bounding box minimum `x, y, z, 1.0` of the segment from this point to the next (the point itself if it has no next) |
 | 0x10 | bounding box maximum `x, y, z, 1.0` |
-| 0x20 | position `x, y, z, 1.0` (world, metres) |
+| 0x20 | position `x, y, z, 1.0` (world, meters) |
 | 0x30 | orientation quaternion `x, y, z, w` (ladder and ledge points only; zero for rails) |
 | 0x40 | flags: `0x1` LipOverride, `0x2` DefaultLine, `0x4` CreatedAtStart, `0x8` NoClimbing, `0x10` ClimbingNode, `0x20` ladder, `0x40` HangLeft, `0x80` HangRight, `0x100` TrickObject, `0x200` has a next point, `0x400` has a previous point, `0x800` ManualNode |
 | 0x44 | checksum of the point's name |
@@ -103,7 +103,7 @@ turns the next / previous indices into pointers where the flags say so, and regi
 slots, keyed by the checksum of the entry's full name, e.g. `04db02de` for `z_houses`) and its trick objects.
 
 `rails.add` inserts the new records at their sorted places and renumbers every next / previous index; all other bytes
-of the stock records stay as they were. `rails.remove` takes records out the same way and unlinks their neighbours.
+of the stock records stay as they were. `rails.remove` takes records out the same way and unlinks their neighbors.
 
 ### Heap and size
 
