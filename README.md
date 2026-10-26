@@ -13,7 +13,7 @@ P8 Plus provides:
 - Keyboard and Xbox controller support (with updated in-game button/key prompts)
 - Bugfixes for issues encountered in the original game
 
-You provide your own copy of Project 8 and [RPCS3](https://rpcs3.net/) (which is used to decrypt the ROM at setup). No original Tony Hawk Project 8 assets or code are provided here. Project 8 Plus was made by running Opus 5.5 in a loop for a few weeks.
+You provide your own copy of Project 8 and [RPCS3](https://rpcs3.net/) (which is used to decrypt the ROM at setup). No original Tony Hawk's Project 8 assets or code are provided here. Project 8 Plus was made by running Opus 5.5 in a loop for a few weeks.
 
 ## Download
 
@@ -48,6 +48,12 @@ https://github.com/user-attachments/assets/4702b8d0-d43c-4b5c-880a-c62b6b0625f3
 
 
 The desktop level editor lets you create and script levels with a visual editor. Hotloading is supported when the game is running, so the game will update with each edit in real-time.
+
+## Credits
+
+- [ps3recomp](https://github.com/sp00nznet/ps3recomp) by sp00nznet, the static recompiler this project builds on
+- [RPCS3](https://rpcs3.net/), used to decrypt your copy during setup
+- HD textures use the 4xTextureDAT2 model by Phhofm ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/))
 
 <sub>License: MIT (LICENSE). Third-party notices: NOTICE (Windows download), NOTICE_linux (Linux download), NOTICE_HD (the HD
 pack).
