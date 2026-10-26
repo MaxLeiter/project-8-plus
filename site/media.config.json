@@ -486,15 +486,14 @@
       "mobile_fps": 24
     },
     {
-      "id": "trailer",
-      "src": "{TRAILER}/build/rough2b_master.mp4",
+      "id": "trailer-v5",
+      "src": "{TRAILER}/../v3/v5/P8Plus_v5_1080p60.mp4",
       "width": 1280,
       "fps": 60,
       "audio": true,
       "crf_av1": 42,
       "crf_h264": 26,
-      "poster_src": "{TRAILER}/P8Plus_thumbnail_1280x720.png",
-      "draft": "rough cut 2b; replace with P8Plus_launch_1080p60.mp4 when final",
+      "poster_src": "{TRAILER}/../v3/v5/P8Plus_v5_thumbnail_1280x720.png",
       "mobile_width": 854,
       "crf_av1_mobile": 44,
       "crf_h264_mobile": 28,

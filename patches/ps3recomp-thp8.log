@@ -559,3 +559,4 @@ fda181ae 2026-10-24 web README: the browser build comes from thp8-unified (one r
 901034f8 2026-10-24 vm_read32/vm_write32: declare them with the runtime's 64-bit address everywhere (cellCamera.c, rsx_commands.c x2, cellGcmSys.c)
 0d266885 2026-10-24 cellGcmSys.c: drop the vm_read32 declaration (901034f8 made it conflict)
 fb177812 2026-10-24 ppu lifter: the WebAssembly helper forms (478c03fd) only with --wasm -- the native lift text is byte-identical to b32's again
+5fc2ef9f 2026-10-26 cellAudio WASAPI: PS3_AUDIO_MUTE plays silence instead of muting the session (GitHub #1)

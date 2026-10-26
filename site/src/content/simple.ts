@@ -17,7 +17,7 @@ export const hero = {
   // Project8Plus-0.9.0-windows-x64.zip: repin33 candidate 39,600,839 B = 37.8 MiB (Windows shows "37.8 MB"); the HD pack
   // (45,628,001 B = 43.5 MiB) is fetched by the launcher when HD is on. Re-check at the final 0.9.0 pin.
   // Items of the note under the download button; drawn with slanted separators (no "/" or "|" characters).
-  downloadNote: ["Free", "Windows 10/11", "about 38 MB", "Unofficial fan project"],
+  downloadNote: ["Free", "Windows 10/11", "Unofficial fan project"],
   trailer: "Watch the trailer",
 };
 
@@ -96,6 +96,7 @@ export const comingSoon = {
 };
 
 export const linux = {
+  // sizes are not shown on the home page (Max, 2026-10-25): the download shows them; FACTS.md keeps them
   link: "Linux (experimental)",
   // shown next to the Windows button only once the release is public
   note: "No HD textures on Linux yet.",

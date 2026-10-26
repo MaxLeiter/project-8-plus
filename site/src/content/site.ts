@@ -5,7 +5,7 @@
 // download buttons read "coming soon", repo references in the docs render as plain text.
 // LAUNCH: flip this one line to true. Then Download goes to the v0.9.0 release, the GitHub links show, the Linux
 // (experimental) link appears and "Linux" leaves Coming soon. Then `npm.cmd run deploy`.
-export const reposPublic = false;
+export const reposPublic = true;
 
 /** The release the Download buttons point at. */
 export const release = {

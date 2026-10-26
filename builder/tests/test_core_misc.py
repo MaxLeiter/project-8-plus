@@ -29,9 +29,16 @@ class Layering(unittest.TestCase):
 class Launch(unittest.TestCase):
     def test_command(self):
         c = launch.command("C:/inst", "p8plus", fullscreen=True, stretch=True, audio="Speakers")
-        self.assertEqual(c[:2], ["cmd", "/c"])
-        self.assertTrue(c[2].endswith("play_p8plus.cmd"))
-        self.assertEqual(c[3:], ["fullscreen", "stretch", "audio", "Speakers"])
+        if launch.IS_WIN:
+            self.assertEqual(c[:2], ["cmd", "/c"])
+            self.assertTrue(c[2].endswith("play_p8plus.cmd"))
+            self.assertEqual(c[3:], ["fullscreen", "stretch"])      # the device goes as PS3_AUDIO_DEVICE (GitHub #1)
+            self.assertEqual(launch.option_env("Speakers"), {"PS3_AUDIO_DEVICE": "Speakers"})
+        else:
+            self.assertEqual(c[0], "bash")
+            self.assertEqual(c[2:], ["fullscreen", "stretch", "audio", "Speakers"])
+            self.assertEqual(launch.option_env("Speakers"), {})
+        self.assertEqual(launch.option_env(None), {})
         self.assertEqual(launch.command("C:/inst", "vanilla", window="1920x1080")[3:], ["window", "1920x1080"])
         self.assertEqual(launch.command("C:/inst", "vanilla")[3:], [])
         with self.assertRaises(ValueError):

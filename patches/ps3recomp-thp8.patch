@@ -1012,7 +1012,7 @@ index 00000000..1a2a2bba
 +
 +#endif /* PS3MOD_H */
 diff --git a/libs/audio/cellAudio.c b/libs/audio/cellAudio.c
-index b51fb7c4..0d03fa35 100644
+index b51fb7c4..88953bab 100644
 --- a/libs/audio/cellAudio.c
 +++ b/libs/audio/cellAudio.c
 @@ -34,7 +34,11 @@ extern uint32_t sys_event_queue_create_direct(uint64_t key, int32_t size);
@@ -1208,7 +1208,7 @@ index b51fb7c4..0d03fa35 100644
  
  static u32 audio_backend_queued_samples(void)
  {
-@@ -227,13 +347,238 @@ static u32 audio_backend_queued_samples(void)
+@@ -227,12 +347,258 @@ static u32 audio_backend_queued_samples(void)
  
  #endif /* AUDIO_BACKEND_SDL2 */
  
@@ -1224,7 +1224,8 @@ index b51fb7c4..0d03fa35 100644
 +static u64                  s_wasapi_clock_freq = 0;
  static HANDLE               s_wasapi_event  = NULL;
  static UINT32               s_wasapi_buf_frames = 0;
- 
++static int                  s_wasapi_mute   = 0;      /* PS3_AUDIO_MUTE=1: submit silence */
++
 +#ifndef AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM
 +#define AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM      0x80000000
 +#endif
@@ -1268,16 +1269,35 @@ index b51fb7c4..0d03fa35 100644
 +    printf("[cellAudio] WASAPI device: \"%s\"\n", name);
 +}
 +
-+/* case-insensitive substring test (ASCII folding is enough for device names) */
++/* case-insensitive substring test. Only ASCII letters fold: the names are UTF-8, and folding every byte with 0x20
++ * made unrelated bytes equal ('@' / '`', UTF-8 lead bytes 0xC3 / 0xE3). */
 +static int wasapi_name_has(const char* hay, const char* needle)
 +{
 +    if (!needle || !*needle) return 0;
 +    for (; *hay; hay++) {
 +        const char* a = hay; const char* b = needle;
-+        while (*a && *b && (((*a | 0x20) == (*b | 0x20)) || *a == *b)) { a++; b++; }
++        while (*a && *b) {
++            char x = *a, y = *b;
++            if (x >= 'A' && x <= 'Z') x = (char)(x + 32);
++            if (y >= 'A' && y <= 'Z') y = (char)(y + 32);
++            if (x != y) break;
++            a++; b++;
++        }
 +        if (!*b) return 1;
 +    }
 +    return 0;
++}
++
++/* PS3_AUDIO_DEVICE as UTF-8, the encoding the friendly names are compared in (getenv gives the ANSI code page, so
++ * a name with a character outside it -- "Lautsprecher (Realtek(R) Audio)" is fine, Cyrillic / CJK names are not --
++ * could never match). NULL when unset. */
++static const char* wasapi_env_utf8(const WCHAR* name, char* out, int n)
++{
++    WCHAR w[512];
++    DWORD k = GetEnvironmentVariableW(name, w, (DWORD)(sizeof w / sizeof w[0]));
++    if (k == 0 || k >= sizeof w / sizeof w[0]) return NULL;
++    if (!WideCharToMultiByte(CP_UTF8, 0, w, -1, out, n, NULL, NULL)) return NULL;
++    return out;
 +}
 +
 +/* A virtual streaming sink (Steam Remote Play / Sunshine "Steam Streaming
@@ -1363,7 +1383,8 @@ index b51fb7c4..0d03fa35 100644
 +{
 +    IMMDevice* def = NULL;
 +    if (!wasapi_default_id(default_id, n, &def)) def = NULL;
-+    const char* want = getenv("PS3_AUDIO_DEVICE");
++    char wantbuf[1024];
++    const char* want = wasapi_env_utf8(L"PS3_AUDIO_DEVICE", wantbuf, (int)sizeof wantbuf);
 +    const char* av = getenv("PS3_AUDIO_AVOID_VIRTUAL");
 +    const int avoid = !(av && *av == '0');
 +    char defname[256] = "";
@@ -1443,11 +1464,10 @@ index b51fb7c4..0d03fa35 100644
 +}
 +
 +static void audio_backend_test_tone(void);
-+
+ 
  static int audio_backend_init(void)
  {
-     HRESULT hr;
-@@ -244,22 +589,15 @@ static int audio_backend_init(void)
+@@ -244,22 +610,15 @@ static int audio_backend_init(void)
          return -1;
      }
  
@@ -1477,7 +1497,7 @@ index b51fb7c4..0d03fa35 100644
  
      hr = device->lpVtbl->Activate(device, &IID_IAudioClient, CLSCTX_ALL,
                                     NULL, (void**)&s_wasapi_client);
-@@ -269,6 +607,14 @@ static int audio_backend_init(void)
+@@ -269,6 +628,14 @@ static int audio_backend_init(void)
          return -1;
      }
  
@@ -1492,7 +1512,7 @@ index b51fb7c4..0d03fa35 100644
      WAVEFORMATEX wfx;
      wfx.wFormatTag      = WAVE_FORMAT_IEEE_FLOAT;
      wfx.nChannels       = 2;
-@@ -278,22 +624,28 @@ static int audio_backend_init(void)
+@@ -278,22 +645,28 @@ static int audio_backend_init(void)
      wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
      wfx.cbSize          = 0;
  
@@ -1524,23 +1544,39 @@ index b51fb7c4..0d03fa35 100644
          if (FAILED(hr)) {
              printf("[cellAudio] WASAPI Initialize failed: 0x%08lX\n", hr);
              s_wasapi_client->lpVtbl->Release(s_wasapi_client);
-@@ -319,10 +671,96 @@ static int audio_backend_init(void)
+@@ -319,10 +692,113 @@ static int audio_backend_init(void)
          return -1;
      }
  
-+    /* PS3_AUDIO_MUTE=1: mute this stream's audio session (ISimpleAudioVolume). The device, the stream and its
-+     * clock keep running exactly as before -- only nothing is heard. For test runs on a PC someone is using
-+     * (the harness sets it by default); 0 / unset = normal. Applied on every (re)open of the stream. */
++    /* PS3_AUDIO_MUTE=1: the stream plays silence (audio_backend_submit writes zeros). The device, the stream and
++     * its clock keep running exactly as before -- only nothing is heard. For test runs on a PC someone is using
++     * (the harness sets it by default) and the launcher's data-cache run; 0 / unset = normal.
++     * NOT a session mute (ISimpleAudioVolume::SetMute), which this used to be: Windows keeps a session's mute per
++     * program and endpoint across runs, so one muted run left the game muted in the volume mixer for every later
++     * normal start (THP8 GitHub issue #1: no sound in the P8Plus exe after the launcher's data-cache run).
++     * The session mute is only read: a muted session is logged (the volume mixer has this program muted), and
++     * PS3_AUDIO_UNMUTE=1 clears it -- play_common.cmd sets that once per game exe, to undo what an older build left.
++     * Applied on every (re)open of the stream. */
 +    {
 +        const char* mute = getenv("PS3_AUDIO_MUTE");
-+        if (mute && mute[0] && mute[0] != '0') {
-+            ISimpleAudioVolume* vol = NULL;
-+            hr = s_wasapi_client->lpVtbl->GetService(s_wasapi_client, &ps3r_IID_ISimpleAudioVolume, (void**)&vol);
-+            if (SUCCEEDED(hr) && vol) {
-+                hr = vol->lpVtbl->SetMute(vol, TRUE, NULL);
-+                vol->lpVtbl->Release(vol);
++        s_wasapi_mute = mute && mute[0] && mute[0] != '0';
++        if (s_wasapi_mute) printf("[cellAudio] PS3_AUDIO_MUTE: the stream plays silence\n");
++        ISimpleAudioVolume* vol = NULL;
++        BOOL was_muted = FALSE;
++        if (SUCCEEDED(s_wasapi_client->lpVtbl->GetService(s_wasapi_client, &ps3r_IID_ISimpleAudioVolume, (void**)&vol)) &&
++            vol) {
++            if (SUCCEEDED(vol->lpVtbl->GetMute(vol, &was_muted)) && was_muted) {
++                const char* un = getenv("PS3_AUDIO_UNMUTE");
++                if (un && un[0] && un[0] != '0') {
++                    hr = vol->lpVtbl->SetMute(vol, FALSE, NULL);
++                    printf("[cellAudio] this program was muted in the Windows volume mixer: %s (PS3_AUDIO_UNMUTE, 0x%08lX)\n",
++                           SUCCEEDED(hr) ? "unmuted" : "could NOT unmute", (unsigned long)hr);
++                } else {
++                    printf("[cellAudio] NOTE: this program is muted in the Windows volume mixer (no sound until it is "
++                           "unmuted there)\n");
++                }
 +            }
-+            printf("[cellAudio] PS3_AUDIO_MUTE: session %s (0x%08lX)\n", SUCCEEDED(hr) ? "muted" : "NOT muted", (unsigned long)hr);
++            vol->lpVtbl->Release(vol);
 +        }
 +    }
 +
@@ -1594,6 +1630,7 @@ index b51fb7c4..0d03fa35 100644
 +    const char* a = getenv("PS3_AUDIO_TEST");
 +    const char* b = getenv("THP8_AUDIO_TEST");
 +    if (!((a && *a && *a != '0') || (b && *b && *b != '0'))) return;
++    if (s_wasapi_mute) return;                                   /* PS3_AUDIO_MUTE: nothing is heard, the beep neither */
 +    static int done = 0;
 +    if (done) return;
 +    done = 1;
@@ -1621,9 +1658,13 @@ index b51fb7c4..0d03fa35 100644
  static void audio_backend_shutdown(void)
  {
      if (s_wasapi_client) {
-@@ -361,19 +799,36 @@ static void audio_backend_submit(const float* stereo_samples, u32 num_samples)
+@@ -359,21 +835,39 @@ static void audio_backend_submit(const float* stereo_samples, u32 num_samples)
+     BYTE* buf = NULL;
+     HRESULT hr = s_wasapi_render->lpVtbl->GetBuffer(s_wasapi_render, num_samples, &buf);
      if (SUCCEEDED(hr) && buf) {
-         memcpy(buf, stereo_samples, num_samples * 2 * sizeof(float));
+-        memcpy(buf, stereo_samples, num_samples * 2 * sizeof(float));
++        if (s_wasapi_mute) memset(buf, 0, num_samples * 2 * sizeof(float));     /* PS3_AUDIO_MUTE */
++        else memcpy(buf, stereo_samples, num_samples * 2 * sizeof(float));
          s_wasapi_render->lpVtbl->ReleaseBuffer(s_wasapi_render, num_samples, 0);
 +        s_av_dev_frames += num_samples;
      }
@@ -1661,7 +1702,7 @@ index b51fb7c4..0d03fa35 100644
              fprintf(stderr, "[cellAudio] GetCurrentPadding failed 0x%08lX -- clock pacing%c", (unsigned long)hr, 10);
          return -1;
      }
-@@ -493,6 +948,19 @@ static void audio_mix_one_block(void)
+@@ -493,6 +987,19 @@ static void audio_mix_one_block(void)
              s_mix_buffer[s * 2 + 1] += right;
          }
  
@@ -1681,7 +1722,7 @@ index b51fb7c4..0d03fa35 100644
          /* Firmware clears a ring-buffer block after consuming it. Besides
           * preventing stale PCM from replaying when a producer stalls, the
           * cleared block is an observable consumption signal for producers. */
-@@ -539,6 +1007,21 @@ static unsigned __stdcall audio_mix_thread_func(void* arg)
+@@ -539,6 +1046,21 @@ static unsigned __stdcall audio_mix_thread_func(void* arg)
  {
      (void)arg;
      printf("[cellAudio] Mixing thread started\n");
@@ -1703,7 +1744,7 @@ index b51fb7c4..0d03fa35 100644
  
      /* Pace to the device clock. The PS3 consumes one block every 5.33 ms;
       * the old Sleep(2)/Sleep(5) loop keyed on a queue depth the 1056-frame
-@@ -579,6 +1062,10 @@ static unsigned __stdcall audio_mix_thread_func(void* arg)
+@@ -579,6 +1101,10 @@ static unsigned __stdcall audio_mix_thread_func(void* arg)
            if (_wf == (FILE*)-1) { const char* e = getenv("AUDIO_WAV"); _wf = e ? fopen(e, "wb") : NULL; }
            if (_wf) fwrite(s_mix_buffer, sizeof(float), CELL_AUDIO_BLOCK_SAMPLES * 2, _wf); }
          audio_backend_submit(s_mix_buffer, CELL_AUDIO_BLOCK_SAMPLES);
@@ -1714,7 +1755,7 @@ index b51fb7c4..0d03fa35 100644
          /* AUDIO_RATE=1: blocks mixed vs real time, and frames dropped. */
          { static int on = -1; if (on < 0) on = getenv("AUDIO_RATE") ? 1 : 0;
            if (on) { static ULONGLONG t0; static unsigned n, z; static unsigned long long d0;
-@@ -603,22 +1090,52 @@ static unsigned __stdcall audio_mix_thread_func(void* arg)
+@@ -603,22 +1129,52 @@ static unsigned __stdcall audio_mix_thread_func(void* arg)
      return 0;
  }
  #else
@@ -1776,7 +1817,7 @@ index b51fb7c4..0d03fa35 100644
      }
  
      printf("[cellAudio] Mixing thread stopped\n");
-@@ -685,6 +1202,7 @@ s32 cellAudioInit(void)
+@@ -685,6 +1241,7 @@ s32 cellAudioInit(void)
          return (s32)CELL_AUDIO_ERROR_NOT_INIT;
      }
      printf("[cellAudio] Init()\n");
@@ -1784,7 +1825,7 @@ index b51fb7c4..0d03fa35 100644
  
      if (s_audio_initialized)
          return CELL_AUDIO_ERROR_ALREADY_INIT;
-@@ -812,6 +1330,7 @@ s32 cellAudioPortOpen(const CellAudioPortParam* param, u32* portNum)
+@@ -812,6 +1369,7 @@ s32 cellAudioPortOpen(const CellAudioPortParam* param, u32* portNum)
  
      port->port_addr     = guest_buf;
      port->read_idx_addr = guest_ridx;
@@ -1792,7 +1833,7 @@ index b51fb7c4..0d03fa35 100644
  
      vm_write32(portNum_ea, (u32)found);   /* guest out-param */
  
-@@ -843,6 +1362,7 @@ s32 cellAudioPortClose(u32 portNum)
+@@ -843,6 +1401,7 @@ s32 cellAudioPortClose(u32 portNum)
  
      s_ports[portNum].in_use  = 0;
      s_ports[portNum].running = 0;
@@ -1800,7 +1841,7 @@ index b51fb7c4..0d03fa35 100644
  
      mutex_unlock(&s_audio_mutex);
      return CELL_OK;
-@@ -863,6 +1383,7 @@ s32 cellAudioPortStart(u32 portNum)
+@@ -863,6 +1422,7 @@ s32 cellAudioPortStart(u32 portNum)
  
      mutex_lock(&s_audio_mutex);
      s_ports[portNum].running = 1;
@@ -1808,7 +1849,7 @@ index b51fb7c4..0d03fa35 100644
      mutex_unlock(&s_audio_mutex);
  
      return CELL_OK;
-@@ -883,6 +1404,7 @@ s32 cellAudioPortStop(u32 portNum)
+@@ -883,6 +1443,7 @@ s32 cellAudioPortStop(u32 portNum)
  
      mutex_lock(&s_audio_mutex);
      s_ports[portNum].running = 0;
@@ -1816,7 +1857,7 @@ index b51fb7c4..0d03fa35 100644
      mutex_unlock(&s_audio_mutex);
  
      return CELL_OK;
-@@ -1074,7 +1596,7 @@ s32 cellAudioGetPortConfig(u32 portNum, CellAudioPortConfig* config)
+@@ -1074,7 +1635,7 @@ s32 cellAudioGetPortConfig(u32 portNum, CellAudioPortConfig* config)
      vm_write32(cfg + 24, port->buf_size);                                   /* portSize */
      vm_write32(cfg + 28, (u32)port->port_addr);                             /* portAddr */
  
@@ -67413,6 +67454,191 @@ index 00000000..9257b9ec
 +#endif
 +
 +#endif /* PS3RECOMP_VFS_MODS_H */
+diff --git a/tests/audio_session/test_audio_session.c b/tests/audio_session/test_audio_session.c
+new file mode 100644
+index 00000000..7a59f43f
+--- /dev/null
++++ b/tests/audio_session/test_audio_session.c
+@@ -0,0 +1,179 @@
++/*
++ * ps3recomp - tests/audio_session/test_audio_session.c   (Windows / WASAPI only)
++ *
++ * GitHub THP8 issue #1 regression: a run with PS3_AUDIO_MUTE=1 must not leave the program muted for its later
++ * runs. Windows keeps an audio session's mute (ISimpleAudioVolume) per program and endpoint across restarts, so the
++ * old PS3_AUDIO_MUTE (a session SetMute) muted every later normal start of the same exe in the volume mixer.
++ *
++ * The test includes libs/audio/cellAudio.c and opens the real WASAPI backend (audio_backend_init) in CHILD runs of
++ * this exe -- persistence is only visible across processes. Every child only opens the stream; nothing is played.
++ *   1. child PS3_AUDIO_MUTE=1             -> the session is NOT muted (the backend submits silence instead)
++ *   2. child, no variables                -> the session is not muted (fails before the fix: the mute of run 1 stuck)
++ *   3. child "leave-muted" (SetMute(TRUE) like the old PS3_AUDIO_MUTE, what 0.9.0 left behind) then a plain child
++ *                                         -> muted (documents the Windows persistence the fix works around)
++ *   4. child PS3_AUDIO_UNMUTE=1           -> it clears that left-over mute; 5. a plain child -> not muted again
++ * The program's own session ends unmuted, as it started.
++ *
++ * Pick the endpoint with PS3_AUDIO_DEVICE (e.g. "Steam Streaming Speakers" on a PC someone uses); default = the
++ * Windows default output. No active output endpoint -> SKIP (exit 0).
++ *
++ * Build (zig):  zig cc -target x86_64-windows-gnu -Iinclude tests/audio_session/test_audio_session.c
++ *                  -lole32 -o test_audio_session.exe
++ * Run:          test_audio_session.exe            exit 0 = pass
++ */
++#include "../../libs/audio/cellAudio.c"
++
++#if !AUDIO_BACKEND_WASAPI
++int main(void) { printf("SKIP: WASAPI backend only\n"); return 0; }
++#else
++
++/* --- the few runtime symbols cellAudio.c links against (the backend under test needs none of them) --- */
++uint8_t* vm_base;
++int sys_event_queue_push_by_id(uint32_t q, uint64_t s, uint64_t d1, uint64_t d2, uint64_t d3)
++{ (void)q; (void)s; (void)d1; (void)d2; (void)d3; return 0; }
++uint32_t sys_event_find_queue_by_key(uint64_t k) { (void)k; return 0; }
++uint32_t sys_event_queue_create_direct(uint64_t k, int32_t n) { (void)k; (void)n; return 0; }
++/* guest-memory store helpers (ppu_memory.h / vm.h inlines) */
++int g_resv_store_active;
++uint32_t g_ww_lo, g_ww_hi, ppu_vm_size;
++void ppu_resv_break_store(uint64_t ea) { (void)ea; }
++int spu_coh_is_reserved(uint32_t a) { (void)a; return 0; }
++void spu_lockline_lock(void) {}
++void spu_lockline_unlock(void) {}
++void spu_coh_notify_write(uint32_t a) { (void)a; }
++void ps3_ww_report_inline(uint32_t a, uint64_t v, int w) { (void)a; (void)v; (void)w; }
++
++/* -1 = no stream, 0/1 = the stream's session mute */
++static int session_muted(void)
++{
++    ISimpleAudioVolume* vol = NULL;
++    BOOL m = FALSE;
++    if (!s_wasapi_client) return -1;
++    if (FAILED(s_wasapi_client->lpVtbl->GetService(s_wasapi_client, &ps3r_IID_ISimpleAudioVolume, (void**)&vol)) || !vol)
++        return -1;
++    vol->lpVtbl->GetMute(vol, &m);
++    vol->lpVtbl->Release(vol);
++    return m ? 1 : 0;
++}
++
++/* child: open the backend the way cellAudioInit does, report, close. "leave-muted" = the pre-fix PS3_AUDIO_MUTE. */
++static int child(const char* mode)
++{
++    if (audio_backend_init() < 0) { printf("RESULT nostream\n"); return 0; }
++    if (strcmp(mode, "leave-muted") == 0) {
++        ISimpleAudioVolume* vol = NULL;
++        if (SUCCEEDED(s_wasapi_client->lpVtbl->GetService(s_wasapi_client, &ps3r_IID_ISimpleAudioVolume, (void**)&vol)) && vol) {
++            vol->lpVtbl->SetMute(vol, TRUE, NULL);
++            vol->lpVtbl->Release(vol);
++        }
++    }
++    /* the mute flag decides what audio_backend_submit writes: a loud block must reach the device as zeros */
++    printf("RESULT session_muted=%d silence=%d\n", session_muted(), s_wasapi_mute);
++    fflush(stdout);
++    audio_backend_shutdown();
++    return 0;
++}
++
++/* run this exe as a child with extra variables; returns its session_muted (-1 no stream, -2 failed) and silence */
++static int run_child(const char* mode, const char* const* env_set, int* silence)
++{
++    char exe[MAX_PATH], line[MAX_PATH + 64];
++    GetModuleFileNameA(NULL, exe, sizeof exe);
++    snprintf(line, sizeof line, "\"%s\" --child %s", exe, mode);
++    static const char* const all[] = { "PS3_AUDIO_MUTE", "PS3_AUDIO_UNMUTE", NULL };
++    for (int i = 0; all[i]; i++) SetEnvironmentVariableA(all[i], NULL);
++    for (int i = 0; env_set && env_set[i]; i += 2) SetEnvironmentVariableA(env_set[i], env_set[i + 1]);
++
++    SECURITY_ATTRIBUTES sa = { sizeof sa, NULL, TRUE };
++    HANDLE rd, wr;
++    if (!CreatePipe(&rd, &wr, &sa, 0)) return -2;
++    SetHandleInformation(rd, HANDLE_FLAG_INHERIT, 0);
++    STARTUPINFOA si; memset(&si, 0, sizeof si); si.cb = sizeof si;
++    si.dwFlags = STARTF_USESTDHANDLES; si.hStdOutput = wr; si.hStdError = wr; si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
++    PROCESS_INFORMATION pi;
++    if (!CreateProcessA(NULL, line, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi)) { CloseHandle(rd); CloseHandle(wr); return -2; }
++    CloseHandle(wr);
++    char out[16384]; DWORD got = 0, n;
++    while (got < sizeof out - 1 && ReadFile(rd, out + got, (DWORD)(sizeof out - 1 - got), &n, NULL) && n) got += n;
++    out[got] = 0;
++    CloseHandle(rd);
++    WaitForSingleObject(pi.hProcess, 30000);
++    CloseHandle(pi.hProcess); CloseHandle(pi.hThread);
++    for (int i = 0; env_set && env_set[i]; i += 2) SetEnvironmentVariableA(env_set[i], NULL);
++
++    const char* r = strstr(out, "RESULT ");
++    for (const char* p = out; (p = strstr(p, "[cellAudio] ")) != NULL; ) {      /* the backend's own log lines */
++        const char* e = strchr(p, '\n'); int len = e ? (int)(e - p) : (int)strlen(p);
++        char ln[512]; snprintf(ln, sizeof ln, "%.*s", len, p);
++        if (strstr(ln, "mute") || strstr(ln, "MUTE") || strstr(ln, "WASAPI device")) printf("      %s\n", ln);
++        p += len;
++    }
++    if (!r) { printf("    child %s: no RESULT line:\n%s\n", mode, out); return -2; }
++    if (strncmp(r, "RESULT nostream", 15) == 0) return -1;
++    int m = -2, s = 0;
++    sscanf(r, "RESULT session_muted=%d silence=%d", &m, &s);
++    if (silence) *silence = s;
++    return m;
++}
++
++static int fails = 0;
++static void expect(const char* what, int got, int want)
++{
++    printf("  %s %s (session muted %d, want %d)\n", got == want ? "ok  " : "FAIL", what, got, want);
++    if (got != want) fails++;
++}
++
++int main(int argc, char** argv)
++{
++    if (argc >= 3 && strcmp(argv[1], "--child") == 0) return child(argv[2]);
++    setvbuf(stdout, NULL, _IONBF, 0);
++
++    /* device-name matching (no device needed): PS3_AUDIO_DEVICE is read as UTF-8 like the friendly names; ASCII
++     * letters fold, nothing else does */
++    {
++        char buf[256];
++        WCHAR saved[512]; DWORD had = GetEnvironmentVariableW(L"PS3_AUDIO_DEVICE", saved, 512);
++        SetEnvironmentVariableW(L"PS3_AUDIO_DEVICE", L"\x0414\x0438\x043D\x0430\x043C\x0438\x043A\x0438 (Stra\x00DF" L"e)");
++        const char* w = wasapi_env_utf8(L"PS3_AUDIO_DEVICE", buf, (int)sizeof buf);
++        const int ok1 = w && wasapi_name_has("\xD0\x94\xD0\xB8\xD0\xBD\xD0\xB0\xD0\xBC\xD0\xB8\xD0\xBA\xD0\xB8 "
++                                             "(Stra\xC3\x9F" "e)", w);
++        const int ok2 = wasapi_name_has("Speakers (High Definition Audio Device)", "speakers (high definition audio device)") &&
++                        wasapi_name_has("Speakers (Yeti Nano)", "YETI") && !wasapi_name_has("a@b", "a`b") &&
++                        !wasapi_name_has("\xC3\x9F", "\xE3\x9F") && !wasapi_name_has("Speakers", "Headphones");
++        SetEnvironmentVariableW(L"PS3_AUDIO_DEVICE", had && had < 512 ? saved : NULL);
++        printf("  %s non-ASCII PS3_AUDIO_DEVICE matches its endpoint name (UTF-8)\n", ok1 ? "ok  " : "FAIL");
++        printf("  %s name matching: ASCII case folds, nothing else\n", ok2 ? "ok  " : "FAIL");
++        fails += !ok1 + !ok2;
++    }
++
++    static const char* const mute[] = { "PS3_AUDIO_MUTE", "1", NULL };
++    static const char* const unmute[] = { "PS3_AUDIO_UNMUTE", "1", NULL };
++    int sil = -1;
++    int m = run_child("plain", NULL, &sil);
++    if (m == -1) { printf("SKIP: no active output endpoint to open\n"); return 0; }
++    if (m == -2) { printf("FAIL: the child did not run\n"); return 1; }
++    if (m == 1) {   /* a left-over mute from an earlier (pre-fix) run of this very exe: clear it first */
++        printf("  note: this exe starts muted (an earlier run left it so); clearing it\n");
++        run_child("plain", unmute, NULL);
++        m = run_child("plain", NULL, &sil);
++    }
++    expect("start state", m, 0);
++
++    sil = -1;
++    expect("1 PS3_AUDIO_MUTE=1 run: the session itself stays unmuted", run_child("plain", mute, &sil), 0);
++    printf("  %s 1 PS3_AUDIO_MUTE=1 run: the backend submits silence (flag %d)\n", sil == 1 ? "ok  " : "FAIL", sil);
++    if (sil != 1) fails++;
++    expect("2 the next normal run is not muted (GitHub #1)", run_child("plain", NULL, &sil), 0);
++    printf("  %s 2 a normal run submits the game's audio (silence flag %d)\n", sil == 0 ? "ok  " : "FAIL", sil);
++    if (sil != 0) fails++;
++
++    run_child("leave-muted", NULL, NULL);
++    expect("3 Windows keeps a session mute across runs (what 0.9.0 left behind)", run_child("plain", NULL, NULL), 1);
++    expect("4 PS3_AUDIO_UNMUTE=1 clears it", run_child("plain", unmute, NULL), 0);
++    expect("5 and it stays cleared", run_child("plain", NULL, NULL), 0);
++
++    if (run_child("plain", NULL, NULL) == 1) run_child("plain", unmute, NULL);    /* leave the exe as it started */
++    printf(fails ? "FAIL: %d check(s)\n" : "PASS\n", fails);
++    return fails ? 1 : 0;
++}
++#endif
 diff --git a/third_party/xxhash/README.txt b/third_party/xxhash/README.txt
 new file mode 100644
 index 00000000..313ed6ad

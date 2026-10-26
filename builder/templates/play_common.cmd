@@ -60,8 +60,8 @@ echo unknown option "%~1" (use: fullscreen ^| stretch ^| window WxH ^| audio "de
 shift & goto args
 :argsdone
 
-if not exist "%EXE%" ( echo Missing %EXE% -- run the THP8 builder again to rebuild it. & exit /b 1 )
-if not exist "%ELF%" ( echo Missing %ELF% -- run the THP8 builder again. & exit /b 1 )
+if not exist "%EXE%" ( echo Missing "%EXE%" -- run the THP8 builder again to rebuild it. & exit /b 1 )
+if not exist "%ELF%" ( echo Missing "%ELF%" -- run the THP8 builder again. & exit /b 1 )
 if not exist "%GAMEDATA%\PS3_GAME\USRDIR\EBOOT.BIN" (
     echo The game data is not at "%GAMEDATA%".
     echo If you moved or deleted your game folder, run the THP8 builder again and pick it.
@@ -70,6 +70,15 @@ if not exist "%GAMEDATA%\PS3_GAME\USRDIR\EBOOT.BIN" (
 if not exist "%ROOT%\hdd0" mkdir "%ROOT%\hdd0"
 if not exist "%ROOT%\logs" mkdir "%ROOT%\logs"
 set "LOG=%ROOT%\logs\play_%VARIANT%.log"
+rem Sound: up to 0.9.0 a muted start (the launcher's data-cache run) left the game exe muted in the Windows volume
+rem mixer for good. The first start of each exe after the update clears that once (PS3_AUDIO_UNMUTE); a mute you set
+rem there yourself later stays. The marker is config\audio_unmuted_<exe>.txt.
+if not exist "%ROOT%\config" mkdir "%ROOT%\config"
+for %%E in ("%EXE%") do set "UNMUTE_MARK=%ROOT%\config\audio_unmuted_%%~nE.txt"
+if not exist "%UNMUTE_MARK%" (
+    set "PS3_AUDIO_UNMUTE=1"
+    > "%UNMUTE_MARK%" echo PS3_AUDIO_UNMUTE was set for this exe's first start after the update
+)
 
 title %TITLE%
 echo.

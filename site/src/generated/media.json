@@ -1654,63 +1654,63 @@
    ],
    "w": 1280
   },
-  "trailer": {
+  "trailer-v5": {
    "audio": true,
-   "draft": "rough cut 2b; replace with P8Plus_launch_1080p60.mp4 when final",
-   "duration": 96.0,
+   "draft": null,
+   "duration": 30.0,
    "h": 720,
    "mobile": [
     {
-     "bytes": 6076748,
-     "src": "trailer.m.av1.mp4",
+     "bytes": 2891635,
+     "src": "trailer-v5.m.av1.mp4",
      "type": "video/mp4; codecs=\"av01.0.08M.08\""
     },
     {
-     "bytes": 8149041,
-     "src": "trailer.m.h264.mp4",
+     "bytes": 4239999,
+     "src": "trailer-v5.m.h264.mp4",
      "type": "video/mp4; codecs=\"avc1.640028\""
     }
    ],
    "poster": {
     "files": [
      {
-      "bytes": 16964,
-      "src": "trailer-poster-640.avif",
+      "bytes": 27451,
+      "src": "trailer-v5-poster-640.avif",
       "type": "image/avif",
       "w": 640
      },
      {
-      "bytes": 23208,
-      "src": "trailer-poster-640.webp",
+      "bytes": 35660,
+      "src": "trailer-v5-poster-640.webp",
       "type": "image/webp",
       "w": 640
      },
      {
-      "bytes": 49282,
-      "src": "trailer-poster-1280.avif",
+      "bytes": 80965,
+      "src": "trailer-v5-poster-1280.avif",
       "type": "image/avif",
       "w": 1280
      },
      {
-      "bytes": 62188,
-      "src": "trailer-poster-1280.webp",
+      "bytes": 99094,
+      "src": "trailer-v5-poster-1280.webp",
       "type": "image/webp",
       "w": 1280
      }
     ],
     "h": 720,
-    "placeholder": "data:image/webp;base64,UklGRpgAAABXRUJQVlA4IIwAAADQAwCdASoYAA4APu1iqU2ppaQiMAgBMB2JYwAAW7iZHpHwJ267PjgA/uaF/2+cscQ/CtKYn0mAbYrBKRrLJ4JMYBY9ZEKi/5xXl0g98a/PaPR5BaXugM4cl1K2NREUNu+ng3ApJsSO+eioz5E6O3LwItSsvQWv3U1YGTMll2kATPfQpf9990ZRIFqAAA==",
+    "placeholder": "data:image/webp;base64,UklGRqoAAABXRUJQVlA4IJ4AAADwAwCdASoYAA4APu1iqU2ppaQiMAgBMB2JQBdgBA5r6fSmVxZF2qSAAP3T9T2OWeOi0zaaL7WO8rL+hVaYQ+ufDKGfaU5Z73oBXdlC7PBa2oAkKU+TpZnm2/KCCQbSc71OcljaVx0I7C4/sJ9CGUnqdHvxpbCtqCAy9deYeUT5zhNqYluaQ1VnhrruJmJGKLhAvpD1w7GfW5zfTUAAAA==",
     "w": 1280
    },
    "sources": [
     {
-     "bytes": 18407928,
-     "src": "trailer.av1.mp4",
+     "bytes": 10432179,
+     "src": "trailer-v5.av1.mp4",
      "type": "video/mp4; codecs=\"av01.0.08M.08\""
     },
     {
-     "bytes": 19875481,
-     "src": "trailer.h264.mp4",
+     "bytes": 11427481,
+     "src": "trailer-v5.h264.mp4",
      "type": "video/mp4; codecs=\"avc1.640028\""
     }
    ],

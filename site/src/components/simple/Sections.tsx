@@ -70,7 +70,6 @@ export function DraftBanner() {
 }
 
 export function Intro() {
-  const trailer = video("trailer");
   const wide = video("hero-loop-arc").poster;
   const tall = image("hero-m-arc");
   return (
@@ -101,7 +100,7 @@ export function Intro() {
               {copy.linux.link} <ArrowRight size={16} aria-hidden />
             </a>
           ) : null}
-          <Trailer clip={clipData("trailer")} draft={trailer.draft} label={copy.hero.trailer} />
+          <Trailer clip={clipData("trailer-v5")} label={copy.hero.trailer} />
         </div>
         <p className="s-hero-note">
           {copy.hero.downloadNote.map((item, i) => (

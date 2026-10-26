@@ -1,6 +1,10 @@
 """Starting the game through the install's own launchers (UI-free).
 
 play.cmd / play_p8plus.cmd (written by the builder) take: fullscreen | stretch | window WxH | audio "device name".
+On Windows the launcher hands the sound device over as PS3_AUDIO_DEVICE instead of `audio "name"` and runs the script
+with `cmd /s /c ""<script>" <options>"` (see command_line): cmd.exe's /c quote rule broke a start whose install path had
+a space and whose device name had one too (GitHub #1: 4 quotes on the line -> cmd dropped the first and last one ->
+"'D:\\Games\\THPS8' is not recognized", the game never started).
 A launcher run sets THP8_LAUNCHER=1 so the .cmd does not `pause` on an error (nobody sees that console); the launcher
 shows the end of the log instead (logs\\play_<variant>.log)."""
 import os
@@ -31,8 +35,33 @@ def command(inst, variant, fullscreen=False, stretch=False, window=None, audio=N
     if audio:
         if '"' in audio:
             raise ValueError("audio device name must not contain a double quote")
-        args += ["audio", audio]
+        if not IS_WIN:
+            args += ["audio", audio]               # Windows: option_env() (no cmd.exe parsing of the name)
     return args
+
+
+def option_env(audio=None):
+    """Variables for the options that do not go on the command line: on Windows the sound device (PS3_AUDIO_DEVICE,
+    what `audio "name"` sets in play_common.cmd). The name never passes cmd.exe's parser: spaces, ( ) & ^ % and
+    characters outside the console code page arrive unchanged."""
+    return {"PS3_AUDIO_DEVICE": audio} if (IS_WIN and audio) else {}
+
+
+_CMD_PLAIN = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.:/\\")
+
+
+def command_line(argv):
+    """Windows: the CreateProcess line for command()'s ["cmd", "/c", script, *options].
+    cmd /c keeps the quotes of a line only when it has exactly one quoted part with no special character in it;
+    otherwise it removes the first and the last quote -- a script path with a space plus any other quoted word, or a
+    path with ( ) &, then fails. /s + one outer pair of quotes: cmd removes exactly that pair and runs the rest as
+    written."""
+    assert argv[:2] == ["cmd", "/c"]
+    script, opts = argv[2], argv[3:]
+    if any('"' in a for a in argv[2:]):
+        raise ValueError("an argument must not contain a double quote")
+    words = [f'"{script}"'] + [a if a and set(a) <= _CMD_PLAIN else f'"{a}"' for a in opts]
+    return 'cmd /s /c "' + " ".join(words) + '"'
 
 
 def _is_size(s):
@@ -116,9 +145,12 @@ def start(inst, variant, extra_env=None, **opts):
         from . import modsettings                  # the player's mod settings (plugins\*.user.ini) as PS3MOD_* variables
         for k, v in modsettings.env_for(os.path.join(inst, "mods")).items():
             env.setdefault(k, v)
+    env.update(option_env(opts.get("audio")))
     for k, v in (extra_env or {}).items():
         env[SCRIPT_OVERRIDES.get(k, k)] = str(v)
     cmd = command(inst, variant, **opts)
+    if IS_WIN:
+        cmd = command_line(cmd)
     os.makedirs(os.path.join(inst, "logs"), exist_ok=True)
     # Windows: no console window; Linux: its own session (terminate() ends exactly that tree)
     how = {"creationflags": CREATE_NO_WINDOW} if IS_WIN else {"start_new_session": True}
@@ -129,11 +161,13 @@ def start(inst, variant, extra_env=None, **opts):
 
 def audio_devices():
     """Names of the active Windows playback devices (their friendly names; the game matches a substring)."""
-    ps = ("Get-PnpDevice -Class AudioEndpoint -Status OK | Where-Object { $_.InstanceId -like '*{0.0.0.*' } | "
+    # UTF-8 out: PowerShell writes the console code page by default, which turns a name outside it into '?'
+    ps = ("[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; "
+          "Get-PnpDevice -Class AudioEndpoint -Status OK | Where-Object { $_.InstanceId -like '*{0.0.0.*' } | "
           "ForEach-Object { $_.FriendlyName }")
     try:
         r = subprocess.run(["powershell", "-NoProfile", "-NonInteractive", "-Command", ps], capture_output=True,
-                           text=True, timeout=20, creationflags=CREATE_NO_WINDOW)
+                           encoding="utf-8", errors="replace", timeout=20, creationflags=CREATE_NO_WINDOW)
     except (OSError, subprocess.SubprocessError):
         return []
     return sorted({ln.strip() for ln in r.stdout.splitlines() if ln.strip()})
