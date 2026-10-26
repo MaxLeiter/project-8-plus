@@ -1,20 +1,54 @@
 # Project 8 Plus
 
-Tony Hawk's Project 8 (PS3, 2006) as a native Windows program, built on your PC from your own copy of the game, with the
-Project 8 Plus mod layer on top.
+[website](https://project8.maxleiter.com/) | [docs](https://project8.maxleiter.com/docs)
 
-> **You must own Tony Hawk's Project 8 for PS3 (BLUS30011).** This repository and its downloads contain no disc image,
-> game executable, decrypted binaries, extracted assets, keys or translated game code.
+Project 8 Plus is a PC port of [Tony Hawk's Project 8](https://en.wikipedia.org/wiki/Tony_Hawk%27s_Project_8) (the PS3 version). 
 
-*This README is a placeholder; the full one is on its way.* Until then: [docs/SETUP.md](docs/SETUP.md) (how the builder
-works), [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md), [CONTRIBUTING.md](CONTRIBUTING.md) (no game files, ever).
+This is not emulation; the P8 Plus launcher builds a PC [recomp](https://recompedia.com/) as a native Windows (or, experimentally, Linux) program. 
 
-| Folder | What |
-|---|---|
-| `builder/`, `packaging/` | the launcher and builder, and how the release is packaged |
-| `src/`, `tools/`, `patches/` | the title-specific runtime code, and our patch set for [ps3recomp](https://github.com/sp00nznet/ps3recomp) |
-| `mod/` | Project 8 Plus: the plugin, the script host, the live link and the add-on tools |
-| `docs/`, `site/` | documentation and the website's source |
+P8 Plus provides:
+- Support for custom soundtracks, HD textures, and updated smoothed models
+- A full Lua modding API and level/script editor
+- Uncapped FPS and ultrawide support
+- Keyboard and Xbox controller support (with updated in-game button/key prompts)
+- Bugfixes for issues encountered in the original game
 
-License: MIT (LICENSE). Third-party notices: NOTICE (Windows download), NOTICE_linux (Linux download), NOTICE_HD (the HD
+You provide your own copy of Project 8 and [RPCS3](https://rpcs3.net/) (which is used to decrypt the ROM at setup). No original Tony Hawk Project 8 assets or code are provided here. LLMs were used extensively in the development of P8 Plus.
+
+## Download
+
+**[Download the latest release](https://github.com/MaxLeiter/project-8-plus/releases/latest)** (`Project8Plus-0.9.0-windows-x64.zip`)
+
+You need:
+- Your own copy of Tony Hawk's Project 8 for PS3: the US disc (BLUS30011, version 01.02), dumped to a folder
+- [RPCS3](https://rpcs3.net/) during setup 
+- Windows 10 or 11 (64-bit) and a DirectX 12 graphics card
+- About 4 GB of free space, and an internet connection during setup
+
+To install:
+1. Unzip the download anywhere and run `THP8 Launcher.cmd`. 
+2. Pick your game folder and RPCS3, keep the recommended options, and press **Start building**. The build takes about 20–25 minutes and only happens once.
+3. Press **Play**. **Play original** starts the unmodified game without P8 Plus additions.
+
+## HD Textures
+
+<img width="1608" height="450" alt="Original vs HD" src="https://github.com/user-attachments/assets/1820d360-bd9d-4b01-b0f8-ddfa8c23bc2c" />
+
+The majority (~5000) of the game's textures and models are upscaled by an AI model on your own graphics card after install. It takes about an hour on a modern card and you can play while it runs in the background. The launcher downloads the upscaler by itself (44 MB). You can turn HD textures off in the launcher.
+
+<img width="1608" height="450" alt="Original vs HD" src="https://github.com/user-attachments/assets/73035400-4b3e-4be5-b0db-33792884a435" />
+
+## Modding
+
+The launcher's **Mods** page lets you manage your mods. Mods can be written with the Lua scripting API ([docs](https://project8.maxleiter.com/docs)). Working examples are in [`mod/examples`](mod/examples).
+
+### Level Creator
+
+https://github.com/user-attachments/assets/4702b8d0-d43c-4b5c-880a-c62b6b0625f3
+
+
+The desktop level editor lets you create and script levels with a visual editor. Hotloading is supported when the game is running, so the game will update with each edit in real-time.
+
+<sub>License: MIT (LICENSE). Third-party notices: NOTICE (Windows download), NOTICE_linux (Linux download), NOTICE_HD (the HD
 pack).
+</sub>
