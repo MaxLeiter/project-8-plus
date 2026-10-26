@@ -13,7 +13,7 @@ P8 Plus provides:
 - Keyboard and Xbox controller support (with updated in-game button/key prompts)
 - Bugfixes for issues encountered in the original game
 
-You provide your own copy of Project 8 and [RPCS3](https://rpcs3.net/) (which is used to decrypt the ROM at setup). No original Tony Hawk Project 8 assets or code are provided here. LLMs were used extensively in the development of P8 Plus.
+You provide your own copy of Project 8 and [RPCS3](https://rpcs3.net/) (which is used to decrypt the ROM at setup). No original Tony Hawk Project 8 assets or code are provided here. Project 8 Plus was made by running Opus 5.5 in a loop for a few weeks.
 
 ## Download
 
