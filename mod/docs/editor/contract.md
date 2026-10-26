@@ -6,8 +6,8 @@ script mods, the live link).
 
 ## Toolkit
 
-One app: the launcher, built on **imgui-bundle 1.92.900** (hello_imgui docking, ImGuizmo, imgui-node-editor,
-ImGuiColorTextEdit, implot) with **moderngl 5.12.0** for 3D viewports. The theme, fonts, icons and widgets come from the
+One app: the launcher, built on imgui-bundle 1.92.900 (hello_imgui docking, ImGuizmo, imgui-node-editor,
+ImGuiColorTextEdit, implot) with moderngl 5.12.0 for 3D viewports. The theme, fonts, icons and widgets come from the
 `p8ui` design system; do not hand-roll styles or colors. Panels are Python modules drawn every frame.
 
 ## 1. The document is a modkit mod

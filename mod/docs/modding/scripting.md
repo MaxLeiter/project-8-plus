@@ -197,7 +197,7 @@ local _, won = qb.call("GMan_HasWonGoal", { goal = qb.key("my_goal") })  -- cond
 qb.call("ChangeNodeFlag", { qb.key("NODEFLAG_Z_HOUSES_CHALK"), 1 })     -- unnamed params
 ```
 
-**Parameters** (Lua -> QB):
+Parameters (Lua -> QB):
 
 | Lua | QB |
 |---|---|
@@ -213,12 +213,12 @@ qb.call("ChangeNodeFlag", { qb.key("NODEFLAG_Z_HOUSES_CHALK"), 1 })     -- unnam
 | `{1, 2, 3}` (only 1..n keys) | array |
 | array part of the params table | unnamed params, in order |
 
-**Results**: `qb.call` returns `results, ok`. `results` holds what the callee returned (a CFunction's results, a
+Results: `qb.call` returns `results, ok`. `results` holds what the callee returned (a CFunction's results, a
 script's `return x = ...`), converted back (checksums as `qb.key` values that print as their names, vectors as
 `qb.vec`, wide strings as UTF-8 strings). `ok` is the boolean result (CFunctions and member functions; `true` for
 scripts).
 
-**Trick data: pass `qb.global` references, not copies.** The game's trick scripts trust their params. An
+Trick data: pass `qb.global` references, not copies. The game's trick scripts trust their params. An
 `AnimData` struct without the animation names hangs the game thread inside the game's own trick code for good
 (seen in game). Pass the game's own data by reference: `AnimData = qb.global("ChristianAir_Data")` (QB's
 `$ChristianAir_Data`), never a Lua copy of it (`qb.get_global` copies lose array element types and every member
@@ -237,7 +237,7 @@ qb.call("MakeSkaterGoto", { qb.key("GrabTrick"), params = {
 Other ways into the trick scripts (e.g. `SpawnSkaterScript`, a QB script of your own made with `qb.script`) are not
 checked.
 
-**Lua functions callable from QB**: `qb.register(name, fn)` defines a QB CFunction whose body is Lua. Use it for
+Lua functions callable from QB: `qb.register(name, fn)` defines a QB CFunction whose body is Lua. Use it for
 callbacks the game calls by name: dialog buttons (`pad_choose_script`), a ped's `activation_script`, goal scripts.
 
 ```lua
@@ -282,7 +282,7 @@ The full list with signatures and examples is [scripting_api.json](scripting_api
 layout). Writes are refused outside the game's data and heap ranges (code, stacks and device memory are off limits).
 Prefer `qb.*` where it can do the job: guest addresses differ between game versions.
 
-**Save data** (`save.*`) is a JSON file per mod, `<mods>\_modsave\<mod id>\save.json`, written atomically within
+Save data (`save.*`) is a JSON file per mod, `<mods>\_modsave\<mod id>\save.json`, written atomically within
 10 s of a change, on reload and at exit, or at once with `save.flush()`. The game's own saves are never touched.
 
 ## Examples
@@ -312,19 +312,19 @@ Native plugins (other DLLs in `<mods>\plugins`) use the host through two service
 The port's lifter compiles every PPU function of the game into C, with a guard at each function's entry, so the
 mod-capable exe can wrap any game function at run time (plugin ABI 1.2 `hook_add`). The host:
 
-- **pumps** the game thread from the frame step (`sub_5C1E18`): Lua tasks, the `frame` event, queued work;
-- **calls QB** by writing a tiny QB script ("stub") into the game's symbol table and starting it with the game's own
+- pumps the game thread from the frame step (`sub_5C1E18`): Lua tasks, the `frame` event, queued work;
+- calls QB by writing a tiny QB script ("stub") into the game's symbol table and starting it with the game's own
   `SpawnScriptNow` code (`sub_375790`): `if [object:]Name <params as literals>` then `modapi_ret __mcid = <id>
   __ok = 1 <...>`. The callee's results land in the stub's params; `modapi_ret` is a CFunction whose body is the
   host's trampoline, so the results come back to Lua the moment the callee returns, in the same frame or (if it
   waits) frames later;
-- **defines Lua CFunctions** as QB symbols of type CFunction whose function descriptor points at a dead game function
+- defines Lua CFunctions as QB symbols of type CFunction whose function descriptor points at a dead game function
   (`sub_42CEBC`, the retail-unused QB text compiler) that the host replaces; the descriptor's TOC word carries the
   Lua function's id;
-- **taps** script starts (`CScript::SetScript` `sub_43DC9C`, script calls `sub_43DE70`), CFunctions (their own
+- taps script starts (`CScript::SetScript` `sub_43DC9C`, script calls `sub_43DE70`), CFunctions (their own
   entries), and the game's event funnel (`sub_3C41DC`, every LaunchEvent / BroadcastEvent / exception), each only
   while a mod listens;
-- **hooks** a few C++ gameplay functions directly: trick text (`Display` `0x7DA0CC`), combo banked / lost
+- hooks a few C++ gameplay functions directly: trick text (`Display` `0x7DA0CC`), combo banked / lost
   (`ClearPanel_Landed` `0x7D6474` / `ClearPanel_Bailed` `0x7D743C`), gaps (`EndGap` `0x799A7C`), pause
   (`sub_817884`);
 - reads the local skater (`sub_38BEF4` on the skater manager `*(0x100E82C4)`; position `+0x70`, velocity `+0xD0`,

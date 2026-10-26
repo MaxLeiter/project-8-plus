@@ -2,14 +2,14 @@
 
 ## What you need
 
-- **Your own copy of the game**: Tony Hawk's Project 8, US disc BLUS30011, version 01.02, as the folder the native
+- Your own copy of the game: Tony Hawk's Project 8, US disc BLUS30011, version 01.02, as the folder the native
   port runs from (the folder that contains `PS3_GAME`). The kit reads it; it never writes to it.
-- **The native port** (Project 8 Plus for PC). Mods go into its `mods` folder (next to the port's executable, or the
+- The native port (Project 8 Plus for PC). Mods go into its `mods` folder (next to the port's executable, or the
   folder the `PS3_MODS_ROOT` environment variable names).
-- **Python 3.11-3.13**, 64-bit, with `numpy`, `pillow` and `quicktex`
+- Python 3.11-3.13, 64-bit, with `numpy`, `pillow` and `quicktex`
   (`pip install numpy pillow quicktex`). `moderngl` is only needed to render previews with the kit's renderer;
   [development.md](../development.md) lists the extras of the other tools.
-- **Blender 4.x** for the 3D work ([blender.md](blender.md), [blender-addon.md](blender-addon.md)). Any glTF 2.0 tool
+- Blender 4.x for the 3D work ([blender.md](blender.md), [blender-addon.md](blender-addon.md)). Any glTF 2.0 tool
   works too; the kit only reads `.glb` / `.gltf` files.
 - This repository, for the tools in `tools/modkit` and the example mods in `examples`.
 
@@ -25,17 +25,17 @@ mods live in the `mods` folder, not in the game folder ([packaging.md](packaging
 
 ## The workflow
 
-1. **Export** what you want to change from your game files to a glTF file: a zone, a prop, a skater, a board, a
+1. Export what you want to change from your game files to a glTF file: a zone, a prop, a skater, a board, a
    clothing part (`python tools/modkit/modkit.py export zone z_houses`). The exported files are yours to edit and stay on
    your PC; do not share them. Skip this step for something wholly new (a ramp from scratch).
-2. **Edit in Blender**: import the `.glb`, change or add meshes, UVs, materials, then export glTF again
+2. In Blender, import the `.glb`, change or add meshes, UVs, materials, then export glTF again
    ([blender.md](blender.md)). Axes need no conversion: Blender's exporter writes +Y up, which is the game's up axis.
-3. **Write the manifest**: a mod is a folder with `modkit.json` and an `assets/` folder holding your glTF and PNG
+3. Write a manifest. A mod is a folder with `modkit.json` and an `assets/` folder holding your glTF and PNG
    files (`python tools/modkit/modkit.py new "My mod"` scaffolds one). The manifest lists the operations to apply
    ([packaging.md](packaging.md), [operations.md](operations.md)).
-4. **Build**: `python tools/modkit/modkit.py build <mod folder> --mods <install>\mods`. All mods you pass are applied
+4. Build with `python tools/modkit/modkit.py build <mod folder> --mods <install>\mods`. All mods you pass are applied
    in load order to your game's files and installed as one pack in the mods folder.
-5. **Play**: start the native port. Its log shows `[mods]` lines with the files it serves from the pack. After a
+5. Start the native port. Its log shows `[mods]` lines with the files it serves from the pack. After a
    change of the mod set the game rebuilds its HDD cache once, so the first start is a little slower.
 
 ## A first build: the examples
@@ -97,7 +97,7 @@ again from its next start, and resets the game's HDD cache once so that nothing 
 
 ## Make a mod and share it
 
-A mod folder holds only your own work, so it can be shared as a folder or, with `modkit.py package`, as a zip. Check
+A mod folder holds only your own work and can be shared as a folder or, with `modkit.py package`, as a zip. Check
 before you do:
 
 - no game content anywhere: not a file the exporters wrote from your copy, not a texture or model derived from the

@@ -2,8 +2,8 @@
 
 A skater mod in two parts:
 
-1. `skin.recolor` changes the hue, saturation and brightness of Tony Hawk's T-shirt **at build time, on your own copy
-   of the game**. The manifest only says how; the game's picture is never shipped (the mod folder has no texture of
+1. `skin.recolor` changes the hue, saturation and brightness of Tony Hawk's T-shirt at build time, on your own copy
+   of the game. The manifest only says how; the game's picture is never shipped (the mod folder has no texture of
    the shirt).
 2. `skin.add_mesh` adds a small original cap that [make_assets.py](make_assets.py) generates (a six-panel crown and a
    curved brim with a cloth texture). The mesh is left unskinned: one rigid node that the operation attaches to a
@@ -27,11 +27,11 @@ A skater mod in two parts:
  "rigid_bone": "Bone_Head", "offset": [0, 0.03, -0.012], "scale": 1.1}
 ```
 
-- **The shirt.** Mesh 4 of `Pro_Hawk` is the T-shirt. Its texture is an atlas shared with the jacket (mesh 0), so the
+- The shirt. Mesh 4 of `Pro_Hawk` is the T-shirt. Its texture is an atlas shared with the jacket (mesh 0), so the
   operation changes only the texels the shirt's UVs cover (`uv_mask`, on by default). Hue +150 degrees turns the
   shirt and its print to green and blue; the saturation and value factors make it stand out, since the shirt is dark.
   Free skate, skater select and create-a-skater draw Tony Hawk from the `cas_shared` pak, which is where the edit goes.
-- **The cap.** `cap.glb` (Y up, meters, in the human skeleton's bind pose, the skater faces +Z): one node `modkit_cap`, one
+- The cap. `cap.glb` (Y up, meters, in the human skeleton's bind pose, the skater faces +Z): one node `modkit_cap`, one
   material `modkit_cap_cloth`, normals, `TEXCOORD_0` (inside 0..1), white `COLOR_0`. Crown base at y = 1.765 m, apex at
   1.883 m, the brim reaches z = +0.16 m; `Bone_Head` is near y = 1.65 m. `offset` and `scale` (about the cap's own
   center) settle it on his head. Texture: v < 0.78 is the crown (panel seams at u = k/6, one at the front center

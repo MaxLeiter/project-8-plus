@@ -21,7 +21,7 @@ the game.
 ## Size and orientation
 
 A pro's deck graphic is a create-a-skater texture swap: the board's default deck texture is replaced by a `Decks_*` image
-when the skater's appearance is built. Tony Hawk's is `Decks_Birdhouse_01`, a **128 x 256 DXT1** portrait image in the
+when the skater's appearance is built. Tony Hawk's is `Decks_Birdhouse_01`, a 128 x 256 DXT1 portrait image in the
 `cas_shared` pak (u across the 0.25 m wide deck, v along its 0.82 m length). The operation keeps that size and format:
 the picture is fitted with `fit: cover` (the default), and since this one is also 1:2 it is scaled down without
 cropping. The build log says what happened:

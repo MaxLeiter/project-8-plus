@@ -108,8 +108,8 @@ A requirement cycle, a missing requirement, or a declared conflict stops the bui
 
 Two mods overlap when they change the same pak entry (the same model, the same texture) or the same file. That is
 not an error: both are applied in load order, and the build lists every overlap in its output and in the pack record
-(`conflicts`: the file, the entry, the mods in order, `last`). Reading it: `last` is the mod applied last, **on top of
-the others' result**. If it replaces the whole entry (a texture, a mesh) it hides the earlier mods' change; if the
+(`conflicts`: the file, the entry, the mods in order, `last`). Reading it: `last` is the mod applied last, on top of
+the others' result. If it replaces the whole entry (a texture, a mesh) it hides the earlier mods' change; if the
 mods edit different parts of an entry (different meshes of one skater, different objects of one zone) both survive.
 
 Use the manifest's `conflicts` to forbid a combination that cannot work, and `--strict` to turn every overlap and
@@ -121,23 +121,23 @@ warning into an error.
 overlay pack, `<mods>\<pack>\PS3_GAME\USRDIR\DATA\...`, plus a record `modkit_pack.json` next to it. A `MOD` is a mod
 folder or a mod zip (below).
 
-- **One pack, so that mods can combine.** The overlay replaces whole files ([formats.md](formats.md#the-overlay)); two
+- One pack, so that mods can combine. The overlay replaces whole files ([formats.md](formats.md#the-overlay)); two
   separate packs that both edit a zone pak would hide each other. The build applies the mods to one in-memory view of
   the game's files and writes each changed file once. A mod that changes one entry of a pak therefore ships the whole
   pak: the three example mods together make a 43 MiB pack.
-- **The pack name.** Default `zz_modkit`, which sorts after `hd_textures` and every pack named `a`..`y`. A name is 1-64
+- The pack name. Default `zz_modkit`, which sorts after `hd_textures` and every pack named `a`..`y`. A name is 1-64
   letters, digits, `_`, `.`, `-`, must not start with `_` or `.` (the overlay skips those), and `PS3_GAME` and `plugins`
   are reserved.
-- **The base.** The build edits the files the overlay would serve below the pack: lower packs (in name order, for
+- The base. The build edits the files the overlay would serve below the pack: lower packs (in name order, for
   example `hd_textures`), then the game (`--game`, default `THP8_DATA`). So a mod built on top of the HD textures keeps
   them. A pack that sorts after the mod pack, or loose files in `<mods>\PS3_GAME`, that replace the same file would hide
   the change; the build refuses that (`--force` to install anyway), so keep the default name or choose one that sorts
   last. A kit pack above yours that was built on files you change is reported as going stale: rebuild it next.
-- **Only changed files** are in the pack: files whose bytes differ from the base. A build that changes nothing installs
+- Only changed files are in the pack: files whose bytes differ from the base. A build that changes nothing installs
   nothing (and removes the kit's old pack).
-- **Atomic.** The pack is staged in `<mods>\.<pack>.build`, verified, then swapped in by renames; a failed build leaves
+- Atomic. The pack is staged in `<mods>\.<pack>.build`, verified, then swapped in by renames; a failed build leaves
   the installed pack as it was. The overlay ignores folders starting with `.`.
-- **Rebuild after changes.** Change a mod, a lower pack, or the game, and build again. `status` tells you.
+- Rebuild after changes. Change a mod, a lower pack, or the game, and build again. `status` tells you.
 
 ### Commands
 

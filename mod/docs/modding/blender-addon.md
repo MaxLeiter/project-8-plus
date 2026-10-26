@@ -5,7 +5,7 @@ content into the scene, mark the objects that make up your mod, write the mod fo
 port's mods folder. It is a convenience on top of the command line ([getting-started.md](getting-started.md)); every
 step it does can also be done by hand ([blender.md](blender.md)).
 
-**Status: preview.** The add-on's logic and its Blender calls are covered by automated tests (`tools/blender/tests`),
+Status: preview. The add-on's logic and its Blender calls are covered by automated tests (`tools/blender/tests`),
 but it has not yet been used in Blender itself, so expect rough edges and please report what you find. The glTF
 import and export it uses are Blender's own.
 

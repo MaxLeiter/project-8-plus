@@ -10,7 +10,7 @@ the game's own:
 - they crossfade into the next song;
 - SKIP TRACK and the random / in-order setting work on them.
 
-**Your music, your PC.** The kit never ships or downloads music. You supply the files. They are converted on your
+Your music, your PC. The kit never ships or downloads music. You supply the files. They are converted on your
 PC, into your own mods folder, from your own copy of the game. Don't share a built pack that contains someone
 else's music.
 
@@ -77,16 +77,16 @@ ambience, voices and the menu music. The bank holds 2060 MP3 subsounds, found by
   `User_Music` sound bus) and the save's per-song on/off flags all read that table.
 
 The build does the following:
-1. **Converts** each song to MP3, CBR, 44.1 kHz stereo, the same kind of stream as the stock songs:
+1. Converts each song to MP3, CBR, 44.1 kHz stereo, the same kind of stream as the stock songs:
    - decodes the file and mixes the stems;
    - trims silence at both ends;
    - matches the loudness of the stock songs (about -21 LUFS integrated, EBU R128 gating) with a peak limiter.
 
    The converter is `p8audio.exe` (Windows Media Foundation, plus stb_vorbis for Ogg). It falls back to ffmpeg.
    Results are cached in `<mods>\_music_cache`, so a rebuild only converts new or changed files.
-2. **Writes a new stream bank** into the kit's pack: the stock bank's header and stream data, copied from your game,
+2. Writes a new stream bank into the kit's pack: the stock bank's header and stream data, copied from your game,
    plus your songs as new subsounds at the end. Stock streams keep their numbers.
-3. **Rebuilds the index and the playlist.** Stock songs keep their positions, so a save's on/off choices still match
+3. Rebuilds the index and the playlist. Stock songs keep their positions, so a save's on/off choices still match
    them, and your songs come after them.
 
 Costs:
@@ -106,11 +106,11 @@ Notes:
 Native port pool runs, 2026-10-07, with the test music only ("Your Game, Your Rules", the Project 8 Plus score, CC BY
 4.0, plus a synthesized tone ladder):
 
-- **Playback.** Found in the game's own audio output (the runtime's AUDIO_WAV dump), by cross-correlation with the
+- Playback. Found in the game's own audio output (the runtime's AUDIO_WAV dump), by cross-correlation with the
   built streams: 0.97 and 0.95. The second song started 2.5 s before the first ended, which is the crossfade.
-- **Now Playing.** The pause-menu ticker read `NOW PLAYING: Project 8 Plus, "Your Game, Your Rules" (Punk)`.
-- **Playlist menu.** With stock songs off it listed only the two songs. With stock songs on it listed the 56 stock
+- Now Playing. The pause-menu ticker read `NOW PLAYING: Project 8 Plus, "Your Game, Your Rules" (Punk)`.
+- Playlist menu. With stock songs off it listed only the two songs. With stock songs on it listed the 56 stock
   songs, then the two.
-- **Controls.** The per-song toggle and the PLAY preview worked.
-- **Volume.** The game applied the same gain to a custom song as to a stock song: -7.8 dB from the source file to the
+- Controls. The per-song toggle and the PLAY preview worked.
+- Volume. The game applied the same gain to a custom song as to a stock song: -7.8 dB from the source file to the
   game output at MUSIC LEVEL 10, for both.

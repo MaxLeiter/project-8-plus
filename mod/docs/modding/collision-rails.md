@@ -6,8 +6,8 @@ the rail points by name) and its baked rails (the zone's `.rnb_lvl` in `global_r
 grinds on). The kit can add to all three. This page says what it adds, how to use it, and what it cannot do.
 
 Status: the operations build, every changed file parses back, the new collision and rails export to OBJ for a look in
-Blender, and the example mod's kicker and rail render in the right place in the kit's renderer. **Grind rails work in the
-game**: a `rails.add` rail is loaded into the engine's rail manager and the skater grinds it (see "What is verified").
+Blender, and the example mod's kicker and rail render in the right place in the kit's renderer. Grind rails work in the
+game: a `rails.add` rail is loaded into the engine's rail manager and the skater grinds it (see "What is verified").
 The collision operations have not been run in the game yet; read "What is verified" before you rely on them.
 
 ## How the game stores it
@@ -61,8 +61,8 @@ the static object ended up at (the build prints `snap_to_ground: ground at y=...
 ### Where the game gets its rails
 
 The startup script sets `RAILNODE_ASSETS_ENABLED = 1`. With it, the zone loader skips `RailNode`, `ClimbingNode` and
-`ManualNode` nodes of the node array (except in the park editor) and the rail manager is filled from **baked rail
-files** instead: `pak/global_rails/global_rails.pak` (`PAK/200C0745.CHK`) holds one `.rnb_lvl` entry per world zone,
+`ManualNode` nodes of the node array (except in the park editor) and the rail manager is filled from baked rail
+files instead: `pak/global_rails/global_rails.pak` (`PAK/200C0745.CHK`) holds one `.rnb_lvl` entry per world zone,
 named after the zone, and the level script loads it once per level into its own heap, `RailNodeHeap`. Mission paks and
 the training zone carry their own `.rnb_lvl`. Each stock `.rnb_lvl` is an exact bake of the zone's node-array rails:
 18,132 of the 18,134 records of the 12 zones come out byte for byte from the node array (the other 2 are points with

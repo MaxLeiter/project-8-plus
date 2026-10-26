@@ -53,8 +53,8 @@ textures are shared and small (128-512 px), and a deck graphic is 128 x 256 in t
 
 ## Zone video memory
 
-All the zones share **four fixed video-memory link slots**, and every slot is as big as the **largest zone `_vram`
-pak** of any zone (the game measures the files on the disc when a level loads), rounded up to 0x800. So the budget is
+All the zones share four fixed video-memory link slots, and every slot is as big as the largest zone `_vram`
+pak of any zone (the game measures the files on the disc when a level loads), rounded up to 0x800. So the budget is
 global:
 
 ```

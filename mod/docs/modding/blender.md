@@ -99,18 +99,18 @@ Custom properties on objects, meshes and materials (Object Properties > Custom P
 
 - Import the exported skater, board or clothing part and edit the meshes; leave the Armature, the bone names and
   the hierarchy alone. The human skeleton has 101 bones, the board skeleton 9.
-- **Weights:** Weight Paint > Weights > Limit Total 3, then Normalize All, before exporting. Vertex groups carry the
+- Weights: Weight Paint > Weights > Limit Total 3, then Normalize All, before exporting. Vertex groups carry the
   game's bone names; bones are matched by name, case-insensitively (`bone_<8 hex digits>` for the few unnamed ones). A
   weighted joint the game skeleton does not have fails the import and the message lists it.
-- **Moving the armature:** if the armature in the file is moved or scaled as a whole against the game's bind pose, the
+- Moving the armature: if the armature in the file is moved or scaled as a whole against the game's bind pose, the
   import undoes that and warns; any other difference of the bind pose fails. Blender re-orients bones on import; that is
   fine, only the joint positions are compared.
-- **Meshes over the SPU skinning budget** (about 1,600 vertices, [limits.md](limits.md)) are split automatically by
+- Meshes over the SPU skinning budget (about 1,600 vertices, [limits.md](limits.md)) are split automatically by
   the build, which prints the exact job size of each mesh.
 - An accessory without a skin (a cap, a backpack) is a plain mesh in the bind pose; `skin.add_mesh` binds it to one bone
   (`rigid_bone`), and `offset` / `scale` fit it ([cas_recolor](../../examples/cas_recolor/README.md)). Model it where it
   sits on the exported skater, with the skater's pose as the reference.
-- **Textures:** a skater's textures are shared and small (128-512 px), and often atlases shared by several meshes
+- Textures: a skater's textures are shared and small (128-512 px), and often atlases shared by several meshes
   (Tony Hawk's jacket and T-shirt share one image). `skin.recolor` with `mesh` changes only the texels that mesh's UVs
   cover. Replace textures with `skin.replace_texture` (or `skin.deck_graphic` for a deck) and keep the size unless you
   have checked the budget.

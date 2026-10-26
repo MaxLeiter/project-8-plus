@@ -58,14 +58,14 @@ launcher (imgui-bundle, hello_imgui)                 thp8-mod/tools
                                                                    ops_story, ops_script ... -> one overlay pack
 ```
 
-- **The document is the mod.** `modkit.json` is the only project file. An editor object is one or more ops sharing
+- The document is the mod. `modkit.json` is the only project file. An editor object is one or more ops sharing
   `x_editor.entity`. Its primary op holds the editor's description (`kind`, `params`, `xf` = position / yaw /
   scale), and the editor regenerates the ops from it whenever something changes. The build strips every `x_` key.
   Generated meshes go to `assets/gen/`. The contract with the content areas is [contract.md](contract.md).
-- **Nothing from the game is in a mod.** Pieces are generated with procedural textures. Game props are referenced by
+- Nothing from the game is in a mod. Pieces are generated with procedural textures. Game props are referenced by
   name (`static.add_object` `game_model`) and copied from the player's own files at build time. Texture edits ship
   parameters or the creator's own layer.
-- **Caches** (level meshes, thumbnails, the pak index) live in the user's local app data, never in the bundle.
+- Caches (level meshes, thumbnails, the pak index) live in the user's local app data, never in the bundle.
 
 ## Status
 

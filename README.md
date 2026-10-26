@@ -47,7 +47,7 @@ The launcher's **Mods** page lets you manage your mods. Mods can be written with
 https://github.com/user-attachments/assets/4702b8d0-d43c-4b5c-880a-c62b6b0625f3
 
 
-The desktop level editor lets you create and script levels with a visual editor. Hotloading is supported when the game is running, so the game will update with each edit in real-time.
+The desktop level editor lets you create and script levels with a visual editor. Hotloading is supported when the game is running: the game updates with each edit in real-time.
 
 ## Credits
 

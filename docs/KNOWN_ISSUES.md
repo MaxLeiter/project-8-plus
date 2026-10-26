@@ -80,7 +80,7 @@ exits); rebuild with `--fma off` for a portable install.
 
 ## Linux (experimental)
 
-- Linux ships as an **experimental** package in this release (`Project8Plus-<version>-linux-x86_64.tar.xz`): build and
+- Linux ships as an experimental package in this release (`Project8Plus-<version>-linux-x86_64.tar.xz`): build and
   play on a Linux PC with your own game, as on Windows; no HD textures there yet. See its TESTING.txt.
 
 ## Coming soon

@@ -24,11 +24,11 @@ tools in `tools/` resolve names for you; a name dictionary built from your own c
 A pak is a container of entries (`.geom`, `.tex`, `.hkc`, `.qb`, ...). Each entry has a type (the checksum of its
 extension), a full name and a name checksum. Two things to know:
 
-- **Header and vram halves.** Geometry and textures are split in two: the part the CPU reads (`X.pak`: material
+- Header and vram halves. Geometry and textures are split in two: the part the CPU reads (`X.pak`: material
   libraries, scene tables, texture dictionaries) and the part the GPU reads (`X_vram.pak`: vertex buffers, index
   buffers, pixel data). Entries pair up by name. A mod that changes a model or a texture changes both files; the
   kit does this together.
-- **Split paks.** A few paks keep their data in a second file (`.pab`, e.g. the global pak).
+- Split paks. A few paks keep their data in a second file (`.pab`, e.g. the global pak).
 
 A pak is rebuilt byte for byte by the tools, so an unchanged entry stays identical.
 

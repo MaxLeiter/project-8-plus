@@ -22,7 +22,7 @@ no goal and no script mod), the third for goal-givers (the goal system creates t
 loaded by `load_level` into the fixed PedParts heaps (main 6,656,000 B, video 25,088,000 B, [limits.md](limits.md))
 for every level (`LoadPak "zones/z_peds/z_peds.pak" Heap = PedParts`). It holds:
 
-- **108 ped skins**: the random-ped parts (`RPed_*` heads, torsos, legs), the goal peds (`GPed_*`), three pros (Hawk,
+- 108 ped skins: the random-ped parts (`RPed_*` heads, torsos, legs), the goal peds (`GPed_*`), three pros (Hawk,
   Huston, Williams), `Ped_RandomSkater_HEAD`, ... A person can only be drawn in any level when every part of its
   profile is one of these (the kit calls such a profile resident; 125 of the game's 200 profiles are);
 - `z_peds_scripts.qb`: the pedlife profile tables (`global_pedlife_profiles`, `kid_pedlife_profiles`,
@@ -326,7 +326,7 @@ the ped itself when it has none). In game, a Lua-spawned `Profile_Greg_Skater` w
 teleported, and a zone-script `RPed_Businessmen` moves with every method (`walk_to` to a position or a node,
 `Obj_MoveToPos`, `Obj_MoveToRelPos`, `Obj_SetPosition`).
 
-**Talk prompts**: `peds.talk(id, {name, prompt, radius = 4, pos, once, on_talk = function(id) ... end})`,
+Talk prompts: `peds.talk(id, {name, prompt, radius = 4, pos, once, on_talk = function(id) ... end})`,
 `peds.untalk(id)`, `peds.talking(id)`, `peds.near()` (the id whose prompt is up). While the skater is within `radius` of the person (its `pos`, or its own
 position re-read twice a second, so walkers work), on the ground and not in a trick, the stock-look prompt
 "<name>: <prompt> (button)" shows at the bottom of the screen (`create_speech_box`, the box the game's talk prompts

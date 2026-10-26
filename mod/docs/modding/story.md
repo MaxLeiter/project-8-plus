@@ -22,9 +22,9 @@ covered offline by the simulator tests.
 
 `p8story/1`. A story is one document. You can write it two ways:
 
-- **a YAML or JSON file** in the mod, built by the op `{"op": "story.file", "source": "assets/story/kicker.yaml"}`
+- a YAML or JSON file in the mod, built by the op `{"op": "story.file", "source": "assets/story/kicker.yaml"}`
   (like every build input, it lives under `assets/`);
-- **editor ops**, one per entity: `story.story`, `story.character`, `story.chapter`, `story.quest`, `story.dialogue`,
+- editor ops, one per entity: `story.story`, `story.character`, `story.chapter`, `story.quest`, `story.dialogue`,
   `story.cutscene`, `story.trigger`. These are what the editor writes. Every op names its story with `"story"`
   (default: the mod's only `story.story`).
 
@@ -60,7 +60,7 @@ cutscenes: {cs_arrival: {...}, ...}
 triggers: [{when: ..., do: [...]}, ...]
 ```
 
-**Start** (story and quests): `auto`, `manual` (only an action starts it), `{talk: <character>, prompt: "..."}`,
+Start (story and quests): `auto`, `manual` (only an action starts it), `{talk: <character>, prompt: "..."}`,
 `{area: {pos: [x, y, z], radius: m}}`, `{event: <name>}` (an `emit` action), `{level_enter: <zone>}`,
 `{after: <seconds>}`.
 
@@ -114,7 +114,7 @@ warm_up:
 Only one quest runs at a time, like the game's goals. Progress is saved after every step. A quest interrupted by
 a level change or by quitting resumes at its current step.
 
-**Steps** (one key each):
+Steps (one key each):
 
 | step | |
 |---|---|
@@ -132,7 +132,7 @@ a level change or by quitting resumes at its current step.
 
 Any step may have `text:`, which is shown as the objective line at the top of the screen while the step runs.
 
-**Objectives** (`objective: {...}`) are for small beats that do not need a full goal:
+Objectives (`objective: {...}`) are for small beats that do not need a full goal:
 
 | `type` | parameters | done when |
 |---|---|---|
@@ -290,7 +290,7 @@ Every action is a mapping with one verb. It may have `if: <condition>`.
 | `emit: <event>` | starts `{event: ...}` quests and fires `event` triggers |
 | `save`, `end_story` | |
 
-**Rewards**:
+Rewards:
 
 - `stat_points` uses the game's `AwardStatPoint`.
 - `goal_points` adds goal points (`CareerFunc AddGoalPoints`, as secret spots and gaps do).
@@ -301,7 +301,7 @@ Every action is a mapping with one verb. It may have `if: <condition>`.
 - `flag` sets a story flag.
 - With `text`, the reward shows a dialogue box (`title`, default "REWARD") and the game's goal-success sound.
 
-**Areas** (top level `areas:`): the career's node-flag unlocks, kept by the story. An area has the node flags of
+Areas (top level `areas:`): the career's node-flag unlocks, kept by the story. An area has the node flags of
 its locked and unlocked looks and the condition that opens it:
 
 ```yaml
@@ -320,7 +320,7 @@ area flags of each zone are the `*_PRE` / `*_POST` pairs of `game_progress_set_i
 (chapter_info.qb); in Houses `NODEFLAG_Z_HOUSES_UNLOCKSHOPS_PRE` is the `Z_Houses_G_SUBURBS_GATE_LOCKED` gate and
 `_POST` the open `Z_Houses_G_SUBURBS_GATE` (plus its grind rails), `UNLOCKCRETEPARK_*` the way to the skate park.
 
-**Time of day**: THP8 has no clock, so there is no time trigger. Each level has one lighting set (its TOD manager),
+Time of day: THP8 has no clock, so there is no time trigger. Each level has one lighting set (its TOD manager),
 and `mood` changes the look for a scene.
 
 # The runtime
@@ -378,7 +378,7 @@ the skip watcher and the deck unlock. Those scripts hand their results to Lua th
 script has to call into Lua. Goals report through quests' globals (`p8q_result_serial`, `p8q_last_goal`,
 `p8q_last_result`).
 
-**Saving**: the story state is stored with modapi's per-mod save (`<mods>\_modsave\<mod id>\save.json`, key
+Saving: the story state is stored with modapi's per-mod save (`<mods>\_modsave\<mod id>\save.json`, key
 `story.<id>`). The game's own save is never touched. It holds:
 
 - chapter states, and quest states with their current step;
@@ -387,7 +387,7 @@ script has to call into Lua. Goals report through quests' globals (`p8q_result_s
 
 The state is written after every step and flushed at quest and chapter boundaries.
 
-**Mod scripts** can use the runtime:
+Mod scripts can use the runtime:
 
 ```lua
 local story = require("story.runtime")
@@ -398,7 +398,7 @@ s:on("quest_done", function(s, id) ... end)              -- story_start, chapter
                                                          -- quest_started, quest_done, goal_won, goal_failed, story_done
 ```
 
-**Livelink exports** (modapi's `mod.export`, called by livelink's `mod.call`):
+Livelink exports (modapi's `mod.export`, called by livelink's `mod.call`):
 
 - `story.list`
 - `story.state(id)`
@@ -606,14 +606,14 @@ event `goal_presentation_finished` (`goal_presentation_ok` / `goal_presentation_
 
 ## 4. Cutscenes
 
-**Pre-rendered-in-engine cutscenes** (`Cutscene_7b9ec42b.q`, 408 `CUTSCENES` paks): `PlayCutscene Name = "c_..."
+Pre-rendered-in-engine cutscenes (`Cutscene_7b9ec42b.q`, 408 `CUTSCENES` paks): `PlayCutscene Name = "c_..."
 ExitScript = X` / `GoalPlayCutscene Name = "c_story_skateshop_2"`. `CutsceneSetup` hides peds and the skater, pauses
 objects and spawned scripts, loads the cutscene data (`Cut_GEL_*`), sets render and game lock to 2 (30 fps), swaps the
 sound buss to `Generic_IGC_BussSet` and pauses the user music; `CutsceneCleanup` / `PostCutscene` undo all of it,
 optionally `RestartNode` to reset the skater. Subtitles: `cutscene_subtitles_d59c70dc.q`; fades:
 `CutsceneFadeIn/Out time = s`.
 
-**In-game cinematics (IGC scenes)**: `igc_player_run` (`igc_player_7698ded1.q`) is a data-driven scene player:
+In-game cinematics (IGC scenes): `igc_player_run` (`igc_player_7698ded1.q`) is a data-driven scene player:
 `scene_setup` / `Template` (actors, `default_direction`, `default_behavior`, `camera_cycle`), `shot_params = [ {
 Camera, speaker, frames | waitfor | VO, actor_positions = [{ ActorName, Pos, Quat | node }], actor_directions,
 actor_behaviors, shot_script, pre/post_shot_script, transition = { in out } } ]`, `gameside_callbacks = { setup,

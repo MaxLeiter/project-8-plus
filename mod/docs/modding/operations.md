@@ -5,17 +5,17 @@ and the parameters below. `python tools/modkit/modkit.py ops` lists the operatio
 
 Rules that hold for every operation:
 
-- **Paths** (`source`, `gltf`, `image`, ...) are relative to the mod folder, for example `assets/ramp.glb`. An absolute
+- Paths (`source`, `gltf`, `image`, ...) are relative to the mod folder, for example `assets/ramp.glb`. An absolute
   path, or one that leaves the folder, is an error.
-- **Unknown parameters.** The `static`, `texture` and `skin` operations reject a parameter they do not know and list
+- Unknown parameters. The `static`, `texture` and `skin` operations reject a parameter they do not know and list
   the ones they accept, so a typo cannot silently do nothing. The `collision` and `nodes` operations ignore
   parameters they do not know: check the spelling against this page (`yaw_deg`, `rotation_y`, ...). Keys that start
   with `_` or `x_` are comments and are removed before the operation runs.
-- **Order matters.** The operations of a build run in load order ([packaging.md](packaging.md#load-order-and-priority));
+- Order matters. The operations of a build run in load order ([packaging.md](packaging.md#load-order-and-priority));
   each one sees the files as the earlier ones left them. Collision operations that name a static object
   (`"object": "modkit_kicker"`) must come after the `static.add_object` that made it.
-- **Failure writes nothing.** The first error stops the build; the installed pack stays as it was.
-- **Coordinates** are game world space: Y up, right-handed, meters. `rotation_y` and `yaw_deg` are degrees about +Y; a
+- Failure writes nothing. The first error stops the build; the installed pack stays as it was.
+- Coordinates are game world space: Y up, right-handed, meters. `rotation_y` and `yaw_deg` are degrees about +Y; a
   yaw of 0 leaves local +Z pointing at world +Z, and a positive yaw turns local +Z towards +X (local +Z becomes
   `(sin yaw, 0, cos yaw)`).
 - Budgets are checked after the operation and recorded in the build report ([limits.md](limits.md)).
@@ -89,7 +89,7 @@ follow it.
  "node": "modkit_kicker", "position": [-61.05, 2.39, -64.52], "rotation_y": 45, "snap_to_ground": true}
 ```
 
-**Game models.** With `game_model` the kit exports the model from your game files to a temporary glTF at build time
+Game models. With `game_model` the kit exports the model from your game files to a temporary glTF at build time
 (base-color textures embedded, the material references kept) and imports it like any other source; the file never
 enters the mod folder. A prop needs `position` (its model space is around its own pivot, usually the bottom center). A
 zone object without `position` / `rotation_y` / `scale` is duplicated in place, at its original spot. Materials the
@@ -218,7 +218,7 @@ model and changes only the texels one mesh uses.
 
 ### texture.overlay
 
-**Paints over** a game texture with a layer of your own (graffiti, a logo, scuffs): the mod ships only the layer, a
+Paints over a game texture with a layer of your own (graffiti, a logo, scuffs): the mod ships only the layer, a
 PNG with transparency; the build composites it onto the player's copy of the texture.
 
 | parameter | default | meaning |

@@ -10,8 +10,7 @@ dropped anywhere on the launcher window. It checks the whole package before it c
 
 A creator mod is the other kind of package. It holds `modkit.json` and `assets/`, and it is built on the player's PC
 ([packaging.md](packaging.md)). The manifest below uses the same words as `modkit.json` on purpose: the same id rule,
-semantic versions, `requires` and `conflicts` with the same ranges, and `priority`. One vocabulary covers both kinds.
-A later online mod browser will read the same manifests.
+semantic versions, `requires` and `conflicts` with the same ranges, and `priority`. A later online mod browser will read the same manifests.
 
 ## The package
 
@@ -32,8 +31,8 @@ without `p8mod.json` is still accepted: it is treated as an older package, and i
 
 Where the files go:
 
-- **A plugin package** (only `plugins/`): `<install>\mods\plugins\`.
-- **Every other package**: its own pack folder, `<install>\mods\<name>\`. The pack folder may hold a `plugins\` folder of
+- A plugin package (only `plugins/`): `<install>\mods\plugins\`.
+- Every other package: its own pack folder, `<install>\mods\<name>\`. The pack folder may hold a `plugins\` folder of
   its own, which the game loads with the pack.
 
 ## p8mod.json
@@ -107,7 +106,7 @@ Each setting describes one key of the plugin's ini:
 Values may not contain `" % ! ^ & | < >` or line breaks. The value reaches the game as an environment variable, so
 this keeps it safe.
 
-The **player's values** never go into the shipped ini. The launcher writes them to `plugins\<name>.user.ini`. The
+The player's values never go into the shipped ini. The launcher writes them to `plugins\<name>.user.ini`. The
 package must not ship that file, an update keeps it, and uninstalling the mod takes it along. The game's plugin loader
 reads only `<name>.ini`, but an environment variable `PS3MOD_<PLUGIN>_<KEY>` wins over it. (The name is upper-case,
 and every character that is not A-Z or 0-9 becomes `_`. This is the runtime's existing override.) So the launcher
@@ -126,7 +125,7 @@ The check runs on the zip before anything is written:
 
 | refused (nothing is installed) | flagged (installed after the player confirms) |
 |---|---|
-| a path that leaves the folder (`..`, absolute, a drive, a device name), links, encrypted entries, names that differ only by case | **native code**: every `plugins/*.dll`. A plugin is a program that runs inside the game with the game's access to the PC. The review shows it in red, and the button reads *Install anyway* |
+| a path that leaves the folder (`..`, absolute, a drive, a device name), links, encrypted entries, names that differ only by case | native code: every `plugins/*.dll`. A plugin is a program that runs inside the game with the game's access to the PC. The review shows it in red, and the button reads *Install anyway* |
 | executables and scripts for Windows (`.exe .bat .cmd .ps1 .vbs .js .msi .lnk ...`), `EBOOT`, `thp8*.exe`, `.self .sprx .elf` | a file overlay replaces whole game files: the first start after installing it is slower |
 | a `.dll` anywhere but `plugins/<name>.dll` | a `.dds` not named by a 16-digit texture key (the game ignores it) |
 | a file outside the areas above; a `plugins/*.user.ini` | no `p8mod.json` (an older package) |
@@ -139,10 +138,10 @@ The review lists every check, so a refused package shows all its reasons at once
 
 The launcher's **Mods** page lists everything in `<install>\mods`, whether or not a package installed it:
 
-- **Load order**: texture packs, overlays, script mods and CAS item folders, in the order the game applies them. The
+- Load order: texture packs, overlays, script mods and CAS item folders, in the order the game applies them. The
   last one wins.
-- **Plugins.**
-- **Creator mods**: parks, CAS items and other kit mods, which **Apply** builds into the `zz_modkit` pack.
+- Plugins.
+- Creator mods: parks, CAS items and other kit mods, which **Apply** builds into the `zz_modkit` pack.
 
 Filter chips pick a type, and a **Problems** chip lists every mod with something wrong. For each mod the page shows:
 
@@ -201,18 +200,18 @@ in the editor or built. Tool data other than `x_editor` and `x_cap` is removed. 
 `sharecheck` runs on export (a file that fails is never written) and on import (nothing is copied). It uses an allow
 list: anything it does not recognize is refused.
 
-- **Every entry** must be listed in `p8share.json` with the right size and SHA-256. Nothing can be hidden, added or
+- Every entry must be listed in `p8share.json` with the right size and SHA-256. Nothing can be hidden, added or
   swapped after the file was made.
-- **`thumb.png` and pictures** must be real PNG or JPEG files with only image chunks, at most 1024 px for the
+- `thumb.png` and pictures must be real PNG or JPEG files with only image chunks, at most 1024 px for the
   thumbnail. No data can ride along in text chunks.
-- **`look.p8cas`** must follow the look grammar line by line: `p8cas 1`, `name`, `style <hex>`, `part <hex> <hex>=i:|f:|k:`,
+- `look.p8cas` must follow the look grammar line by line: `p8cas 1`, `name`, `style <hex>`, `part <hex> <hex>=i:|f:|k:`,
   `top`. A look names game items by checksum and contains none of them.
-- **`park/modkit.json`** may use only park operations: `static collision rails nodes goals peds story texture level`.
+- `park/modkit.json` may use only park operations: `static collision rails nodes goals peds story texture level`.
   No `script` (code), no `music`, no `skin` or `cas`. Every file an operation reads must be inside the park, or be a
   generated mesh that one of the park's own pieces makes.
-- **Models** must be glTF that no game exporter wrote. The check refuses the `thp8geom.py`, `import_skin` and modkit
+- Models must be glTF that no game exporter wrote. The check refuses the `thp8geom.py`, `import_skin` and modkit
   `export` generators, and any `thp8_export` marker.
-- **Never allowed**: `.dds`, game files (`.CHK .pak ...`), `thp8_export.json`, anything executable, and paths that
+- Never allowed: `.dds`, game files (`.CHK .pak ...`), `thp8_export.json`, anything executable, and paths that
   leave the folder.
 
 What the check cannot know is whether a picture or a model *you* add is your own work. Add only what you made.

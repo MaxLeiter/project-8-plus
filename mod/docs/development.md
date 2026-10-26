@@ -43,7 +43,7 @@ is not in the repository): `python tools/qbc/harvest_dbg.py --game "<game folder
 
 ## Never modify the original game files
 
-- A game copy made of **NTFS hard links** to your dump costs zero extra space,
+- A game copy made of NTFS hard links to your dump costs zero extra space,
   but writing into one of its files in place edits the original. Replace files
   with `gamecopy.py` (atomic, never writes through a link); never run an
   in-place patcher on a hard-linked copy.

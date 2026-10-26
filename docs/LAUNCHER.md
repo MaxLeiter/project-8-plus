@@ -29,7 +29,7 @@ On a Project 8 Plus install the top of the Mods page is the **Look** card. Two t
 game files, never shipped:
 
 * **Smoothed skaters** (the packs `skaters_pn` and `heads_pn`), made during the build.
-* **HD textures** (the packs `hd_mix` and `hd_chars_ui`), made in the **background** after the build: the game is playable at once.
+* **HD textures** (the packs `hd_mix` and `hd_chars_ui`), made in the background after the build: the game is playable at once.
   The card shows the progress with the time left and a **Pause** / **Resume** link; the rail on the left shows a small progress
   chip too. It carries on after you close the launcher or restart the PC (the launcher starts it again when it opens), waits while
   the game runs so the game keeps all the video memory, and the packs switch on the next time you start the game. A PC without a
@@ -54,16 +54,16 @@ files is ever changed.
 
 How the game orders and switches packs (this is the runtime's own rule, the launcher only follows it):
 
-* Packs are applied **in folder-name order**, ignoring case. The pack that comes **later wins** for a file or a
+* Packs are applied in folder-name order, ignoring case. The pack that comes later wins for a file or a
   texture; files in `mods\PS3_GAME` and `mods\textures` win over every pack.
-* A folder whose name starts with `_` or `.` is **disabled**. That is how the launcher disables a mod: it renames the
+* A folder whose name starts with `_` or `.` is disabled. That is how the launcher disables a mod: it renames the
   folder to `_name` and back. A plugin is disabled by renaming its `.dll` the same way.
 * The **Move up / Move down** buttons number the packs the launcher may rename (`010_name`, `020_name`, ...);
   digits sort before letters, so numbered packs apply before packs named by letters. Packs made by other tools
   (`hd_mix`, `zz_modkit`, `_xbox_prompts`) keep their own names because those tools look them up by name.
 * `_xbox_prompts` is a texture pack that the plugin switches on itself (Settings, *Button prompts*).
 
-**mod.json** (optional) describes a pack in the list:
+mod.json (optional) describes a pack in the list:
 
 ```json
 { "name": "Skater pack v2", "author": "somebody", "version": "2.1.0",
@@ -98,13 +98,13 @@ overlay order.
 
 The full format and the check are in thp8-mod `docs/modding/mod-packages.md`; in short:
 
-* A **mod package** is a `.zip` with a `p8mod.json` manifest (id, name, version, type, author, requirements, plugin
-  hooks, settings). **Install from file** or a file **dropped anywhere on the window** opens the **install review**
+* A mod package is a `.zip` with a `p8mod.json` manifest (id, name, version, type, author, requirements, plugin
+  hooks, settings). **Install from file** or a file dropped anywhere on the window opens the **install review**
   in the right-hand panel: every check with a tick, a flag or a cross. Nothing is copied before **Install**. A plugin
   `.dll` is flagged in red as native code (the button reads *Install anyway*). A package that is already installed
   is offered as an **Update**, and the old version moves to *Removed*. Packages without a manifest still install;
   their type is guessed.
-* The list has **filter chips** by type (Plugins, Textures, Overlays, CAS items, Parks, Scripts, Creator) and a
+* The list has filter chips by type (Plugins, Textures, Overlays, CAS items, Parks, Scripts, Creator) and a
   **Problems** chip, plus a search field. A row shows its problems in red (it will not work) or amber (worth knowing).
 * **Needs**: each requirement of the mod (another mod and its version range, Project 8 Plus, the plugin interface
   version) as met / missing / switched off / wrong version; script mods need the script host plugin. Declared
@@ -120,8 +120,8 @@ The full format and the check are in thp8-mod `docs/modding/mod-packages.md`; in
 
 ## Share
 
-Parks (made in **Create** or the game's **Create-a-Park**, saved in `Documents\P8Plus Mods\<name>`) and **saved
-looks** (Create-a-Skater Plus *Save look*, `<mods>\_cas_presets\*.p8cas`, or the plugin's `user_data_dir`) are shown
+Parks (made in **Create** or the game's **Create-a-Park**, saved in `Documents\P8Plus Mods\<name>`) and saved
+looks (Create-a-Skater Plus *Save look*, `<mods>\_cas_presets\*.p8cas`, or the plugin's `user_data_dir`) are shown
 as cards with a picture the launcher draws from the data (a plan of the pieces, the look's colors: never a picture of
 the game).
 
@@ -135,7 +135,7 @@ the game).
   --dry`, which also checks the budgets), packs it (`modkit.py package`), installs it as a creator mod and starts
   **Apply** on the Mods page, so the park is in the game the next time it starts. A Create-a-Park park's gaps travel
   as data; their scoring script comes from this install's own creator tools.
-* The **check** runs on export and import. It uses an allow list: every entry listed with its checksum, park
+* The check runs on export and import. It uses an allow list: every entry listed with its checksum, park
   operations only (no scripts, no music, no skater changes), every file an operation reads inside the park, models
   not written by a game exporter, plain pictures, the look grammar line by line, no `.dds`, game files or code. A
   park with scripts cannot be shared this way; share it as a creator mod instead.
@@ -146,7 +146,7 @@ The first time, the Studio reads your game's textures and makes small previews: 
 once, and everything stays on your PC (`<install>\launcher\textures`; delete the folder to make it again). After
 that you can search by name, container or key, filter by category and format, and click a texture to see it large.
 
-* A **key** identifies a texture by its content. The game's renderer replaces a texture when a pack holds
+* A key identifies a texture by its content. The game's renderer replaces a texture when a pack holds
   `<key>.dds`, so a replacement applies to every place that texture is used.
 * **Export PNG** saves the texture (a normal map is exported as an RGB normal map).
 * **Replace** takes a PNG (or JPG, BMP, TGA, WebP). Choose the size in the game (1x, 2x or 4x the original, up to 4096
@@ -160,7 +160,7 @@ that you can search by name, container or key, filter by category and format, an
   Pitch-linear single-level DXT textures, such as the font atlases, can be replaced.
 * If another enabled pack replaces the same texture and comes later in the order, it wins; the Mods page shows that.
 
-Keys hash the **stock** game data. A pack that replaces files by path (a file overlay) changes the data some textures
+Keys hash the stock game data. A pack that replaces files by path (a file overlay) changes the data some textures
 are read from, so a texture inside such a file has a different key at run time.
 
 ## Where the launcher keeps things

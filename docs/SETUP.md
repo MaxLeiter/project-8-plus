@@ -41,7 +41,7 @@ specific executable, so another release needs its own lift and its own testing.
 
 | Release | Title ID | `EBOOT.BIN` | Status |
 | --- | --- | --- | --- |
-| US disc, version 01.02 | `BLUS30011` | in the table above | **Supported.** |
+| US disc, version 01.02 | `BLUS30011` | in the table above | Supported. |
 | US disc, any other version | `BLUS30011` | unknown | Not supported. Whether another disc version exists is unknown. |
 | Europe (PAL) disc | `BLES00014` | unknown | Not supported. |
 | Japan disc | `BLJM60030` (reported, unconfirmed) | unknown | Not supported. We have not confirmed this release from a disc. |
@@ -61,7 +61,7 @@ It reads only `PARAM.SFO` and `EBOOT.BIN` and prints what it found: the
 `TITLE_ID`, `TITLE` and `VERSION` from `PARAM.SFO`, and the size and SHA-1 of
 `EBOOT.BIN`. Paste those lines into a
 [release report](../../../issues/new?template=other_release.yml), with the
-region printed on your disc. **Do not send the files.**
+region printed on your disc. Do not send the files.
 
 ## What happens on first run
 
@@ -104,14 +104,14 @@ region printed on your disc. **Do not send the files.**
 11. **Cleaning up.** Unless you chose **Keep sources**, the generated sources,
     object files and the unpacked compiler are deleted.
 
-Every step records its result, so a build that was interrupted continues from
-the last completed step when you run the builder again.
+Every step records its result, and an interrupted build continues from the last
+completed step when you run the builder again.
 
 ## Where everything lives
 
-There are two folders: the **builder folder** you unpacked (`THP8 Launcher.cmd`,
+There are two folders: the builder folder you unpacked (`THP8 Launcher.cmd`,
 its Python, the ps3recomp tools and the prebuilt runtime library), and the
-**install folder** you picked. The builder never writes into your game folder,
+install folder you picked. The builder never writes into your game folder,
 and the game writes only inside the install folder.
 
 ```
@@ -144,13 +144,12 @@ the two exes (0.2 GB), the game's data cache in `hdd0` (0.3 GB, made at the
 first start), the compiler archive for rebuilds (0.1 GB), the smoothed skaters
 and other packs (0.15 GB) and the HD textures (1.4 GB). A plain port keeps about
 0.5 GB. Add 5.2 GB of game data if it had to be copied; hard links cost almost
-nothing. If you
-chose to use your game folder in place, it has to stay where it is; if it moves,
-run the builder again and pick it.
+nothing. If you chose to use your game folder in place, it has to stay where it
+is; if it moves, run the builder again and pick it.
 
 Saves are in `hdd0\home\00000001\savedata`. Copy that folder to back them up.
 
-**Hard links, briefly.** A hard link is a second name for the same file on the
+Hard links, briefly. A hard link is a second name for the same file on the
 same drive. The game opens `game\` read-only and add-ons go to `mods\`, so
 nothing the port does changes those files. Do not edit files in `game\` by
 hand: with hard links, that would change the file in your dump as well.

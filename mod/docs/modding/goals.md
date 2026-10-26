@@ -54,11 +54,11 @@ pivot wallie wallride`; any other string is one trick's name as the game shows i
 
 All the goal operations of a build together make:
 
-1. **`scripts\mods\p8q_goals.qb` in `pak/qb.pak`** (the main script pak, `PAK/F56B119F.CHK` + `F87B73EE.CHK`),
+1. `scripts\mods\p8q_goals.qb` in `pak/qb.pak` (the main script pak, `PAK/F56B119F.CHK` + `F87B73EE.CHK`),
    through `tools/modkit/qbinject.py`: the runtime library (`tools/modkit/goals/runtime.q`) plus, per goal, its
    configuration (`$p8q_goal_cfg.<id>`), its `goal_info` (`$p8q_goal_infos.<id>`) and the callbacks the engine calls
    by name (`<id>_chk1_enter`, `<id>_chk1_scr_landedTargetScore`, `<id>_post_activate`, ...).
-2. **The free-skate goal list** `goal_infos_hsfreeskate` (`pak/goal_infos/goal_infos_hsfreeskate.pak` =
+2. The free-skate goal list `goal_infos_hsfreeskate` (`pak/goal_infos/goal_infos_hsfreeskate.pak` =
    `PAK/ED31D903.CHK`) with the goal infos of every goal that is not `locked` appended. When free skate (or High
    Score) starts, the engine adds them like its own goal, initializes them (the start marker or giver appears) and runs
    them.
