@@ -32,6 +32,9 @@ Use
      play_p8plus.cmd in the install folder). The launcher also has Settings (Project 8 Plus
      options), Mods (install, enable, order, share) and Textures (replace or recolor any
      texture of the game); see docs\LAUNCHER.md in the project.
+  Your saves: Documents\My Games\Project 8 Plus\Saves, the same folder for every install and
+     version (copy it to back them up; Settings > Saves opens it). An older install's saves are
+     copied there on its first start with this version, or imported in Settings > Saves.
 
 Command line
   "THP8 Launcher.cmd" --identify "<game folder>"     what is this folder? (supported / other release)

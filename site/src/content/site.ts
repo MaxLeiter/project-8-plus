@@ -3,16 +3,16 @@
 
 // The repositories, releases and issue tracker are not public yet. While false, the pages show no links to them:
 // download buttons read "coming soon", repo references in the docs render as plain text.
-// LAUNCH: flip this one line to true. Then Download goes to the v0.9.0 release, the GitHub links show, the Linux
+// Launched 2026-10-25 (true). With it, Download goes to the latest release, the GitHub links show, the Linux
 // (experimental) link appears and "Linux" leaves Coming soon. Then `npm.cmd run deploy`.
 export const reposPublic = true;
 
 /** The release the Download buttons point at. */
 export const release = {
-  version: "0.9.0",
-  windowsZip: "Project8Plus-0.9.0-windows-x64.zip",
-  hdPackZip: "Project8Plus-0.9.0-hd-pack-windows-x64.zip",
-  linuxTar: "Project8Plus-0.9.0-linux-x86_64.tar.xz",
+  version: "0.9.1",
+  windowsZip: "Project8Plus-0.9.1-windows-x64.zip",
+  hdPackZip: "Project8Plus-0.9.1-hd-pack-windows-x64.zip",
+  linuxTar: "Project8Plus-0.9.1-linux-x86_64.tar.xz",
 };
 
 export const links = {
@@ -22,8 +22,10 @@ export const links = {
   modRepo: "https://github.com/MaxLeiter/project-8-plus",
   modBranch: "master",
   nativeRepo: "https://github.com/MaxLeiter/project-8-plus",
-  releases: "https://github.com/MaxLeiter/project-8-plus/releases/tag/v0.9.0",
-  linuxDownload: "https://github.com/MaxLeiter/project-8-plus/releases/download/v0.9.0/Project8Plus-0.9.0-linux-x86_64.tar.xz",
+  // Download buttons: GitHub's "Latest" release, so they never point at an old version. The Linux link names a file, so
+  // it carries the version: update it (and `release` above) with each release.
+  releases: "https://github.com/MaxLeiter/project-8-plus/releases/latest",
+  linuxDownload: "https://github.com/MaxLeiter/project-8-plus/releases/download/v0.9.1/Project8Plus-0.9.1-linux-x86_64.tar.xz",
   issues: "https://github.com/MaxLeiter/project-8-plus/issues",
   ps3recomp: "https://github.com/sp00nznet/ps3recomp",
   rpcs3: "https://rpcs3.net",

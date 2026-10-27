@@ -7,8 +7,8 @@ this state, so a source build must use it too.
 | | |
 | --- | --- |
 | upstream base | `a679051ef304555291de2eb3ec8a3dbf64a761a8` (ps3recomp master, 2026-09-29) |
-| our state | `5fc2ef9f` (local branch `thp8`) |
-| `ps3recomp-thp8.patch` | the whole difference, `git diff --binary a679051 5fc2ef9f` |
+| our state | `1cf8753d` (local branch `thp8`) |
+| `ps3recomp-thp8.patch` | the whole difference, `git diff --binary a679051 1cf8753d` |
 | `ps3recomp-thp8.log` | the commits it contains, oldest first (merges omitted) |
 
 ```sh

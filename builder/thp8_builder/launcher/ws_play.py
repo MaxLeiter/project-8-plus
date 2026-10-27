@@ -10,7 +10,7 @@ from p8ui.im import core as C
 from p8ui.im.core import px, v2
 
 from ..util import kill_tree, python_exe
-from .core import cap, datacache, launch, mods, schema
+from .core import cap, datacache, launch, mods, saves, schema
 from .core.firstrun import FIRST_START, first_start
 from .core.ini import IniDoc
 from .workspace import Workspace
@@ -87,6 +87,7 @@ class PlayWorkspace(Workspace):
             if self.last["failed"]:
                 app.toasts.push("error", "The game stopped", f"Exit code {code} after {int(secs)} s. The log is on "
                                 "the Play page.")
+            self._save_notes(app)
         if time.time() - self.summary_t > 4 and app.current == "play" and app.ctx.installed:
             self.summary_t = time.time()
             self._refresh_summary(app)
@@ -187,13 +188,40 @@ class PlayWorkspace(Workspace):
             self._first = c
         return c[2]
 
-    def launch(self, app, variant):
+    def _save_notes(self, app):
+        """What the game said about the shared save folder in this run's log (core/saves.log_notes): the first start of
+        0.9.2+ copies this install's own saves there."""
+        try:
+            with open(launch.log_path(app.ctx.inst, self.variant), "rb") as f:
+                text = f.read(4 << 20).decode("utf-8", "replace")
+        except OSError:
+            return
+        note = saves.log_notes(text)
+        if not note:
+            return
+        if note[0] == "imported":
+            app.toasts.push("success", "Your saves moved to the shared save folder",
+                            f"Copied {', '.join(note[1])} to {saves.save_dir()}. Every install and version uses it now; "
+                            "the old copy stays in this install.")
+        else:
+            app.toasts.push("info", "This install has saves of its own",
+                            "Your save folder already had saves, so they were not copied. Settings > Saves can import them.")
+
+    def launch(self, app, variant, shared_ok=False):
         """Play / Play original. A Project 8 Plus start that would build the game's data cache (the very first one, or
         the first after the mods changed) builds it first, here, with a progress bar (datacache.Prepare), then starts
-        as usual."""
+        as usual. Another running game on the shared save folder (another install) is said first."""
         ctx = app.ctx
         if self.prep is not None:
             return
+        if not shared_ok and saves.install_uses_shared(ctx.inst):
+            busy, who = saves.in_use(saves.save_dir())
+            if busy:
+                app.confirm("Your saves are in use", "Another running game uses your save folder" +
+                            (f" ({who})" if who else "") + ". Both would load and save the same saves, and the one that "
+                            "saves last wins. Close the other game first, or start anyway.",
+                            lambda: self.launch(app, variant, shared_ok=True), ok="Start anyway")
+                return
         if variant == "p8plus":
             # first, as _start does it anyway: a leftover Create-a-Park build must not end up in the prepared cache
             cap.clear_pack(ctx.mods_root)

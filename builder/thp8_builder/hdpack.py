@@ -27,9 +27,9 @@ from .util import rmtree
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_BUNDLE = os.path.normpath(os.path.join(HERE, "..", ".."))
-# The release pin (LAUNCH_RUNBOOK.md): the v0.9.1 release's download path (the HD pack of this builder version). Before the release is published it answers 404,
+# The release pin (LAUNCH_RUNBOOK.md): the v0.9.2 release's download path (the HD pack of this builder version). Before the release is published it answers 404,
 # which the HD job reports as "offline" and retries later.
-RELEASE_PAGE = "https://github.com/MaxLeiter/project-8-plus/releases/download/v0.9.1"
+RELEASE_PAGE = "https://github.com/MaxLeiter/project-8-plus/releases/download/v0.9.2"
 MANIFEST = "hdpack_manifest.json"
 # what a pack may contain (paths inside the builder folder)
 ALLOWED = ("python/Lib/site-packages/onnxruntime/", "python/Lib/site-packages/onnxruntime_directml-",

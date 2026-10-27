@@ -124,7 +124,8 @@ and the game writes only inside the install folder.
 ├── game\              your game data: hard links to your files, or a copy
 │                      (absent if you chose to use your game folder in place)
 ├── decrypted\         your decrypted EBOOT and the two FMOD SPU modules
-├── hdd0\              the console hard drive: saves and the game's data cache
+├── hdd0\              the console hard drive: the game's data cache (your saves are not here
+│                      since 0.9.2, see "Your saves" below)
 ├── mods\              add-ons and mods, used by play_p8plus.cmd / play_mods.cmd (see docs/LAUNCHER.md)
 ├── launcher\          the launcher's own data: preferences, the texture library made on your PC
 ├── logs\              builder.log, and play_*.log for each game session (the last
@@ -147,7 +148,42 @@ and other packs (0.15 GB) and the HD textures (1.4 GB). A plain port keeps about
 nothing. If you chose to use your game folder in place, it has to stay where it
 is; if it moves, run the builder again and pick it.
 
-Saves are in `hdd0\home\00000001\savedata`. Copy that folder to back them up.
+## Your saves
+
+Since 0.9.2 every install and every version of Project 8 Plus uses ONE save
+folder, so a new version (a new install) finds your career without copying
+anything:
+
+- Windows: `Documents\My Games\Project 8 Plus\Saves` (your Documents folder,
+  also when Windows moved it to OneDrive or another drive)
+- Linux / Steam Deck: `~/.local/share/project8plus/saves`
+  (`$XDG_DATA_HOME/project8plus/saves`)
+
+Each save is a folder in there (`BLUS30011_SAVE0`, ...). To back up your saves,
+copy the whole `Saves` folder somewhere safe; to restore them, copy it back while
+the game is closed. The launcher's **Settings > Saves** shows the folder, opens it
+(**Open save folder**) and can move it (**Change...**: your saves are copied to
+the new folder, the old one stays as it is). `play.cmd` started by hand uses the
+same folder.
+
+Coming from 0.9.1 or older: those versions kept the saves in the install, in
+`hdd0\home\00000001\savedata`. The first start of an install that still has
+saves there COPIES them into the shared folder when that folder has no save yet
+(the play log says `imported the save`); the originals stay where they are, next
+to a note `SAVES_COPIED_TO_SHARED_FOLDER.txt`. Saves of another, older install
+are imported in **Settings > Saves > Find older installs** (or **Choose a
+folder...**): newest first, copied, never moved. A save you already have is only
+replaced after you agree, and the replaced one is kept in `Saves\Backups.bak`.
+
+Two games at once on the same saves (two installs, or the original game and
+Project 8 Plus side by side) do not damage them: every save file is written to a
+temporary file and renamed when complete, and one save or load runs at a time.
+The launcher warns before it starts a second game on the same saves, because the
+one that saves last wins.
+
+Only the saves are shared. The game's data cache (`hdd0\game`), the shader cache
+and the rest of `hdd0` stay in each install: they belong to that install's exe
+and mod set and are rebuilt when they do not match.
 
 Hard links, briefly. A hard link is a second name for the same file on the
 same drive. The game opens `game\` read-only and add-ons go to `mods\`, so
@@ -158,8 +194,10 @@ hand: with hard links, that would change the file in your dump as well.
 
 Delete the install folder, and the builder folder if you no longer need it.
 Deleting a hard link removes only that name; the files in your game folder are
-untouched. Copy `hdd0\home\00000001\savedata` first if you want to keep your
-saves.
+untouched. Your saves are not in the install folder (since 0.9.2, see "Your
+saves"), so deleting an install does not delete them. An install from 0.9.1 or
+older still holds its own copy in `hdd0\home\00000001\savedata`: import it
+(Settings > Saves) or copy it before you delete that install.
 
 ## If something goes wrong
 

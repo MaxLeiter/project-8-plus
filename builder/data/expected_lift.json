@@ -1,5 +1,5 @@
 {
- "builder": "0.9.1",
+ "builder": "0.9.2",
  "comment": "SHA-256 of every file the builder generates from BLUS30011 disc 01.02 (hashes only; the files themselves are never published).",
  "files": {
   "analysis/functions.json": "8268f0286021638884a6c75119e887fadea835409f346707e87fbc334ffc2789",

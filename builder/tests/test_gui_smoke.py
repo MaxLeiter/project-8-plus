@@ -38,7 +38,8 @@ class EveryPageRenders(unittest.TestCase):
         scratch_install.make(cls.inst, cls.game)
         scratch_mods.make(cls.inst)
         cls.env = dict(os.environ, THP8_LAUNCHER_INSTALL=cls.inst, THP8_BUILDER_SETTINGS=os.path.join(t, "bs.json"),
-                       THP8_GUI_SHOT_FRAMES="30", THP8_ADDONS_DIR=os.path.join(t, "addons"))
+                       THP8_GUI_SHOT_FRAMES="30", THP8_ADDONS_DIR=os.path.join(t, "addons"),
+                       P8_CONFIG_DIR=os.path.join(t, "p8cfg"), P8_SAVE_DIR=os.path.join(t, "p8saves"))
 
     @classmethod
     def tearDownClass(cls):

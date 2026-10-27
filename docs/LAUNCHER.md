@@ -6,7 +6,7 @@
 | Page | What it does |
 | --- | --- |
 | **Play** | Starts Project 8 Plus or the original game through the install's own launchers (`play_p8plus.cmd`, `play.cmd`). Window or fullscreen, window size, sound output. If the game stops early or with an error, the end of its log is shown. |
-| **Settings** | A form for the Project 8 Plus plugin's settings file (frame rate, widescreen, picture quality, effects, button prompts, camera invert and the keyboard bindings: add a key and press it, remove it, add a mouse button or wheel; up to 4 keys per input). Every option says in plain words what it does and costs. Comments and keys of the file that the form does not know are kept. **Reset to recommended** and **Stock (PS3 look)** set every option at once (nothing is written until you press **Save**). |
+| **Settings** | **Saves** first: the one save folder every install and version uses (Documents\My Games\Project 8 Plus\Saves), **Open save folder**, **Change...** (your saves are copied to the new folder; the old one stays), and **Find older installs** / **Choose a folder...** to import the saves an older install kept in its own `hdd0` (newest first; a save you have is only replaced after you agree, and the replaced one goes to `Saves\Backups.bak`). Then a form for the Project 8 Plus plugin's settings file (frame rate, widescreen, picture quality, effects, button prompts, camera invert and the keyboard bindings: add a key and press it, remove it, add a mouse button or wheel; up to 4 keys per input). Every option says in plain words what it does and costs. Comments and keys of the file that the form does not know are kept. **Reset to recommended** and **Stock (PS3 look)** set every option at once (nothing is written until you press **Save**). |
 | **Mods** | Everything in the install's `mods\` folder (plugins, texture packs, file overlays, CAS items, parks, script mods, creator mods): enable, disable, order, per-mod settings, what a mod needs and what clashes, install from a file (picked or dropped on the window, after a review of every check), export, uninstall into *Removed* (restorable). |
 | **Share** | Your parks and Create-a-Skater Plus looks as single files (`.p8park`, `.p8look`) with a picture drawn from the data; import a friend's. A check proves a file holds only what a player made. |
 | **Textures** | The Texture Studio: browse every texture of your game, export it as PNG, replace it with your own picture or recolor it, and save the result into a mod. |
@@ -174,7 +174,15 @@ are read from, so a texture inside such a file has a different key at run time.
 <install>\launcher\cache\share\    the pictures of parks and looks
 <install>\mods\                    the packs
 <builder folder>\builder_settings.json   what Setup remembers (game folder, RPCS3, install folder, options)
+Documents\My Games\Project 8 Plus\Saves   YOUR SAVES, for every install and version (Settings > Saves)
+%APPDATA%\Project 8 Plus\save_folder.txt  the save folder you picked in Settings (empty = the default)
+%APPDATA%\Project 8 Plus\installs.txt     the installs this PC has had (Find older installs looks there)
 ```
+
+Play warns before it starts a game while another one is running on the same saves (another install, or the
+original game next to Project 8 Plus): both would save into the same folder and the last save wins. The first
+start of a version from 0.9.2 on copies the saves an install kept in its own `hdd0` (0.9.1 and older) into the
+shared folder when that has none yet; Play then shows *Your saves moved to the shared save folder*.
 
 ## Running from source
 

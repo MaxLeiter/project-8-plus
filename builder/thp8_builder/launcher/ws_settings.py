@@ -11,6 +11,7 @@ from p8ui.im.core import px, v2
 from .core import keys as keymod
 from .core import schema
 from .core.ini import IniDoc
+from .saves_panel import SavesPanel
 from .workspace import Workspace
 
 
@@ -32,6 +33,7 @@ class SettingsWorkspace(Workspace):
         self.path = ""
         self.capture = None         # the key_* option that waits for a key press (the rebind widget)
         self._imgui_keys = None
+        self.saves = SavesPanel()   # Saves: the shared save folder (it is not part of the plugin ini)
 
     # ------------------------------------------------------------------ data
     def on_activate(self, app):
@@ -101,7 +103,7 @@ class SettingsWorkspace(Workspace):
             self.vals[k] = str(v)
 
     # ------------------------------------------------------------------ page
-    GROUP_ICONS = {"Frame rate": "gauge", "Display and widescreen": "monitor", "Picture quality": "sparkles",
+    GROUP_ICONS = {"Saves": "save", "Frame rate": "gauge", "Display and widescreen": "monitor", "Picture quality": "sparkles",
                    "Effects": "wand-sparkles", "Controls": "gamepad-2", "Keyboard": "keyboard", "Menus": "layout-list", "Advanced": "wrench"}
 
     def gui(self, app):
@@ -118,8 +120,17 @@ class SettingsWorkspace(Workspace):
         # with the column's right edge on wide windows
         inner = min(inner, px(248 + SP["section"] + 1000 + 16))
         if self.doc is None:
-            imgui.set_cursor_pos(v2(x0, px(120)))
-            ui.begin_panel("empty", inner, 0, T.BG, padding=0, border=False, rounding=0)
+            # no plugin ini (the plain port): the save folder still is a setting
+            imgui.set_cursor_pos(v2(x0, y0))
+            ui.begin_panel("empty", inner, H - y0, T.BG, padding=0, border=False, rounding=0, scroll=True)
+            ui.title("Settings", "Your saves. The Project 8 Plus options appear here when the plugin is installed.")
+            ui.gap(SP["section"] - 8)
+            ui.begin_column("savescol", min(inner, px(1000)) / C.S.scale, center=False)
+            ui.text("Saves", "h1")
+            ui.gap(SP["stack_lg"])
+            self.saves.gui(app)
+            ui.end_column()
+            ui.gap(SP["section"])
             if self.error:
                 ui.callout("error", "Could not open the settings", self.error)
             elif ui.empty_state("sliders-horizontal", "The Project 8 Plus plugin is not installed",
@@ -160,8 +171,8 @@ class SettingsWorkspace(Workspace):
         body_y = y0 + head_h + px(SP["section"] - 8)
         body_h = H - body_y - bar_h
         nav_w = px(248)
-        groups = [g for g in schema.GROUPS
-                  if any(o.group == g and (not o.advanced or self.show_adv) for o in schema.OPTS)]
+        groups = ["Saves"] + [g for g in schema.GROUPS
+                              if any(o.group == g and (not o.advanced or self.show_adv) for o in schema.OPTS)]
         ys = getattr(self, "_group_y", {})
         # ---- category list (scrolls the option column to a group)
         imgui.set_cursor_pos(v2(x0, body_y))
@@ -195,6 +206,8 @@ class SettingsWorkspace(Workspace):
                 self._cur_group = group
             ui.text(group, "h1")
             ui.gap(SP["stack_lg"])
+            if group == "Saves":                    # the shared save folder: not an ini option (saves_panel.py)
+                self.saves.gui(app)
             for o in opts:
                 self._row(app, o)
         ui.gap(SP["stack_md"])

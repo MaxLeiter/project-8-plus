@@ -39,6 +39,15 @@ class CommandLine(unittest.TestCase):
 
 @unittest.skipUnless(os.name == "nt", "cmd.exe")
 class PlayWithDevice(unittest.TestCase):
+    def setUp(self):
+        # launch.start passes the shared save folder and remembers the install (0.9.2): keep both in a temp profile
+        t = tempfile.TemporaryDirectory()
+        self.addCleanup(t.cleanup)
+        old = {k: os.environ.get(k) for k in ("P8_CONFIG_DIR", "P8_SAVE_DIR")}
+        os.environ.update(P8_CONFIG_DIR=os.path.join(t.name, "cfg"), P8_SAVE_DIR=os.path.join(t.name, "saves"))
+        self.addCleanup(lambda: [os.environ.pop(k, None) if v is None else os.environ.__setitem__(k, v)
+                                 for k, v in old.items()])
+
     def make_install(self, root):
         launchers.write_all(root, root, "copy", None, ["mods"], ["p8plus"], lambda *_: None)
         common = os.path.join(root, "tools", "play_common.cmd")

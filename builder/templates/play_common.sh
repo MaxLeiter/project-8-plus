@@ -23,6 +23,26 @@ case "$VARIANT" in
 esac
 [ -n "${THP8_OVERRIDE_MODS:-}" ] && MODS=$THP8_OVERRIDE_MODS
 
+# ---- YOUR SAVES: one folder for every install and version (since 0.9.2): $XDG_DATA_HOME/project8plus/saves.
+#   P8_SAVE_DIR wins (the launcher sets it); else the folder picked in the launcher's Settings > Saves
+#   ($XDG_CONFIG_HOME/project8plus/save_folder.txt, or $P8_CONFIG_DIR/save_folder.txt); else the default. The saves this
+#   install kept in hdd0 (0.9.1 and older) are COPIED into an empty shared folder on the first start; the originals stay.
+#   The creator tools' test runs (THP8_OVERRIDE_HDD0) keep their saves in their own console drive.
+P8_CFG=${P8_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/project8plus}
+SAVES=${P8_SAVE_DIR:-}
+if [ -z "$SAVES" ] && [ -f "$P8_CFG/save_folder.txt" ]; then
+    IFS= read -r SAVES < "$P8_CFG/save_folder.txt" || true
+    SAVES=${SAVES%$'\r'}
+fi
+if [ -z "$SAVES" ]; then
+    case "${XDG_DATA_HOME:-}" in /*) SAVES=$XDG_DATA_HOME/project8plus/saves ;; *) SAVES=$HOME/.local/share/project8plus/saves ;; esac
+fi
+SAVES_IMPORT=$HDD0/home/00000001/savedata
+[ -n "${THP8_OVERRIDE_HDD0:-}" ] && { SAVES=""; SAVES_IMPORT=""; }
+# a game built by 0.9.1 or older keeps its saves in hdd0 (the launcher refreshes this script in old installs too): only an
+# exe that knows the shared folder (it contains the name PS3_SAVEDATA_IMPORT) gets it
+grep -q -a PS3_SAVEDATA_IMPORT "$ROOT/$EXE" 2> /dev/null || { SAVES=""; SAVES_IMPORT=""; }
+
 # ---- player settings (the exe applies THP8's runtime defaults itself)
 WINDOW=@@WINDOW@@
 FULLSCREEN=""
@@ -68,7 +88,8 @@ if [ "$STEAMOPTS" = 1 ]; then
             "PS3_SELF_SIDECAR_DIR=$(w "$ROOT/decrypted")" "RSX_SHADER_CACHE_DIR=$(w "$ROOT/shadercache")" \
             "PS3_WINDOW=$WINDOW" "PS3_FULLSCREEN=1" "PS3_FULLSCREEN_ASPECT=$ASPECT" \
             "PS3_MODS_ROOT=$([ "$MODS" = off ] && echo off || w "$MODS")" \
-            "PRESSURE_VESSEL_FILESYSTEMS_RW=$ROOT:$GAMEDATA" "%command%" "$(w "$ELF")"
+            ${SAVES:+"PS3_SAVEDATA_ROOT=$(w "$SAVES")" "PS3_SAVEDATA_IMPORT=$(w "$SAVES_IMPORT")"} \
+            "PRESSURE_VESSEL_FILESYSTEMS_RW=$ROOT:$GAMEDATA${SAVES:+:$SAVES}" "%command%" "$(w "$ELF")"
         echo
     fi
     exit 0
@@ -89,7 +110,8 @@ for i in 4 3 2 1; do [ -f "$LOG.$i" ] && mv -f "$LOG.$i" "$LOG.$((i + 1))"; done
 
 echo "  $TITLE ($TARGET)"
 echo "  Window: $WINDOW${FULLSCREEN:+, fullscreen}   F11 = fullscreen on/off   close the window to quit (Esc does NOT quit)"
-echo "  Saves: $HDD0/home/00000001/savedata    Log: $LOG (the last 5 sessions: .1 ... .5)"
+echo "  Saves: ${SAVES:-$HDD0/home/00000001/savedata} (every install and version; back up this folder)"
+echo "  Log: $LOG (the last 5 sessions: .1 ... .5)"
 
 if [ "$TARGET" = native ]; then
     # vkd3d (LGPL-2.1, built by the package) comes from lib/; SDL2 from the system first (SteamOS and every desktop
@@ -100,6 +122,7 @@ if [ "$TARGET" = native ]; then
     export RSX_SHADER_CACHE_DIR="${RSX_SHADER_CACHE_DIR:-$ROOT/shadercache}"
     export PS3_WINDOW="$WINDOW" PS3_FULLSCREEN="$FULLSCREEN" PS3_FULLSCREEN_ASPECT="$ASPECT" PS3_TITLE="$TITLE"
     export PS3_MODS_ROOT="$MODS"
+    [ -n "$SAVES" ] && export PS3_SAVEDATA_ROOT="$SAVES" PS3_SAVEDATA_IMPORT="$SAVES_IMPORT"
     [ "$VARIANT" = mods ] && export PS3_MODS_PLUGINS=0
     [ -n "$AUDIO" ] && export PS3_AUDIO_DEVICE="$AUDIO"
     # the player's mod settings from the launcher's Mods page (PS3MOD_* variables), when the launcher wrote them
@@ -120,6 +143,7 @@ ENVS=(
     "PS3_FULLSCREEN_ASPECT=$ASPECT" "PS3_MODS_ROOT=$([ "$MODS" = off ] && echo off || w "$MODS")"
 )
 [ "$VARIANT" = mods ] && ENVS+=("PS3_MODS_PLUGINS=0")
+[ -n "$SAVES" ] && ENVS+=("PS3_SAVEDATA_ROOT=$(w "$SAVES")" "PS3_SAVEDATA_IMPORT=$(w "$SAVES_IMPORT")")
 [ -n "$AUDIO" ] && ENVS+=("PS3_AUDIO_DEVICE=$AUDIO")
 find_steam() {
     local d

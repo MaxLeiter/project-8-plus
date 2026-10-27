@@ -14,8 +14,7 @@ export const hero = {
   line: "Tony Hawk's Project 8 on PC. 60+ fps, HD textures and mods.",
   download: "Download for Windows",
   downloadSoon: "Download — coming soon",
-  // Project8Plus-0.9.0-windows-x64.zip: repin33 candidate 39,600,839 B = 37.8 MiB (Windows shows "37.8 MB"); the HD pack
-  // (45,628,001 B = 43.5 MiB) is fetched by the launcher when HD is on. Re-check at the final 0.9.0 pin.
+  // download sizes live in FACTS.md (v0.9.1: windows zip 39,621,562 B, HD pack 45,627,999 B); the home page shows none
   // Items of the note under the download button; drawn with slanted separators (no "/" or "|" characters).
   downloadNote: ["Free", "Windows 10/11", "Unofficial fan project"],
   trailer: "Watch the trailer",
@@ -89,7 +88,7 @@ export const run = {
 // Max's list (2026-10-18): no dates.
 export const comingSoon = {
   title: "Coming soon",
-  // 0.9.0 ships an experimental Linux package: at launch (reposPublic) Linux moves from here to the Linux download link.
+  // The release ships an experimental Linux package: at launch (reposPublic) Linux moves from here to the Linux download link.
   // Steam Deck stays here (coordinator 2026-10-25); the release notes call the package "Linux (experimental)" only.
   items: ["Linux", "Steam Deck", "Mac", "Online play"],
   itemsAtLaunch: ["Steam Deck", "Mac", "Online play"],

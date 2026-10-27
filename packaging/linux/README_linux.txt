@@ -40,7 +40,9 @@ Play
   <install>/play.sh                     the game (play_p8plus.sh: with Project 8 Plus)
   <install>/play.sh fullscreen          F11 toggles fullscreen; close the window to quit
   <install>/play.sh steam-options       how to add it to Steam (Game Mode): see STEAM_DECK.txt
-  Saves: <install>/hdd0   Logs: <install>/logs/play_<variant>.log (+ the last 5 sessions .1 ... .5)
+  Saves: ~/.local/share/project8plus/saves (since 0.9.2: one folder for every install and version; an install's
+         old saves in <install>/hdd0 are copied there on its first start)
+  Logs: <install>/logs/play_<variant>.log (+ the last 5 sessions .1 ... .5)
 
 Not on Linux yet: making the HD textures, smoothed skaters, Xbox prompts and boot screen add-ons
 (their tools are Windows-only for now; texture packs made on Windows do play here), and the launcher

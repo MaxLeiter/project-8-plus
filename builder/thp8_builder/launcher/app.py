@@ -52,6 +52,8 @@ class App:
                 launchers.refresh(self.ctx.inst, self.ctx.bundle)
             except OSError:
                 pass
+            from .core import saves             # a later version finds this install to import its saves (core/saves.py)
+            saves.remember_install(self.ctx.inst)
         self._load_pages()
         self.current = "play" if self.ctx.installed else "setup"
         self._activated = None

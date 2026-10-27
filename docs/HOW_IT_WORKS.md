@@ -66,9 +66,13 @@ is a curated summary; addresses and sizes are facts about the BLUS30011 disc
 - **Audio.** FMOD runs as on the PS3 -- its mixer and MPEG decoder are lifted
   SPU programs -- and cellAudio hands the mixed blocks to WASAPI.
 - **Files.** `/dev_bdvd` is the game data (read-only), `/dev_hdd0` is
-  `hdd0\` in the install (saves and the game's HDD data cache). With
+  `hdd0\` in the install (the game's HDD data cache). With
   `PS3_VFS_STRICT=1` every write outside `hdd0\` is refused, which is what
-  makes hard links to your game folder safe.
+  makes hard links to your game folder safe. The saves (cellSaveData) are
+  the exception since 0.9.2: `PS3_SAVEDATA_ROOT` puts them in the one save
+  folder every install shares (`Documents\My Games\Project 8 Plus\Saves`), the
+  runtime copies an install's old saves there once (`PS3_SAVEDATA_IMPORT`), and
+  a lock file in that folder keeps two running games from interleaving a save.
 - **Mods.** `mods\` is an overlay: a file at `mods\<pack>\PS3_GAME\...`
   replaces the game's file of the same path when it is opened for reading.
   When the set of active files changes, the game's data-cache listing is

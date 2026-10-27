@@ -7081,42 +7081,373 @@ index 6392ccd4..9125b362 100644
  s32 cellRtcTickAddYears(CellRtcTick* pTick0, const CellRtcTick* pTick1, s32 iAdd);
  s32 cellRtcTickAddMonths(CellRtcTick* pTick0, const CellRtcTick* pTick1, s32 iAdd);
 diff --git a/libs/system/cellSaveData.c b/libs/system/cellSaveData.c
-index 79ea8cab..dd2a0300 100644
+index 79ea8cab..aefa3a4d 100644
 --- a/libs/system/cellSaveData.c
 +++ b/libs/system/cellSaveData.c
-@@ -52,6 +52,31 @@
+@@ -32,47 +32,362 @@
  
- static char s_save_root[1024] = "./gamedata/dev_hdd0/home/00000001/savedata";
+ #ifdef _WIN32
+ #  include <windows.h>
++#  include <objbase.h>     /* CoTaskMemFree (ole32, linked by the audio backend already) */
+ #  include <io.h>
+ #  include <direct.h>
+-#  define HOST_MKDIR(p) _mkdir(p)
+-#  define HOST_STAT     _stat64
++#  include <wchar.h>
+ #  define HOST_STAT_T   struct __stat64
+ #else
+ #  include <unistd.h>
+ #  include <dirent.h>
++#  include <fcntl.h>
+ #  include <sys/types.h>
+-#  define HOST_MKDIR(p) mkdir(p, 0755)
+-#  define HOST_STAT     stat
+ #  define HOST_STAT_T   struct stat
+ #endif
  
++/* ---------------------------------------------------------------------------
++ * Host file layer: every host path in this file is UTF-8.
++ *
++ * The shared save folder lives in the player's Documents (Project 8 Plus 0.9.2: one save folder for every
++ * install and version), and a user folder may hold characters outside the ANSI code page (a Windows user
++ * named Łukasz or 田中). The narrow CRT calls (fopen, _stat64, FindFirstFileA, MoveFileExA) and getenv() go
++ * through that code page on Windows, so such a folder turned into '?' and every save failed. On Windows the
++ * helpers below convert UTF-8 to UTF-16 and use the wide calls; environment variables are read with
++ * _wgetenv. A string that is not valid UTF-8 (a legacy ANSI path) is converted from the ANSI code page, as
++ * the narrow call did. POSIX: the bytes go to the system unchanged.
++ * -----------------------------------------------------------------------*/
++#define SD_PATH_MAX 1024
++
++#ifdef _WIN32
++/* UTF-8 (or ANSI) -> UTF-16 with backslashes; a long absolute path gets the \\?\ prefix. 0 on failure. */
++static int sd_wide(const char* p, wchar_t* w, int cap)
++{
++    int off = 0;
++    size_t n = strlen(p);
++    if (n >= 240 && ((p[0] && p[1] == ':' && (p[2] == '\\' || p[2] == '/')))) {
++        wcscpy(w, L"\\\\?\\");
++        off = 4;
++    }
++    int k = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, p, -1, w + off, cap - off);
++    if (k <= 0) k = MultiByteToWideChar(CP_ACP, 0, p, -1, w + off, cap - off);
++    if (k <= 0) { w[0] = 0; return 0; }
++    for (wchar_t* c = w + off; *c; c++) if (*c == L'/') *c = L'\\';
++    return 1;
++}
++
++static int sd_utf8(const wchar_t* w, char* out, int cap)
++{
++    int k = WideCharToMultiByte(CP_UTF8, 0, w, -1, out, cap, NULL, NULL);
++    if (k <= 0) { out[0] = 0; return 0; }
++    return 1;
++}
++#endif
++
++/* getenv as UTF-8 into out; 1 when set and non-empty */
++static int sd_getenv(const char* name, char* out, size_t cap)
++{
++    out[0] = 0;
++#ifdef _WIN32
++    wchar_t wn[64];
++    if (!MultiByteToWideChar(CP_UTF8, 0, name, -1, wn, 64)) return 0;
++    const wchar_t* v = _wgetenv(wn);
++    if (!v || !*v) return 0;
++    return sd_utf8(v, out, (int)cap) && out[0];
++#else
++    const char* v = getenv(name);
++    if (!v || !*v) return 0;
++    snprintf(out, cap, "%s", v);
++    return 1;
++#endif
++}
++
++static FILE* sd_fopen(const char* path, const char* mode)
++{
++#ifdef _WIN32
++    wchar_t w[SD_PATH_MAX + 8], wm[8];
++    if (!sd_wide(path, w, SD_PATH_MAX + 8)) return NULL;
++    MultiByteToWideChar(CP_UTF8, 0, mode, -1, wm, 8);
++    return _wfopen(w, wm);
++#else
++    return fopen(path, mode);
++#endif
++}
++
++static int sd_stat(const char* path, HOST_STAT_T* st)
++{
++#ifdef _WIN32
++    wchar_t w[SD_PATH_MAX + 8];
++    if (!sd_wide(path, w, SD_PATH_MAX + 8)) return -1;
++    return _wstat64(w, st);
++#else
++    return stat(path, st);
++#endif
++}
++
++static int sd_mkdir(const char* path)
++{
++#ifdef _WIN32
++    wchar_t w[SD_PATH_MAX + 8];
++    if (!sd_wide(path, w, SD_PATH_MAX + 8)) return -1;
++    return _wmkdir(w);
++#else
++    return mkdir(path, 0755);
++#endif
++}
++
++static int sd_remove(const char* path)
++{
++#ifdef _WIN32
++    wchar_t w[SD_PATH_MAX + 8];
++    if (!sd_wide(path, w, SD_PATH_MAX + 8)) return -1;
++    return _wremove(w);
++#else
++    return remove(path);
++#endif
++}
++
++/* rename src -> dst; replace_existing: a file dst is replaced (atomic on one volume). 0 on success. */
++static int sd_rename(const char* src, const char* dst, int replace_existing)
++{
++#ifdef _WIN32
++    wchar_t a[SD_PATH_MAX + 8], b[SD_PATH_MAX + 8];
++    if (!sd_wide(src, a, SD_PATH_MAX + 8) || !sd_wide(dst, b, SD_PATH_MAX + 8)) return -1;
++    return MoveFileExW(a, b, MOVEFILE_WRITE_THROUGH | (replace_existing ? MOVEFILE_REPLACE_EXISTING : 0)) ? 0 : -1;
++#else
++    if (!replace_existing) {                   /* rename() replaces silently: refuse an existing target */
++        struct stat st;
++        if (stat(dst, &st) == 0) { errno = EEXIST; return -1; }
++    }
++    return rename(src, dst);
++#endif
++}
++
++/* Directory listing with UTF-8 names. sd_dir_next: 1 = an entry (".", ".." skipped), 0 = the end. */
++typedef struct sd_dirent {
++    char name[260 * 3];
++    int is_dir;
++    u64 size;
++    s64 atime, mtime, ctime;   /* Unix seconds */
++} sd_dirent;
++
++typedef struct sd_dir {
++#ifdef _WIN32
++    HANDLE h;
++    WIN32_FIND_DATAW fd;
++    int first;
++#else
++    DIR* dp;
++    char path[SD_PATH_MAX];
++#endif
++} sd_dir;
++
++#ifdef _WIN32
++/* FILETIME (100 ns ticks since 1601-01-01) -> Unix seconds. */
++static s64 savedata_filetime_unix(const FILETIME* ft)
++{
++    ULARGE_INTEGER v;
++    v.LowPart  = ft->dwLowDateTime;
++    v.HighPart = ft->dwHighDateTime;
++    return (s64)(v.QuadPart / 10000000ULL) - 11644473600LL;
++}
++#endif
++
++/* pattern: NULL = every entry, else a "*suffix" filter (Windows: passed to FindFirstFileW; POSIX: ignored, the caller filters) */
++static int sd_dir_open(sd_dir* d, const char* path, const char* pattern)
++{
++#ifdef _WIN32
++    char search[SD_PATH_MAX + 32];
++    wchar_t w[SD_PATH_MAX + 40];
++    snprintf(search, sizeof search, "%s/%s", path, pattern ? pattern : "*");
++    if (!sd_wide(search, w, SD_PATH_MAX + 40)) return 0;
++    d->h = FindFirstFileW(w, &d->fd);
++    d->first = 1;
++    return d->h != INVALID_HANDLE_VALUE;
++#else
++    (void)pattern;
++    snprintf(d->path, sizeof d->path, "%s", path);
++    d->dp = opendir(path);
++    return d->dp != NULL;
++#endif
++}
++
++static int sd_dir_next(sd_dir* d, sd_dirent* e)
++{
++#ifdef _WIN32
++    for (;;) {
++        if (!d->first && !FindNextFileW(d->h, &d->fd)) return 0;
++        d->first = 0;
++        if (!wcscmp(d->fd.cFileName, L".") || !wcscmp(d->fd.cFileName, L"..")) continue;
++        if (!sd_utf8(d->fd.cFileName, e->name, (int)sizeof e->name)) continue;
++        e->is_dir = (d->fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
++        ULARGE_INTEGER sz;
++        sz.HighPart = d->fd.nFileSizeHigh;
++        sz.LowPart  = d->fd.nFileSizeLow;
++        e->size = (u64)sz.QuadPart;
++        e->atime = savedata_filetime_unix(&d->fd.ftLastAccessTime);
++        e->mtime = savedata_filetime_unix(&d->fd.ftLastWriteTime);
++        e->ctime = savedata_filetime_unix(&d->fd.ftCreationTime);
++        return 1;
++    }
++#else
++    struct dirent* de;
++    while ((de = readdir(d->dp)) != NULL) {
++        if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..")) continue;
++        char full[SD_PATH_MAX + 300];
++        snprintf(full, sizeof full, "%s/%s", d->path, de->d_name);
++        struct stat st;
++        if (stat(full, &st) != 0) continue;
++        snprintf(e->name, sizeof e->name, "%s", de->d_name);
++        e->is_dir = S_ISDIR(st.st_mode);
++        e->size = (u64)st.st_size;
++#  if defined(__APPLE__)
++        /* Darwin names the sub-second stat fields st_*timespec, not glibc's st_*tim. */
++        e->atime = (s64)st.st_atimespec.tv_sec; e->mtime = (s64)st.st_mtimespec.tv_sec; e->ctime = (s64)st.st_ctimespec.tv_sec;
++#  else
++        e->atime = (s64)st.st_atim.tv_sec; e->mtime = (s64)st.st_mtim.tv_sec; e->ctime = (s64)st.st_ctim.tv_sec;
++#  endif
++        return 1;
++    }
++    return 0;
++#endif
++}
++
++static void sd_dir_close(sd_dir* d)
++{
++#ifdef _WIN32
++    if (d->h != INVALID_HANDLE_VALUE) FindClose(d->h);
++    d->h = INVALID_HANDLE_VALUE;
++#else
++    if (d->dp) closedir(d->dp);
++    d->dp = NULL;
++#endif
++}
++
+ /* ---------------------------------------------------------------------------
+  * Internal helpers
+  * -----------------------------------------------------------------------*/
+ 
+-static char s_save_root[1024] = "./gamedata/dev_hdd0/home/00000001/savedata";
++static char s_save_root[SD_PATH_MAX] = "./gamedata/dev_hdd0/home/00000001/savedata";
+ 
+ /* Ensure directory (and parents) exist */
+ static void ensure_dirs(const char* path)
+ {
+-    char tmp[1024];
++    char tmp[SD_PATH_MAX];
+     strncpy(tmp, path, sizeof(tmp) - 1);
+     tmp[sizeof(tmp) - 1] = '\0';
+ 
+     for (char* p = tmp + 1; *p; p++) {
+         if (*p == '/' || *p == '\\') {
++            if (p[-1] == ':') continue;          /* "C:" alone is not a directory to make */
+             char saved = *p;
+             *p = '\0';
+-            HOST_MKDIR(tmp);
++            sd_mkdir(tmp);
+             *p = saved;
+         }
+     }
+-    HOST_MKDIR(tmp);
++    sd_mkdir(tmp);
++}
++
++static int dir_exists(const char* path);
++static int dir_has_save(const char* path);
++static void savedata_shared_init(const char* import_from);
++
++/* ASCII case-insensitive prefix compare (no locale) */
++static int sd_strnicmp(const char* a, const char* b, size_t n)
++{
++    for (size_t i = 0; i < n; i++) {
++        int x = (unsigned char)a[i], y = (unsigned char)b[i];
++        if (x >= 'A' && x <= 'Z') x += 32;
++        if (y >= 'A' && y <= 'Z') y += 32;
++        if (x != y || !x) return x - y;
++    }
++    return 0;
++}
++
++/* "{Documents}/My Games/..." -> the player's Documents folder (Windows: the known folder, so a Documents moved
++ * to OneDrive or another drive is found; %USERPROFILE%\Documents if that fails). Other text is kept as is. */
++static void savedata_expand_root(const char* in, char* out, size_t cap)
++{
++    static const char tok[] = "{Documents}";
++    const size_t tl = sizeof tok - 1;
++    if (sd_strnicmp(in, tok, tl) != 0) { snprintf(out, cap, "%s", in); return; }
++    char docs[SD_PATH_MAX] = "";
++#ifdef _WIN32
++    typedef HRESULT (WINAPI *known_folder_fn)(const GUID*, DWORD, HANDLE, PWSTR*);
++    static const GUID folderid_documents =      /* FOLDERID_Documents {FDD39AD0-238F-46AF-ADB4-6C85480369C7} */
++        { 0xFDD39AD0, 0x238F, 0x46AF, { 0xAD, 0xB4, 0x6C, 0x85, 0x48, 0x03, 0x69, 0xC7 } };
++    HMODULE sh = LoadLibraryW(L"shell32.dll");           /* loaded at run time: the exe links no shell32 */
++    known_folder_fn fn = sh ? (known_folder_fn)(void*)GetProcAddress(sh, "SHGetKnownFolderPath") : NULL;
++    PWSTR wp = NULL;
++    if (fn && SUCCEEDED(fn(&folderid_documents, 0, NULL, &wp)) && wp) {
++        sd_utf8(wp, docs, (int)sizeof docs);
++        CoTaskMemFree(wp);
++    }
++    if (!docs[0] && sd_getenv("USERPROFILE", docs, sizeof docs))
++        strncat(docs, "\\Documents", sizeof docs - strlen(docs) - 1);
++#else
++    if (sd_getenv("HOME", docs, sizeof docs))
++        strncat(docs, "/Documents", sizeof docs - strlen(docs) - 1);
++#endif
++    if (!docs[0]) snprintf(docs, sizeof docs, ".");
++    snprintf(out, cap, "%s%s", docs, in + tl);
++}
++
 +/* Host dir for /dev_hdd0/home/00000001/savedata. The literal above is relative
 + * to the CWD, so a port's saves land wherever it happens to be started from --
 + * a different tree from the /dev_hdd0 that ppu_fs serves. Resolved once:
-+ *   $PS3_SAVEDATA_ROOT                                   if set, else
++ *   $PS3_SAVEDATA_ROOT                                   if set (a shared save folder), else
 + *   $PS3_HDD0_ROOT/home/00000001/savedata                under PS3_VFS_STRICT=1, else
 + *   the CWD-relative literal (unchanged default).
 + * Deriving from PS3_HDD0_ROOT is opt-in because some run environments point
-+ * PS3_HDD0_ROOT at an emulator's real dev_hdd0, whose saves must not be touched. */
++ * PS3_HDD0_ROOT at an emulator's real dev_hdd0, whose saves must not be touched.
++ *
++ * PS3_SAVEDATA_ROOT may start with {Documents} (savedata_expand_root). With it set, this is a SHARED save
++ * folder (several installs / versions of a port use it): savedata_shared_init takes the session lock (a
++ * second game on the same folder is logged) and, once, copies the install's own saves into it
++ * ($PS3_SAVEDATA_IMPORT, see savedata_import). Saves and loads then take the pass lock (savedata_lock). */
 +static const char* save_root(void)
 +{
 +    static int resolved = 0;
 +    if (!resolved) {
 +        resolved = 1;
-+        const char* sr = getenv("PS3_SAVEDATA_ROOT");
-+        const char* st = getenv("PS3_VFS_STRICT");
-+        const char* h0 = getenv("PS3_HDD0_ROOT");
-+        if (sr && *sr)
-+            snprintf(s_save_root, sizeof s_save_root, "%s", sr);
-+        else if (st && *st && *st != '0' && h0 && *h0)
++        char sr[SD_PATH_MAX], st[16], h0[SD_PATH_MAX], imp[SD_PATH_MAX];
++        int shared = 0;
++        if (sd_getenv("PS3_SAVEDATA_ROOT", sr, sizeof sr)) {
++            savedata_expand_root(sr, s_save_root, sizeof s_save_root);
++            shared = 1;
++        } else if (sd_getenv("PS3_VFS_STRICT", st, sizeof st) && st[0] != '0' && sd_getenv("PS3_HDD0_ROOT", h0, sizeof h0))
 +            snprintf(s_save_root, sizeof s_save_root, "%s/home/00000001/savedata", h0);
-+        printf("[cellSaveData] savedata root: %s\n", s_save_root);
++        size_t n = strlen(s_save_root);
++        while (n > 3 && (s_save_root[n - 1] == '/' || s_save_root[n - 1] == '\\')) s_save_root[--n] = 0;
++#ifdef _WIN32
++        for (char* c = s_save_root; *c; c++) if (*c == '/') *c = '\\';    /* one separator in the log and the lock note */
++#endif
++        printf("[cellSaveData] savedata root: %s%s\n", s_save_root, shared ? " (shared save folder)" : "");
++        const int have_imp = shared && sd_getenv("PS3_SAVEDATA_IMPORT", imp, sizeof imp);
++        if (shared) {
++            ensure_dirs(s_save_root);
++            if (!dir_exists(s_save_root) && have_imp) {
++                /* a shared folder that cannot be made (a Documents folder on a drive that is gone, no access): this
++                 * start uses the install's own savedata as before 0.9.2 rather than failing every save */
++                printf("[cellSaveData] WARNING: the save folder '%s' cannot be made (errno %d): this start uses the "
++                       "install's own savedata '%s'\n", s_save_root, errno, imp);
++                snprintf(s_save_root, sizeof s_save_root, "%s", imp);
++#ifdef _WIN32
++                for (char* c = s_save_root; *c; c++) if (*c == '/') *c = '\\';
++#endif
++                shared = 0;
++            }
++        }
++        if (shared)
++            savedata_shared_init(have_imp ? imp : NULL);
 +    }
 +    return s_save_root;
-+}
-+
- /* Ensure directory (and parents) exist */
- static void ensure_dirs(const char* path)
- {
-@@ -72,7 +97,7 @@ static void ensure_dirs(const char* path)
+ }
  
  static void build_save_path(char* buf, size_t buf_size, const char* dirName)
  {
@@ -7125,40 +7456,107 @@ index 79ea8cab..dd2a0300 100644
  #ifdef _WIN32
      for (char* p = buf; *p; p++) {
          if (*p == '/') *p = '\\';
-@@ -436,12 +461,12 @@ static u32 enumerate_save_dirs(const char* prefix, CellSaveDataDirList* dirList,
+@@ -94,7 +409,7 @@ static const char* savedata_host_str(const char* p)
+ static int dir_exists(const char* path)
+ {
+     HOST_STAT_T st;
+-    if (HOST_STAT(path, &st) != 0)
++    if (sd_stat(path, &st) != 0)
+         return 0;
+ #ifdef _WIN32
+     return (st.st_mode & _S_IFDIR) != 0;
+@@ -119,7 +434,7 @@ static int dir_has_save(const char* path)
+     char sfo[1024];
+     snprintf(sfo, sizeof(sfo), "%s/PARAM.SFO", path);
+     HOST_STAT_T st;
+-    return HOST_STAT(sfo, &st) == 0;
++    return sd_stat(sfo, &st) == 0;
+ }
+ 
+ 
+@@ -436,73 +751,53 @@ static u32 enumerate_save_dirs(const char* prefix, CellSaveDataDirList* dirList,
  {
      u32 count = 0;
  
 -    ensure_dirs(s_save_root);
+-
+-#ifdef _WIN32
+-    {
+-        char search[1024];
+-        snprintf(search, sizeof(search), "%s\\*", s_save_root);
+-        for (char* p = search; *p; p++) {
+-            if (*p == '/') *p = '\\';
+-        }
 +    ensure_dirs(save_root());
  
- #ifdef _WIN32
-     {
-         char search[1024];
--        snprintf(search, sizeof(search), "%s\\*", s_save_root);
-+        snprintf(search, sizeof(search), "%s\\*", save_root());
-         for (char* p = search; *p; p++) {
-             if (*p == '/') *p = '\\';
-         }
-@@ -470,7 +495,7 @@ static u32 enumerate_save_dirs(const char* prefix, CellSaveDataDirList* dirList,
-     }
- #else
-     {
+-        WIN32_FIND_DATAA fd;
+-        HANDLE hFind = FindFirstFileA(search, &fd);
+-        if (hFind == INVALID_HANDLE_VALUE)
+-            return 0;
+-
+-        do {
+-            if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+-                continue;
+-            if (fd.cFileName[0] == '.')
+-                continue;
+-            if (prefix && prefix[0] && strncmp(fd.cFileName, prefix, strlen(prefix)) != 0)
+-                continue;
+-            if (count < max && dirList) {
+-                memset(&dirList[count], 0, sizeof(CellSaveDataDirList));
+-                strncpy(dirList[count].dirName, fd.cFileName,
+-                        CELL_SAVEDATA_DIRNAME_SIZE - 1);
+-            }
+-            count++;
+-        } while (FindNextFileA(hFind, &fd));
+-
+-        FindClose(hFind);
+-    }
+-#else
+-    {
 -        DIR* dp = opendir(s_save_root);
-+        DIR* dp = opendir(save_root());
-         if (!dp)
-             return 0;
- 
-@@ -480,7 +505,7 @@ static u32 enumerate_save_dirs(const char* prefix, CellSaveDataDirList* dirList,
-                 continue;
-             /* Check it's a directory */
-             char full[1024];
+-        if (!dp)
+-            return 0;
+-
+-        struct dirent* de;
+-        while ((de = readdir(dp)) != NULL) {
+-            if (de->d_name[0] == '.')
+-                continue;
+-            /* Check it's a directory */
+-            char full[1024];
 -            snprintf(full, sizeof(full), "%s/%s", s_save_root, de->d_name);
-+            snprintf(full, sizeof(full), "%s/%s", save_root(), de->d_name);
-             if (!dir_exists(full))
-                 continue;
-             if (prefix && prefix[0] && strncmp(de->d_name, prefix, strlen(prefix)) != 0)
-@@ -500,9 +525,27 @@ static u32 enumerate_save_dirs(const char* prefix, CellSaveDataDirList* dirList,
+-            if (!dir_exists(full))
+-                continue;
+-            if (prefix && prefix[0] && strncmp(de->d_name, prefix, strlen(prefix)) != 0)
+-                continue;
+-            if (count < max && dirList) {
+-                memset(&dirList[count], 0, sizeof(CellSaveDataDirList));
+-                strncpy(dirList[count].dirName, de->d_name,
+-                        CELL_SAVEDATA_DIRNAME_SIZE - 1);
+-            }
+-            count++;
++    sd_dir d;
++    sd_dirent e;
++    if (!sd_dir_open(&d, save_root(), NULL))
++        return 0;
++    while (sd_dir_next(&d, &e)) {
++        if (!e.is_dir || e.name[0] == '.')
++            continue;
++        /* a save being imported into the shared folder (<dir>.p3import, see savedata_import) is not a save yet */
++        if (strchr(e.name, '.'))
++            continue;
++        if (prefix && prefix[0] && strncmp(e.name, prefix, strlen(prefix)) != 0)
++            continue;
++        if (count < max && dirList) {
++            memset(&dirList[count], 0, sizeof(CellSaveDataDirList));
++            strncpy(dirList[count].dirName, e.name, CELL_SAVEDATA_DIRNAME_SIZE - 1);
+         }
+-        closedir(dp);
++        count++;
+     }
+-#endif
++    sd_dir_close(&d);
+ 
+     return count;
  }
  
  /* System metadata belongs to the service, not the guest file list. */
@@ -7187,7 +7585,7 @@ index 79ea8cab..dd2a0300 100644
  }
  
  static u32 savedata_content_type(const char* name)
-@@ -515,50 +558,65 @@ static u32 savedata_content_type(const char* name)
+@@ -515,133 +810,531 @@ static u32 savedata_content_type(const char* name)
      return CELL_SAVEDATA_FILETYPE_NORMALFILE;
  }
  
@@ -7252,7 +7650,7 @@ index 79ea8cab..dd2a0300 100644
 +{
 +    char path[1024], line[64];
 +    pfd_path(save_path, path, sizeof(path));
-+    FILE* fp = fopen(path, "rb");
++    FILE* fp = sd_fopen(path, "rb");
 +    if (!fp) return 0;
 +    int found = 0;
 +    while (!found && fgets(line, sizeof(line), fp)) {
@@ -7272,7 +7670,7 @@ index 79ea8cab..dd2a0300 100644
 +    if (pfd_has(save_path, name)) return;
 +    char path[1024];
 +    pfd_path(save_path, path, sizeof(path));
-+    FILE* fp = fopen(path, "ab");
++    FILE* fp = sd_fopen(path, "ab");
 +    if (fp) { fprintf(fp, "%s\n", name); fclose(fp); }
 +}
 +
@@ -7283,55 +7681,37 @@ index 79ea8cab..dd2a0300 100644
 +         ? CELL_SAVEDATA_FILETYPE_SECUREFILE : t;
 +}
 +
-+#ifdef _WIN32
-+/* FILETIME (100 ns ticks since 1601-01-01) -> Unix seconds. */
-+static s64 savedata_filetime_unix(const FILETIME* ft)
-+{
-+    ULARGE_INTEGER v;
-+    v.LowPart  = ft->dwLowDateTime;
-+    v.HighPart = ft->dwHighDateTime;
-+    return (s64)(v.QuadPart / 10000000ULL) - 11644473600LL;
-+}
-+#endif
-+
  /* Enumerate files in a save directory. Returns count, fills fileList up to max. */
  static u32 enumerate_save_files(const char* save_path,
                                   CellSaveDataFileStat* fileList, u32 max)
-@@ -579,13 +637,21 @@ static u32 enumerate_save_files(const char* save_path,
-                 continue;
-             if (count < max && fileList) {
-                 memset(&fileList[count], 0, sizeof(CellSaveDataFileStat));
--                fileList[count].fileType = savedata_file_type(save_path, fd.cFileName);
-+                fileList[count].fileType = savedata_file_type(save_path, fd.cFileName);
-                 strncpy(fileList[count].fileName, fd.cFileName,
-                         CELL_SAVEDATA_FILENAME_SIZE - 1);
-                 ULARGE_INTEGER sz;
-                 sz.HighPart = fd.nFileSizeHigh;
-                 sz.LowPart  = fd.nFileSizeLow;
-                 fileList[count].st_size = (u64)sz.QuadPart;
-+                /* Titles show these: Tony Hawk's Project 8 dates each save
-+                 * slot from st_ctime and st_mtime (its funcStat at 0x61C568).
-+                 * This branch left them 0 -- every save "made" 1970-01-01 --
-+                 * while the POSIX branch below filled them. ctime = creation
-+                 * time, as _stat64 reports it for the directory. */
-+                fileList[count].st_atime = savedata_filetime_unix(&fd.ftLastAccessTime);
-+                fileList[count].st_mtime = savedata_filetime_unix(&fd.ftLastWriteTime);
-+                fileList[count].st_ctime = savedata_filetime_unix(&fd.ftCreationTime);
-             }
-             count++;
-         } while (FindNextFileA(hFind, &fd));
-@@ -616,7 +682,7 @@ static u32 enumerate_save_files(const char* save_path,
- #endif
-             if (count < max && fileList) {
-                 memset(&fileList[count], 0, sizeof(CellSaveDataFileStat));
--                fileList[count].fileType = savedata_file_type(save_path, de->d_name);
-+                fileList[count].fileType = savedata_file_type(save_path, de->d_name);
-                 strncpy(fileList[count].fileName, de->d_name,
-                         CELL_SAVEDATA_FILENAME_SIZE - 1);
-                 fileList[count].st_size = (u64)st.st_size;
-@@ -644,6 +710,104 @@ static u32 enumerate_save_files(const char* save_path,
-     return count;
- }
+ {
+     u32 count = 0;
++    sd_dir d;
++    sd_dirent e;
++    if (!sd_dir_open(&d, save_path, NULL))
++        return 0;
++    while (sd_dir_next(&d, &e)) {
++        if (e.is_dir || e.name[0] == '.' || savedata_system_file(e.name))
++            continue;
++        if (count < max && fileList) {
++            memset(&fileList[count], 0, sizeof(CellSaveDataFileStat));
++            fileList[count].fileType = savedata_file_type(save_path, e.name);
++            strncpy(fileList[count].fileName, e.name, CELL_SAVEDATA_FILENAME_SIZE - 1);
++            fileList[count].st_size = e.size;
++            /* Titles show these: Tony Hawk's Project 8 dates each save
++             * slot from st_ctime and st_mtime (its funcStat at 0x61C568).
++             * The Windows branch once left them 0 -- every save "made"
++             * 1970-01-01. ctime = creation time on Windows, as _stat64
++             * reports it for the directory. */
++            fileList[count].st_atime = e.atime;
++            fileList[count].st_mtime = e.mtime;
++            fileList[count].st_ctime = e.ctime;
++        }
++        count++;
++    }
++    sd_dir_close(&d);
++    return count;
++}
  
 +/* ---- crash-safe saving ------------------------------------------------------------------------
 + * A save used to delete the slot's files first (reCreateMode YES) and then write the new ones in
@@ -7358,7 +7738,30 @@ index 79ea8cab..dd2a0300 100644
 +
 +static void savedata_host_path(char* p)
 +{
-+#ifdef _WIN32
+ #ifdef _WIN32
+-    {
+-        char search[1024];
+-        snprintf(search, sizeof(search), "%s\\*", save_path);
+-        WIN32_FIND_DATAA fd;
+-        HANDLE hFind = FindFirstFileA(search, &fd);
+-        if (hFind == INVALID_HANDLE_VALUE)
+-            return 0;
+-
+-        do {
+-            if ((fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) || savedata_system_file(fd.cFileName))
+-                continue;
+-            if (count < max && fileList) {
+-                memset(&fileList[count], 0, sizeof(CellSaveDataFileStat));
+-                fileList[count].fileType = savedata_file_type(save_path, fd.cFileName);
+-                strncpy(fileList[count].fileName, fd.cFileName,
+-                        CELL_SAVEDATA_FILENAME_SIZE - 1);
+-                ULARGE_INTEGER sz;
+-                sz.HighPart = fd.nFileSizeHigh;
+-                sz.LowPart  = fd.nFileSizeLow;
+-                fileList[count].st_size = (u64)sz.QuadPart;
+-            }
+-            count++;
+-        } while (FindNextFileA(hFind, &fd));
 +    for (; *p; p++) if (*p == '/') *p = '\\';
 +#else
 +    (void)p;
@@ -7368,18 +7771,15 @@ index 79ea8cab..dd2a0300 100644
 +/* tmp -> final, replacing it; 0 on success */
 +static int savedata_commit_file(const char* tmp, const char* final_path)
 +{
-+#ifdef _WIN32
-+    return MoveFileExA(tmp, final_path, MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH) ? 0 : -1;
-+#else
-+    return rename(tmp, final_path);
-+#endif
++    return sd_rename(tmp, final_path, 1);
 +}
-+
+ 
+-        FindClose(hFind);
 +/* fopen for a whole-file rewrite of final_path: opens <final_path>.p3tmp; savedata_close_commit finishes it */
 +static FILE* savedata_open_tmp(const char* final_path, char* tmp, size_t n)
 +{
 +    snprintf(tmp, n, "%s%s", final_path, SAVEDATA_TMP_SUFFIX);
-+    return fopen(tmp, "wb");
++    return sd_fopen(tmp, "wb");
 +}
 +
 +/* close + rename over final_path; on any failure the old file stays and the tmp is removed. 0 = ok */
@@ -7390,13 +7790,404 @@ index 79ea8cab..dd2a0300 100644
 +    if (!failed && savedata_commit_file(tmp, final_path) != 0) {
 +        printf("[cellSaveData] cannot replace '%s' (errno %d): the previous file is kept\n", final_path, errno);
 +        failed = 1;
-+    }
-+    if (failed) remove(tmp);
+     }
++    if (failed) sd_remove(tmp);
 +    return failed ? -1 : 0;
 +}
 +
 +
 +
++/* ---- shared save folder (PS3_SAVEDATA_ROOT): locks and the one-time import ------------------------------------
++ * Several installs and versions of a port can use one save folder, and two of them can run at the same time.
++ * <root>/.ps3recomp-savedata.lock carries two byte-range locks far past its end (its text stays readable):
++ *   SESSION  held by a game from its first save-data call to its exit. The OS drops it when the process ends, crash
++ *            or kill included, so it is never stale. Taken without waiting: when another game holds it, both use the
++ *            folder and this is logged (the launcher warns before it starts a second game on the same folder).
++ *   PASS     held for one save or load pass, and for the import: passes of two games never interleave, so a load
++ *            never reads half of another game's save and two saves never mix their files. Each file is still
++ *            written crash-safe (tmp + rename, above). Waits up to PS3_SAVEDATA_LOCK_MS (default 15000 ms); a
++ *            save that cannot get it in time is not written (the previous save stays), a load goes ahead.
++ * The text at the start of the file names the session holder ("pid=<n> exe=<path>") for the launcher. */
++#define SD_LOCK_NAME    ".ps3recomp-savedata.lock"
++#define SD_LOCK_SESSION 0x7FFFFFF0u
++#define SD_LOCK_PASS    0x7FFFFFF8u
++#define SD_IMPORT_MARK  "SAVES_COPIED_TO_SHARED_FOLDER.txt"
++#define SD_IMPORT_SUFFIX ".p3import"
++
++static int s_shared;               /* save_root() is a shared save folder */
++#ifdef _WIN32
++static HANDLE s_lock_h = INVALID_HANDLE_VALUE;
+ #else
+-    {
+-        DIR* dp = opendir(save_path);
+-        if (!dp)
+-            return 0;
+-
+-        struct dirent* de;
+-        while ((de = readdir(dp)) != NULL) {
+-            if (de->d_name[0] == '.' || savedata_system_file(de->d_name))
+-                continue;
+-            char full[1024];
+-            snprintf(full, sizeof(full), "%s/%s", save_path, de->d_name);
+-            HOST_STAT_T st;
+-            if (HOST_STAT(full, &st) != 0)
+-                continue;
++static int s_lock_fd = -1;
++#endif
++
++static void sd_sleep_ms(unsigned ms)
++{
+ #ifdef _WIN32
+-            if (st.st_mode & _S_IFDIR)
+-                continue;
++    Sleep(ms);
+ #else
+-            if (S_ISDIR(st.st_mode))
+-                continue;
++    struct timespec ts = { (time_t)(ms / 1000), (long)(ms % 1000) * 1000000L };
++    nanosleep(&ts, NULL);
+ #endif
+-            if (count < max && fileList) {
+-                memset(&fileList[count], 0, sizeof(CellSaveDataFileStat));
+-                fileList[count].fileType = savedata_file_type(save_path, de->d_name);
+-                strncpy(fileList[count].fileName, de->d_name,
+-                        CELL_SAVEDATA_FILENAME_SIZE - 1);
+-                fileList[count].st_size = (u64)st.st_size;
++}
++
++static int sd_lock_open(void)
++{
++    char p[SD_PATH_MAX + 64];
++    snprintf(p, sizeof p, "%s/%s", s_save_root, SD_LOCK_NAME);
+ #ifdef _WIN32
+-                fileList[count].st_atime = (s64)st.st_atime;
+-                fileList[count].st_mtime = (s64)st.st_mtime;
+-                fileList[count].st_ctime = (s64)st.st_ctime;
+-#elif defined(__APPLE__)
+-/* Darwin names the sub-second stat fields st_*timespec, not glibc's st_*tim. */
+-                fileList[count].st_atime = (s64)st.st_atimespec.tv_sec;
+-                fileList[count].st_mtime = (s64)st.st_mtimespec.tv_sec;
+-                fileList[count].st_ctime = (s64)st.st_ctimespec.tv_sec;
++    if (s_lock_h != INVALID_HANDLE_VALUE) return 1;
++    wchar_t w[SD_PATH_MAX + 72];
++    if (!sd_wide(p, w, SD_PATH_MAX + 72)) return 0;
++    s_lock_h = CreateFileW(w, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
++                           NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_HIDDEN, NULL);
++    return s_lock_h != INVALID_HANDLE_VALUE;
+ #else
+-                fileList[count].st_atime = (s64)st.st_atim.tv_sec;
+-                fileList[count].st_mtime = (s64)st.st_mtim.tv_sec;
+-                fileList[count].st_ctime = (s64)st.st_ctim.tv_sec;
++    if (s_lock_fd >= 0) return 1;
++    s_lock_fd = open(p, O_RDWR | O_CREAT, 0644);
++    return s_lock_fd >= 0;
+ #endif
++}
++
++/* 1 = locked, 0 = another process holds it, -1 = no lock file */
++static int sd_lock_try(u32 off)
++{
++    if (!sd_lock_open()) return -1;
++#ifdef _WIN32
++    OVERLAPPED ov;
++    memset(&ov, 0, sizeof ov);
++    ov.Offset = off;
++    if (LockFileEx(s_lock_h, LOCKFILE_EXCLUSIVE_LOCK | LOCKFILE_FAIL_IMMEDIATELY, 0, 1, 0, &ov)) return 1;
++    return GetLastError() == ERROR_LOCK_VIOLATION || GetLastError() == ERROR_IO_PENDING ? 0 : -1;
++#else
++    struct flock fl;
++    memset(&fl, 0, sizeof fl);
++    fl.l_type = F_WRLCK; fl.l_whence = SEEK_SET; fl.l_start = (off_t)off; fl.l_len = 1;
++    if (fcntl(s_lock_fd, F_SETLK, &fl) == 0) return 1;
++    return (errno == EACCES || errno == EAGAIN) ? 0 : -1;
++#endif
++}
++
++static void sd_lock_release(u32 off)
++{
++#ifdef _WIN32
++    OVERLAPPED ov;
++    memset(&ov, 0, sizeof ov);
++    ov.Offset = off;
++    if (s_lock_h != INVALID_HANDLE_VALUE) UnlockFileEx(s_lock_h, 0, 1, 0, &ov);
++#else
++    struct flock fl;
++    memset(&fl, 0, sizeof fl);
++    fl.l_type = F_UNLCK; fl.l_whence = SEEK_SET; fl.l_start = (off_t)off; fl.l_len = 1;
++    if (s_lock_fd >= 0) fcntl(s_lock_fd, F_SETLK, &fl);
++#endif
++}
++
++/* who holds the session (the text at the start of the lock file) */
++static void sd_lock_holder(char* out, size_t cap)
++{
++    out[0] = 0;
++    char p[SD_PATH_MAX + 64];
++    snprintf(p, sizeof p, "%s/%s", s_save_root, SD_LOCK_NAME);
++    FILE* f = sd_fopen(p, "rb");
++    if (!f) return;
++    size_t n = fread(out, 1, cap - 1, f);
++    fclose(f);
++    out[n] = 0;
++    out[strcspn(out, "\r\n")] = 0;
++}
++
++static void sd_lock_write_holder(void)
++{
++    char text[SD_PATH_MAX + 64], exe[SD_PATH_MAX] = "";
++    unsigned long pid;
++#ifdef _WIN32
++    wchar_t w[SD_PATH_MAX];
++    if (GetModuleFileNameW(NULL, w, SD_PATH_MAX)) sd_utf8(w, exe, (int)sizeof exe);
++    pid = (unsigned long)GetCurrentProcessId();
++#else
++    ssize_t k = readlink("/proc/self/exe", exe, sizeof exe - 1);
++    exe[k > 0 ? k : 0] = 0;
++    pid = (unsigned long)getpid();
++#endif
++    int n = snprintf(text, sizeof text, "pid=%lu exe=%s\n", pid, exe);
++    if (n <= 0) return;
++#ifdef _WIN32
++    DWORD wr = 0;
++    SetFilePointer(s_lock_h, 0, NULL, FILE_BEGIN);
++    SetEndOfFile(s_lock_h);
++    WriteFile(s_lock_h, text, (DWORD)n, &wr, NULL);
++#else
++    if (ftruncate(s_lock_fd, 0) == 0 && pwrite(s_lock_fd, text, (size_t)n, 0) < 0) { /* the text is only a hint */ }
++#endif
++}
++
++/* the PASS lock for one save/load pass: 1 = held (or no shared folder), 0 = not in time */
++static int savedata_pass_lock(int is_save)
++{
++    if (!s_shared) return 1;
++    static int timeout_ms = -1;
++    if (timeout_ms < 0) {
++        char e[16];
++        timeout_ms = sd_getenv("PS3_SAVEDATA_LOCK_MS", e, sizeof e) ? atoi(e) : 15000;
++        if (timeout_ms < 0) timeout_ms = 0;
++    }
++    int r = sd_lock_try(SD_LOCK_PASS);
++    if (r < 0) return 1;                                   /* no lock file (read-only folder?): go on as before */
++    if (r == 1) return 1;
++    printf("[cellSaveData] the save folder is busy (another game is %s): waiting up to %d ms\n",
++           "saving or loading", timeout_ms);
++    for (int waited = 0; waited < timeout_ms; waited += 50) {
++        sd_sleep_ms(50);
++        if (sd_lock_try(SD_LOCK_PASS) != 0) {
++            printf("[cellSaveData] the save folder is free again after %d ms\n", waited + 50);
++            return 1;
++        }
++    }
++    printf("[cellSaveData] the save folder stayed busy for %d ms: %s\n", timeout_ms,
++           is_save ? "this save is NOT written (the previous save is kept)" : "loading anyway");
++    return 0;
++}
++
++static void savedata_pass_unlock(void)
++{
++    if (s_shared) sd_lock_release(SD_LOCK_PASS);
++}
++
++/* save directories of a savedata folder: subfolders holding a PARAM.SFO (names with a '.' are no save) */
++static int sd_count_saves(const char* folder)
++{
++    int n = 0;
++    sd_dir d;
++    sd_dirent e;
++    char p[SD_PATH_MAX + 300];
++    if (!sd_dir_open(&d, folder, NULL)) return 0;
++    while (sd_dir_next(&d, &e)) {
++        if (!e.is_dir || e.name[0] == '.' || strchr(e.name, '.')) continue;
++        snprintf(p, sizeof p, "%s/%s", folder, e.name);
++        if (dir_has_save(p)) n++;
++    }
++    sd_dir_close(&d);
++    return n;
++}
++
++/* copy one file, keeping its times (the game dates a save slot from them); 0 = ok */
++static int sd_copy_file(const char* src, const char* dst)
++{
++#ifdef _WIN32
++    wchar_t a[SD_PATH_MAX + 8], b[SD_PATH_MAX + 8];
++    if (!sd_wide(src, a, SD_PATH_MAX + 8) || !sd_wide(dst, b, SD_PATH_MAX + 8)) return -1;
++    if (!CopyFileW(a, b, FALSE)) return -1;               /* keeps the write time and the attributes */
++    HANDLE hs = CreateFileW(a, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
++    HANDLE hd = CreateFileW(b, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
++    if (hs != INVALID_HANDLE_VALUE && hd != INVALID_HANDLE_VALUE) {
++        FILETIME c, ac, wr;
++        if (GetFileTime(hs, &c, &ac, &wr)) SetFileTime(hd, &c, &ac, &wr);
++        FlushFileBuffers(hd);
++    }
++    if (hs != INVALID_HANDLE_VALUE) CloseHandle(hs);
++    if (hd != INVALID_HANDLE_VALUE) CloseHandle(hd);
++    return 0;
++#else
++    FILE* in = fopen(src, "rb");
++    if (!in) return -1;
++    FILE* out = fopen(dst, "wb");
++    if (!out) { fclose(in); return -1; }
++    char buf[65536];
++    size_t k;
++    int bad = 0;
++    while ((k = fread(buf, 1, sizeof buf, in)) > 0)
++        if (fwrite(buf, 1, k, out) != k) { bad = 1; break; }
++    if (ferror(in)) bad = 1;
++    fclose(in);
++    if (fflush(out) != 0) bad = 1;
++    if (!bad) fsync(fileno(out));
++    if (fclose(out) != 0) bad = 1;
++    struct stat st;
++    if (!bad && stat(src, &st) == 0) {
++#  if defined(__APPLE__)
++        struct timespec t[2] = { st.st_atimespec, st.st_mtimespec };
++#  else
++        struct timespec t[2] = { st.st_atim, st.st_mtim };
++#  endif
++        utimensat(AT_FDCWD, dst, t, 0);
++    }
++    return bad ? -1 : 0;
++#endif
++}
++
++static int sd_same_path(const char* a, const char* b)
++{
++    char x[SD_PATH_MAX], y[SD_PATH_MAX];
++    snprintf(x, sizeof x, "%s", a);
++    snprintf(y, sizeof y, "%s", b);
++    for (char* c = x; *c; c++) if (*c == '\\') *c = '/';
++    for (char* c = y; *c; c++) if (*c == '\\') *c = '/';
++    size_t n = strlen(x), m = strlen(y);
++    while (n > 1 && x[n - 1] == '/') x[--n] = 0;
++    while (m > 1 && y[m - 1] == '/') y[--m] = 0;
++#ifdef _WIN32
++    return n == m && sd_strnicmp(x, y, n) == 0;    /* NTFS: case-insensitive (ASCII folding is enough here) */
++#else
++    return strcmp(x, y) == 0;
++#endif
++}
++
++/* One-time import (copy, never move) of an install's own saves into the shared folder: when the shared folder has
++ * no save yet, the source has some and the source carries no SD_IMPORT_MARK. Each save folder is copied into
++ * <root>/<dir>.p3import and renamed to <root>/<dir> when complete (an interrupted import leaves no half save the game
++ * would load; the next start finishes it). An existing <root>/<dir> is never replaced. The source stays as it is,
++ * plus the marker: a note for a player who looks there, and it keeps a later start from importing again (a player
++ * who empties the shared folder to start over does not get the old saves back). Returns how many were imported. */
++static int savedata_import(const char* src)
++{
++    char mark[SD_PATH_MAX + 64], p[SD_PATH_MAX + 300], q[SD_PATH_MAX + 300], t[SD_PATH_MAX + 300];
++    HOST_STAT_T st;
++    if (!src || !src[0] || sd_same_path(src, s_save_root) || !dir_exists(src)) return 0;
++    snprintf(mark, sizeof mark, "%s/%s", src, SD_IMPORT_MARK);
++    if (sd_stat(mark, &st) == 0) return 0;                       /* copied before */
++    int have_src = sd_count_saves(src);
++    if (!have_src) return 0;
++    int have_dst = sd_count_saves(s_save_root);
++    if (have_dst) {
++        printf("[cellSaveData] this install's own saves (%d in '%s') were NOT copied: the shared save folder already "
++               "has %d save(s). The launcher can import them (Settings > Saves).\n", have_src, src, have_dst);
++        return 0;
++    }
++    int imported = 0, failed = 0;
++    sd_dir d;
++    sd_dirent e;
++    if (!sd_dir_open(&d, src, NULL)) return 0;
++    while (sd_dir_next(&d, &e)) {
++        if (!e.is_dir || e.name[0] == '.' || strchr(e.name, '.')) continue;
++        snprintf(p, sizeof p, "%s/%s", src, e.name);
++        if (!dir_has_save(p)) continue;
++        snprintf(q, sizeof q, "%s/%s", s_save_root, e.name);
++        if (dir_exists(q)) {                                      /* an empty or broken folder of that name: leave both */
++            printf("[cellSaveData] import: '%s' is already in the shared folder (no save in it): not copied\n", e.name);
++            failed++;
++            continue;
++        }
++        snprintf(t, sizeof t, "%s/%s%s", s_save_root, e.name, SD_IMPORT_SUFFIX);
++        ensure_dirs(t);
++        int files = 0, bad = 0;
++        u64 bytes = 0;
++        sd_dir fd;
++        sd_dirent fe;
++        if (sd_dir_open(&fd, p, NULL)) {
++            while (sd_dir_next(&fd, &fe)) {
++                if (fe.is_dir || savedata_tmp_file(fe.name)) continue;  /* a save is flat; a .p3tmp is half a file */
++                char a[SD_PATH_MAX + 600], b[SD_PATH_MAX + 600];
++                snprintf(a, sizeof a, "%s/%s", p, fe.name);
++                snprintf(b, sizeof b, "%s/%s", t, fe.name);
++                HOST_STAT_T sa, sb;
++                if (sd_copy_file(a, b) != 0 || sd_stat(a, &sa) != 0 || sd_stat(b, &sb) != 0 || sa.st_size != sb.st_size) {
++                    printf("[cellSaveData] import: copying '%s' failed (errno %d)\n", a, errno);
++                    bad = 1;
++                    break;
++                }
++                files++;
++                bytes += fe.size;
+             }
+-            count++;
++            sd_dir_close(&fd);
++        } else bad = 1;
++        if (!bad && sd_rename(t, q, 0) != 0) {
++            printf("[cellSaveData] import: cannot rename '%s' to '%s' (errno %d)\n", t, q, errno);
++            bad = 1;
+         }
+-        closedir(dp);
++        if (bad) { failed++; continue; }        /* <dir>.p3import stays: it is no save; the next start tries again */
++        imported++;
++        printf("[cellSaveData] imported the save '%s' (%d files, %llu bytes) from '%s' into the shared save folder "
++               "(a copy: the original stays)\n", e.name, files, (unsigned long long)bytes, p);
+     }
++    sd_dir_close(&d);
++    if (imported && !failed) {
++        FILE* f = sd_fopen(mark, "wb");
++        if (f) {
++            time_t now = time(NULL);
++            char when[64] = "";
++            struct tm* lt = localtime(&now);
++            if (lt) strftime(when, sizeof when, "%Y-%m-%d %H:%M", lt);
++            fprintf(f, "The saves in this folder were COPIED to the shared save folder\r\n\r\n    %s\r\n\r\n"
++                       "on %s. The game now loads and saves there, for every install and version. The files here are a\r\n"
++                       "backup of the moment they were copied; the game no longer reads or updates them.\r\n",
++                    s_save_root, when);
++            fclose(f);
++        }
++    }
++    return imported;
++}
++
++static void savedata_shared_init(const char* import_from)
++{
++    s_shared = 1;
++    ensure_dirs(s_save_root);
++    int r = sd_lock_try(SD_LOCK_SESSION);
++    if (r == 1) sd_lock_write_holder();
++    else if (r == 0) {
++        char who[SD_PATH_MAX + 64];
++        sd_lock_holder(who, sizeof who);
++        printf("[cellSaveData] NOTE: another game is using this save folder (%s). Both load and save the same saves: "
++               "the one that saves last wins.\n", who[0] ? who : "unknown process");
++    } else
++        printf("[cellSaveData] NOTE: no lock file in the save folder (errno %d): two games on it are not detected\n", errno);
++    if (import_from && savedata_pass_lock(1)) {
++        savedata_import(import_from);
++        savedata_pass_unlock();
++    }
++}
++
++#if defined(__GNUC__) || defined(__clang__)
++/* With a shared save folder the game takes it at process start, not at the title's first save-data call (Tony Hawk's
++ * Project 8 makes that only in its Load / Save menus): the session lock then tells the launcher from the first second that
++ * this game runs on the folder, and the one-time import has happened before the title lists its saves. Without
++ * PS3_SAVEDATA_ROOT nothing happens here (the folder is resolved on first use, as before). */
++__attribute__((constructor)) static void savedata_shared_at_start(void)
++{
++    char v[SD_PATH_MAX];
++    if (sd_getenv("PS3_SAVEDATA_ROOT", v, sizeof v))
++        save_root();
++}
+ #endif
+ 
+-    return count;
 +static void pass_note(char list[][CELL_SAVEDATA_FILENAME_SIZE], unsigned* n, const char* name)
 +{
 +    for (u32 i = 0; i < *n; i++) if (!strcmp(list[i], name)) return;
@@ -7422,30 +8213,38 @@ index 79ea8cab..dd2a0300 100644
 +#ifdef _WIN32
 +            for (char* p = path; *p; p++) if (*p == '/') *p = '\\';
 +#endif
-+            if (remove(path) == 0)
++            if (sd_remove(path) == 0)
 +                printf("[cellSaveData] recreate: removed '%s'\n", files[i].fileName);
 +        }
 +        free(files);
 +    }
 +    pfd_path(save_path, path, sizeof(path));
-+    remove(path);
-+}
-+
++    sd_remove(path);
+ }
+ 
  /* Execute file callback: read/write/delete files in the save directory */
- static s32 process_file_op(const char* save_path, CellSaveDataFileSet* set)
- {
-@@ -701,12 +865,15 @@ static s32 process_file_op(const char* save_path, CellSaveDataFileSet* set)
+@@ -672,7 +1365,7 @@ static s32 process_file_op(const char* save_path, CellSaveDataFileSet* set)
+ 
+     switch (set->fileOperation) {
+     case CELL_SAVEDATA_FILEOP_READ: {
+-        FILE* fp = fopen(file_path, "rb");
++        FILE* fp = sd_fopen(file_path, "rb");
+         if (!fp) {
+             printf("[cellSaveData] file read: cannot open '%s'\n", file_path);
+             return CELL_SAVEDATA_ERROR_ACCESS_ERROR;
+@@ -701,12 +1394,15 @@ static s32 process_file_op(const char* save_path, CellSaveDataFileSet* set)
          } else {
              mode = "r+b";
          }
 -        FILE* fp = fopen(file_path, mode);
 -        if (!fp) {
+-            fp = fopen(file_path, "wb");
 +        /* a whole-file write goes to <name>.p3tmp and replaces the file when complete (crash-safe saving) */
 +        char tmp_path[1100];
 +        const int whole = mode[0] == 'w' && !getenv("PS3_SAVEDATA_DIRECT");
-+        FILE* fp = whole ? savedata_open_tmp(file_path, tmp_path, sizeof tmp_path) : fopen(file_path, mode);
++        FILE* fp = whole ? savedata_open_tmp(file_path, tmp_path, sizeof tmp_path) : sd_fopen(file_path, mode);
 +        if (!fp && !whole) {
-             fp = fopen(file_path, "wb");
++            fp = sd_fopen(file_path, "wb");
          }
          if (!fp) {
 -            printf("[cellSaveData] file write: cannot open '%s'\n", file_path);
@@ -7453,7 +8252,7 @@ index 79ea8cab..dd2a0300 100644
              return CELL_SAVEDATA_ERROR_ACCESS_ERROR;
          }
          if (set->fileOffset > 0) {
-@@ -720,9 +887,21 @@ static s32 process_file_op(const char* save_path, CellSaveDataFileSet* set)
+@@ -720,14 +1416,26 @@ static s32 process_file_op(const char* save_path, CellSaveDataFileSet* set)
          if (write_size > set->fileBufSize) write_size = set->fileBufSize;
          size_t wrote = fwrite(set->fileBuf, 1, write_size, fp);
          int failed = wrote != write_size;
@@ -7478,7 +8277,13 @@ index 79ea8cab..dd2a0300 100644
          return failed ? CELL_SAVEDATA_ERROR_ACCESS_ERROR : (s32)wrote;
      }
  
-@@ -748,17 +927,19 @@ static void write_param_sfo(const char* save_path, const CellSaveDataSystemFileP
+     case CELL_SAVEDATA_FILEOP_DELETE:
+-        remove(file_path);
++        sd_remove(file_path);
+         return 0;
+ 
+     default:
+@@ -748,17 +1456,19 @@ static void write_param_sfo(const char* save_path, const CellSaveDataSystemFileP
      }
  #endif
  
@@ -7505,7 +8310,16 @@ index 79ea8cab..dd2a0300 100644
  }
  
  /* Read simplified PARAM.SFO */
-@@ -800,11 +981,101 @@ static void read_param_sfo(const char* save_path, CellSaveDataSystemFileParam* p
+@@ -775,7 +1485,7 @@ static void read_param_sfo(const char* save_path, CellSaveDataSystemFileParam* p
+     }
+ #endif
+ 
+-    FILE* fp = fopen(sfo_path, "rb");
++    FILE* fp = sd_fopen(sfo_path, "rb");
+     if (!fp) return;
+ 
+     char line[2048];
+@@ -800,11 +1510,94 @@ static void read_param_sfo(const char* save_path, CellSaveDataSystemFileParam* p
  }
  
  /* Core save/load implementation shared by List/Fixed/Auto variants */
@@ -7523,16 +8337,25 @@ index 79ea8cab..dd2a0300 100644
                               CellSaveDataFileCallback funcFile,
                               void* userdata)
 +{
-+    if (!is_save) return savedata_execute_pass(dirName, 0, setBuf, funcStat, funcFile, userdata, NULL);
-+    savedata_pass* pass = (savedata_pass*)calloc(1, sizeof *pass);
-+    if (!pass) return CELL_SAVEDATA_ERROR_INTERNAL;
-+    savedata_busy_add(1);
-+    savedata_pass* prev = s_pass;
-+    s_pass = pass;
-+    s32 r = savedata_execute_pass(dirName, 1, setBuf, funcStat, funcFile, userdata, pass);
-+    s_pass = prev;
-+    savedata_busy_add(-1);
-+    free(pass);
++    save_root();                                   /* resolves the folder (+ the shared-folder start) before the lock */
++    /* a shared save folder: one pass at a time across every game using it (savedata_pass_lock) */
++    const int locked = savedata_pass_lock(is_save);
++    if (!locked && is_save) return CELL_SAVEDATA_ERROR_BUSY;
++    s32 r;
++    if (!is_save) {
++        r = savedata_execute_pass(dirName, 0, setBuf, funcStat, funcFile, userdata, NULL);
++    } else {
++        savedata_pass* pass = (savedata_pass*)calloc(1, sizeof *pass);
++        if (!pass) { if (locked) savedata_pass_unlock(); return CELL_SAVEDATA_ERROR_INTERNAL; }
++        savedata_busy_add(1);
++        savedata_pass* prev = s_pass;
++        s_pass = pass;
++        r = savedata_execute_pass(dirName, 1, setBuf, funcStat, funcFile, userdata, pass);
++        s_pass = prev;
++        savedata_busy_add(-1);
++        free(pass);
++    }
++    if (locked) savedata_pass_unlock();
 +    return r;
 +}
 +
@@ -7552,13 +8375,13 @@ index 79ea8cab..dd2a0300 100644
 +            if (kept) continue;
 +            snprintf(path, sizeof(path), "%s/%s", save_path, files[i].fileName);
 +            savedata_host_path(path);
-+            if (remove(path) == 0)
++            if (sd_remove(path) == 0)
 +                printf("[cellSaveData] recreate: removed '%s' (not part of the new save)\n", files[i].fileName);
 +        }
 +        free(files);
 +    }
 +    pfd_path(save_path, path, sizeof(path));
-+    if (!pass->n_secure) { remove(path); return; }
++    if (!pass->n_secure) { sd_remove(path); return; }
 +    char tmp_path[1100];
 +    FILE* fp = savedata_open_tmp(path, tmp_path, sizeof tmp_path);
 +    if (!fp) return;
@@ -7569,34 +8392,18 @@ index 79ea8cab..dd2a0300 100644
 +
 +static void savedata_drop_tmp_files(const char* save_path)
 +{
-+    char path[1100];
-+#ifdef _WIN32
-+    char search[1100];
-+    snprintf(search, sizeof(search), "%s\\*%s", save_path, SAVEDATA_TMP_SUFFIX);
-+    savedata_host_path(search);
-+    WIN32_FIND_DATAA fd;
-+    HANDLE h = FindFirstFileA(search, &fd);
-+    if (h == INVALID_HANDLE_VALUE) return;
-+    do {
-+        if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) continue;
-+        snprintf(path, sizeof(path), "%s/%s", save_path, fd.cFileName);
++    char path[SD_PATH_MAX + 300];
++    sd_dir d;
++    sd_dirent e;
++    if (!sd_dir_open(&d, save_path, "*" SAVEDATA_TMP_SUFFIX)) return;
++    while (sd_dir_next(&d, &e)) {
++        if (e.is_dir || !savedata_tmp_file(e.name)) continue;
++        snprintf(path, sizeof(path), "%s/%s", save_path, e.name);
 +        savedata_host_path(path);
-+        if (savedata_tmp_file(fd.cFileName) && remove(path) == 0)
-+            printf("[cellSaveData] removed '%s' (left by an interrupted save)\n", fd.cFileName);
-+    } while (FindNextFileA(h, &fd));
-+    FindClose(h);
-+#else
-+    DIR* dp = opendir(save_path);
-+    if (!dp) return;
-+    struct dirent* de;
-+    while ((de = readdir(dp)) != NULL) {
-+        if (!savedata_tmp_file(de->d_name)) continue;
-+        snprintf(path, sizeof(path), "%s/%s", save_path, de->d_name);
-+        if (remove(path) == 0)
-+            printf("[cellSaveData] removed '%s' (left by an interrupted save)\n", de->d_name);
++        if (sd_remove(path) == 0)
++            printf("[cellSaveData] removed '%s' (left by an interrupted save)\n", e.name);
 +    }
-+    closedir(dp);
-+#endif
++    sd_dir_close(&d);
 +}
 +
 +static s32 savedata_execute_pass(const char* dirName, int is_save,
@@ -7607,7 +8414,16 @@ index 79ea8cab..dd2a0300 100644
  {
      if (!dirName || !funcStat)
          return CELL_SAVEDATA_ERROR_PARAM;
-@@ -897,9 +1168,26 @@ static s32 savedata_execute(const char* dirName, int is_save,
+@@ -847,7 +1640,7 @@ static s32 savedata_execute(const char* dirName, int is_save,
+ 
+     if (!is_new) {
+         HOST_STAT_T hst;
+-        if (HOST_STAT(save_path, &hst) == 0) {
++        if (sd_stat(save_path, &hst) == 0) {
+ #ifdef _WIN32
+             statGet.dir.st_atime = (s64)hst.st_atime;
+             statGet.dir.st_mtime = (s64)hst.st_mtime;
+@@ -897,9 +1690,26 @@ static s32 savedata_execute(const char* dirName, int is_save,
          return CELL_SAVEDATA_ERROR_CBRESULT;
      }
  
@@ -7636,7 +8452,7 @@ index 79ea8cab..dd2a0300 100644
          CellSaveDataSystemFileParam params;
          memcpy(&params, statSet.setParam, sizeof(params));
          params.attribute = ps3_bswap32(params.attribute);
-@@ -932,6 +1220,7 @@ static s32 savedata_execute(const char* dirName, int is_save,
+@@ -932,6 +1742,7 @@ static s32 savedata_execute(const char* dirName, int is_save,
              return CELL_SAVEDATA_ERROR_NODATA;
          return CELL_SAVEDATA_ERROR_CBRESULT;
      }
@@ -7644,7 +8460,7 @@ index 79ea8cab..dd2a0300 100644
  
      printf("[cellSaveData] %s complete for '%s'\n",
             is_save ? "SAVE" : "LOAD", dirName);
-@@ -1128,7 +1417,7 @@ static s32 savedata_fixed(int is_save, CellSaveDataSetList* setList,
+@@ -1128,7 +1939,7 @@ static s32 savedata_fixed(int is_save, CellSaveDataSetList* setList,
          }
          printf("[cellSaveData] savedata_fixed: cbresult=%d listed=%u/%u prefix='%s' root='%s'\n",
                 result, listed, count,
@@ -7653,7 +8469,7 @@ index 79ea8cab..dd2a0300 100644
          SAVEDATA_REJECT(CELL_SAVEDATA_ERROR_CBRESULT, w);
      }
      if (!funcStat)
-@@ -1187,6 +1476,12 @@ s32 cellSaveDataListAutoLoad(u32 version, u32 errDialog,
+@@ -1187,6 +1998,12 @@ s32 cellSaveDataListAutoLoad(u32 version, u32 errDialog,
      return savedata_fixed(0, setList, setBuf, funcFixed, funcStat, funcFile, userdata);
  }
  
@@ -7666,7 +8482,7 @@ index 79ea8cab..dd2a0300 100644
  s32 cellSaveDataAutoSave2(u32 version, const char* dirName,
                             u32 errDialog,
                             CellSaveDataSetBuf* setBuf,
-@@ -1211,8 +1506,8 @@ s32 cellSaveDataAutoSave2(u32 version, const char* dirName,
+@@ -1211,8 +2028,8 @@ s32 cellSaveDataAutoSave2(u32 version, const char* dirName,
       * carries the same defect for each of them. Fixing those needs list/file
       * marshalling that dispatch_func_stat does not do yet, so they are left
       * alone until a title actually reaches one. */
@@ -7677,7 +8493,7 @@ index 79ea8cab..dd2a0300 100644
  }
  
  s32 cellSaveDataAutoLoad2(u32 version, const char* dirName,
-@@ -1323,7 +1618,7 @@ s32 cellSaveDataFixedLoad(u32 version, CellSaveDataSetList* setList,
+@@ -1323,7 +2140,7 @@ s32 cellSaveDataFixedLoad(u32 version, CellSaveDataSetList* setList,
                                    funcFile, container, NULL);
  }
  
@@ -7686,7 +8502,7 @@ index 79ea8cab..dd2a0300 100644
                            u32 errDialog,
                            CellSaveDataSetBuf* setBuf,
                            CellSaveDataStatCallback funcStat,
-@@ -1357,6 +1652,22 @@ s32 cellSaveDataAutoSave(u32 version, const char* dirName,
+@@ -1357,6 +2174,22 @@ s32 cellSaveDataAutoSave(u32 version, const char* dirName,
      return savedata_execute(dirName, 1, setBuf, funcStat, funcFile, userdata);
  }
  
@@ -7709,7 +8525,7 @@ index 79ea8cab..dd2a0300 100644
  s32 cellSaveDataAutoLoad(u32 version, const char* dirName,
                            u32 errDialog,
                            CellSaveDataSetBuf* setBuf,
-@@ -1379,18 +1690,26 @@ s32 cellSaveDataAutoLoad(u32 version, const char* dirName,
+@@ -1379,18 +2212,26 @@ s32 cellSaveDataAutoLoad(u32 version, const char* dirName,
      (void)is_new;
      /* Same as cellSaveDataAutoLoad2 above, including flОw's first-boot compat
       * return (it calls this old non-_2 variant). */
@@ -67639,6 +68455,579 @@ index 00000000..7a59f43f
 +    return fails ? 1 : 0;
 +}
 +#endif
+diff --git a/tests/savedata_shared/test_savedata_shared.c b/tests/savedata_shared/test_savedata_shared.c
+new file mode 100644
+index 00000000..8e7b2c2f
+--- /dev/null
++++ b/tests/savedata_shared/test_savedata_shared.c
+@@ -0,0 +1,567 @@
++/*
++ * ps3recomp - tests/savedata_shared/test_savedata_shared.c
++ *
++ * The shared save folder of libs/system/cellSaveData.c (Project 8 Plus 0.9.2: one save folder for every install and
++ * version, PS3_SAVEDATA_ROOT): the host side, without a game. The test includes cellSaveData.c and runs each case in a
++ * CHILD run of this exe (save_root() resolves once per process, and the locks are per process).
++ *   1. odd paths: a root with spaces, [ ] ( ) & % ! and characters outside every ANSI code page (Ü, ø, 日本) -- a save
++ *      written through the title's file ops (whole-file writes: tmp + rename) reads back byte for byte, the save
++ *      folder is listed, PARAM.SFO round-trips
++ *   2. {Documents} expands to the known Documents folder (string only: nothing is created there)
++ *   3. import: an install's own save is COPIED into an empty shared folder (files, sizes, write times), the source
++ *      is unchanged and gets the marker; a second start does not import again (the player emptied the folder)
++ *   4. no overwrite: a shared folder that has a save keeps it byte for byte; nothing is imported, no marker
++ *   5. an interrupted import (<dir>.p3import) is not listed as a save and is finished by the next start
++ *   6. locks: while one game holds a save pass, a second game on the folder sees the session note, its save times
++ *      out (CELL_SAVEDATA_ERROR_BUSY path: savedata_pass_lock -> 0) and gets the lock once the first one ends
++ *   6b. the session lock is taken at process start (a game that never touched its saves already holds it)
++ *   7. the old layout (no PS3_SAVEDATA_ROOT, PS3_VFS_STRICT + PS3_HDD0_ROOT) is unchanged: no lock file, no import
++ *   8. a shared folder that cannot be made: that start uses the install's own savedata (PS3_SAVEDATA_IMPORT)
++ * Everything happens under SAVEDATA_TEST_DIR (default .\savedata_shared_test); nothing is deleted except inside it
++ * by the cases themselves (each case uses its own fresh sub folder).
++ *
++ * Build (zig):  zig cc -target x86_64-windows-gnu -Iinclude tests/savedata_shared/test_savedata_shared.c -lole32
++ *                  -o test_savedata_shared.exe          (Linux: -target x86_64-linux-gnu, no -lole32)
++ * Run:          test_savedata_shared.exe               exit 0 = pass
++ */
++#include "../../libs/system/cellSaveData.c"
++
++/* --- the runtime symbols cellSaveData.c links against (the host side under test needs none of them) --- */
++uint8_t* vm_base;
++ps3_guest_caller_fn g_ps3_guest_caller;
++int g_resv_store_active;
++uint32_t g_ww_lo, g_ww_hi, ppu_vm_size;
++void ppu_resv_break_store(uint64_t ea) { (void)ea; }
++int spu_coh_is_reserved(uint32_t a) { (void)a; return 0; }
++void spu_lockline_lock(void) {}
++void spu_lockline_unlock(void) {}
++void spu_coh_notify_write(uint32_t a) { (void)a; }
++void ps3_ww_report_inline(uint32_t a, uint64_t v, int w) { (void)a; (void)v; (void)w; }
++void ps3_hle_register_ctx(uint32_t nid, const char* name, void (*fn)(ppu_context*)) { (void)nid; (void)name; (void)fn; }
++
++#ifndef _WIN32
++#  include <sys/wait.h>
++#endif
++
++static const char* g_self;
++static int g_fail;
++#define CHECK(c, ...) do { if (!(c)) { printf("  FAIL %s:%d: ", __FILE__, __LINE__); printf(__VA_ARGS__); printf("\n"); g_fail = 1; } } while (0)
++
++/* ---------------------------------------------------------------- helpers (UTF-8 paths, the file layer under test) */
++static void setenv_u8(const char* k, const char* v)
++{
++#ifdef _WIN32
++    wchar_t wk[128], wv[SD_PATH_MAX];
++    MultiByteToWideChar(CP_UTF8, 0, k, -1, wk, 128);
++    MultiByteToWideChar(CP_UTF8, 0, v ? v : "", -1, wv, SD_PATH_MAX);
++    _wputenv_s(wk, wv);
++#else
++    if (v && *v) setenv(k, v, 1); else unsetenv(k);
++#endif
++}
++
++static int write_file(const char* path, const void* data, size_t n)
++{
++    FILE* f = sd_fopen(path, "wb");
++    if (!f) return -1;
++    size_t w = fwrite(data, 1, n, f);
++    return (fclose(f) == 0 && w == n) ? 0 : -1;
++}
++
++static long read_file(const char* path, char* buf, size_t cap)
++{
++    FILE* f = sd_fopen(path, "rb");
++    if (!f) return -1;
++    size_t n = fread(buf, 1, cap, f);
++    fclose(f);
++    return (long)n;
++}
++
++static int exists(const char* p) { HOST_STAT_T st; return sd_stat(p, &st) == 0; }
++
++static s64 mtime_of(const char* p)
++{
++    HOST_STAT_T st;
++    if (sd_stat(p, &st) != 0) return -1;
++#ifdef _WIN32
++    return (s64)st.st_mtime;
++#elif defined(__APPLE__)
++    return (s64)st.st_mtimespec.tv_sec;
++#else
++    return (s64)st.st_mtim.tv_sec;     /* cellSaveData.c undefines the st_mtime macro */
++#endif
++}
++
++/* a fake THP8 save: PARAM.SFO, PARAM.PFD, ICON0.PNG, the payload; payload bytes depend on `seed` */
++static void make_save(const char* dir, int seed)
++{
++    char p[SD_PATH_MAX];
++    ensure_dirs(dir);
++    snprintf(p, sizeof p, "%s/PARAM.SFO", dir);
++    write_file(p, "TITLE=THP8\nSUB_TITLE=Career\n", 28);
++    snprintf(p, sizeof p, "%s/PARAM.PFD", dir);
++    write_file(p, "5B8AB877.PRG\n", 13);
++    snprintf(p, sizeof p, "%s/ICON0.PNG", dir);
++    write_file(p, "\x89PNG-icon", 9);
++    static char payload[113152];
++    for (size_t i = 0; i < sizeof payload; i++) payload[i] = (char)(i * 31 + seed);
++    snprintf(p, sizeof p, "%s/5B8AB877.PRG", dir);
++    write_file(p, payload, sizeof payload);
++}
++
++/* 1 when every file of a is in b with the same bytes */
++static int same_files(const char* a, const char* b)
++{
++    static char x[200000], y[200000];
++    sd_dir d;
++    sd_dirent e;
++    int n = 0;
++    if (!sd_dir_open(&d, a, NULL)) return 0;
++    while (sd_dir_next(&d, &e)) {
++        if (e.is_dir) continue;
++        char pa[SD_PATH_MAX], pb[SD_PATH_MAX];
++        snprintf(pa, sizeof pa, "%s/%s", a, e.name);
++        snprintf(pb, sizeof pb, "%s/%s", b, e.name);
++        long la = read_file(pa, x, sizeof x), lb = read_file(pb, y, sizeof y);
++        if (la < 0 || la != lb || memcmp(x, y, (size_t)la)) { sd_dir_close(&d); printf("  differs: %s\n", e.name); return 0; }
++        n++;
++    }
++    sd_dir_close(&d);
++    return n > 0;
++}
++
++/* run this exe as a child: <self> child <mode> <arg>; returns its exit code */
++static int run_child(const char* mode, const char* arg)
++{
++    fflush(stdout);
++#ifdef _WIN32
++    wchar_t ws[SD_PATH_MAX], wm[64], wa[SD_PATH_MAX];
++    MultiByteToWideChar(CP_UTF8, 0, g_self, -1, ws, SD_PATH_MAX);
++    MultiByteToWideChar(CP_UTF8, 0, mode, -1, wm, 64);
++    MultiByteToWideChar(CP_UTF8, 0, arg ? arg : "-", -1, wa, SD_PATH_MAX);
++    wchar_t qs[SD_PATH_MAX + 2], qa[SD_PATH_MAX + 2];
++    swprintf(qs, SD_PATH_MAX + 2, L"\"%ls\"", ws);
++    swprintf(qa, SD_PATH_MAX + 2, L"\"%ls\"", wa);
++    return (int)_wspawnl(_P_WAIT, ws, qs, L"child", wm, qa, NULL);
++#else
++    pid_t p = fork();
++    if (p == 0) { execl(g_self, g_self, "child", mode, arg ? arg : "-", (char*)NULL); _exit(127); }
++    int st = 0;
++    waitpid(p, &st, 0);
++    return WIFEXITED(st) ? WEXITSTATUS(st) : 128;
++#endif
++}
++
++/* start a child without waiting (the lock holder) */
++static void start_child_async(const char* mode, const char* arg)
++{
++    fflush(stdout);
++#ifdef _WIN32
++    wchar_t ws[SD_PATH_MAX], wm[64], wa[SD_PATH_MAX], qs[SD_PATH_MAX + 2], qa[SD_PATH_MAX + 2];
++    MultiByteToWideChar(CP_UTF8, 0, g_self, -1, ws, SD_PATH_MAX);
++    MultiByteToWideChar(CP_UTF8, 0, mode, -1, wm, 64);
++    MultiByteToWideChar(CP_UTF8, 0, arg, -1, wa, SD_PATH_MAX);
++    swprintf(qs, SD_PATH_MAX + 2, L"\"%ls\"", ws);
++    swprintf(qa, SD_PATH_MAX + 2, L"\"%ls\"", wa);
++    _wspawnl(_P_NOWAIT, ws, qs, L"child", wm, qa, NULL);
++#else
++    if (fork() == 0) { execl(g_self, g_self, "child", mode, arg, (char*)NULL); _exit(127); }
++#endif
++}
++
++/* ---------------------------------------------------------------- children */
++static int child_oddpath(void)
++{
++    const char* root = save_root();
++    char want[SD_PATH_MAX];
++    sd_getenv("TEST_WANT_ROOT", want, sizeof want);
++    CHECK(sd_same_path(root, want), "root '%s' != '%s'", root, want);
++    CHECK(dir_exists(root), "root not created");
++    char lockp[SD_PATH_MAX];
++    snprintf(lockp, sizeof lockp, "%s/%s", root, SD_LOCK_NAME);
++    CHECK(exists(lockp), "no lock file");
++    /* a save through the title's file ops */
++    char sp[SD_PATH_MAX];
++    build_save_path(sp, sizeof sp, "BLUS30011_SAVE0");
++    static char payload[113152], back[113152];
++    for (size_t i = 0; i < sizeof payload; i++) payload[i] = (char)(i * 7 + 3);
++    CellSaveDataFileSet fs;
++    memset(&fs, 0, sizeof fs);
++    fs.fileOperation = CELL_SAVEDATA_FILEOP_WRITE;
++    fs.fileType = CELL_SAVEDATA_FILETYPE_NORMALFILE;
++    fs.fileName = "5B8AB877.PRG";
++    fs.fileSize = sizeof payload;
++    fs.fileBufSize = sizeof payload;
++    fs.fileBuf = payload;
++    CHECK(process_file_op(sp, &fs) == (s32)sizeof payload, "write failed");
++    CellSaveDataSystemFileParam prm;
++    memset(&prm, 0, sizeof prm);
++    snprintf(prm.title, sizeof prm.title, "Tony Hawk's Project 8");
++    snprintf(prm.subTitle, sizeof prm.subTitle, "Career [x] (y) & z");
++    write_param_sfo(sp, &prm);
++    CHECK(dir_has_save(sp), "no PARAM.SFO after the save");
++    CellSaveDataSystemFileParam got;
++    read_param_sfo(sp, &got);
++    CHECK(!strcmp(got.subTitle, prm.subTitle), "PARAM.SFO subtitle '%s'", got.subTitle);
++    CellSaveDataDirList dl[4];
++    CHECK(enumerate_save_dirs("BLUS30011", dl, 4) == 1 && !strcmp(dl[0].dirName, "BLUS30011_SAVE0"), "dir list");
++    CellSaveDataFileStat fl[8];
++    u32 nf = enumerate_save_files(sp, fl, 8);
++    CHECK(nf == 1 && !strcmp(fl[0].fileName, "5B8AB877.PRG") && fl[0].st_size == sizeof payload && fl[0].st_mtime > 1600000000,
++          "file list n=%u", nf);
++    memset(&fs, 0, sizeof fs);
++    fs.fileOperation = CELL_SAVEDATA_FILEOP_READ;
++    fs.fileType = CELL_SAVEDATA_FILETYPE_NORMALFILE;
++    fs.fileName = "5B8AB877.PRG";
++    fs.fileSize = sizeof back;
++    fs.fileBufSize = sizeof back;
++    fs.fileBuf = back;
++    CHECK(process_file_op(sp, &fs) == (s32)sizeof back && !memcmp(back, payload, sizeof back), "read back differs");
++    /* overwrite: crash-safe path, no .p3tmp left */
++    payload[0] ^= 0x55;
++    memset(&fs, 0, sizeof fs);
++    fs.fileOperation = CELL_SAVEDATA_FILEOP_WRITE;
++    fs.fileType = CELL_SAVEDATA_FILETYPE_NORMALFILE;
++    fs.fileName = "5B8AB877.PRG";
++    fs.fileSize = fs.fileBufSize = sizeof payload;
++    fs.fileBuf = payload;
++    CHECK(process_file_op(sp, &fs) == (s32)sizeof payload, "overwrite failed");
++    char tmpp[SD_PATH_MAX];
++    snprintf(tmpp, sizeof tmpp, "%s/5B8AB877.PRG%s", sp, SAVEDATA_TMP_SUFFIX);
++    CHECK(!exists(tmpp), ".p3tmp left");
++    return g_fail;
++}
++
++static int child_import(const char* expect)          /* expect: "yes" / "no" (count printed by the parent) */
++{
++    save_root();
++    (void)expect;
++    return g_fail;
++}
++
++static int child_hold(const char* ms)                 /* a game in the middle of a save pass */
++{
++    save_root();
++    char ready[SD_PATH_MAX];
++    sd_getenv("TEST_READY", ready, sizeof ready);
++    if (!savedata_pass_lock(1)) { printf("  holder: no lock\n"); return 2; }
++    write_file(ready, "1", 1);
++    sd_sleep_ms((unsigned)atoi(ms));
++    savedata_pass_unlock();
++    return 0;
++}
++
++static int child_idle(const char* ms)                 /* a game that has not touched its saves yet (THP8 at its title) */
++{
++    char ready[SD_PATH_MAX];
++    sd_getenv("TEST_READY", ready, sizeof ready);
++    write_file(ready, "1", 1);
++    sd_sleep_ms((unsigned)atoi(ms));
++    return 0;
++}
++
++/* 1 when another process holds the SESSION byte of <root>/.ps3recomp-savedata.lock (what the launcher checks) */
++static int session_held_by_other(const char* root)
++{
++    char p[SD_PATH_MAX];
++    snprintf(p, sizeof p, "%s/%s", root, SD_LOCK_NAME);
++#ifdef _WIN32
++    wchar_t w[SD_PATH_MAX + 8];
++    sd_wide(p, w, SD_PATH_MAX + 8);
++    HANDLE h = CreateFileW(w, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL,
++                           OPEN_EXISTING, 0, NULL);
++    if (h == INVALID_HANDLE_VALUE) return 0;
++    OVERLAPPED ov;
++    memset(&ov, 0, sizeof ov);
++    ov.Offset = SD_LOCK_SESSION;
++    int held = !LockFileEx(h, LOCKFILE_EXCLUSIVE_LOCK | LOCKFILE_FAIL_IMMEDIATELY, 0, 1, 0, &ov);
++    if (!held) UnlockFileEx(h, 0, 1, 0, &ov);
++    CloseHandle(h);
++    return held;
++#else
++    int fd = open(p, O_RDWR);
++    if (fd < 0) return 0;
++    struct flock fl;
++    memset(&fl, 0, sizeof fl);
++    fl.l_type = F_WRLCK; fl.l_whence = SEEK_SET; fl.l_start = (off_t)SD_LOCK_SESSION; fl.l_len = 1;
++    int held = fcntl(fd, F_GETLK, &fl) == 0 && fl.l_type != F_UNLCK;
++    close(fd);
++    return held;
++#endif
++}
++
++static int child_second(const char* want)             /* a second game on the folder: "busy" or "free" */
++{
++    save_root();
++    int ok = savedata_pass_lock(1);
++    printf("  second game: pass lock %s\n", ok ? "taken" : "not taken (busy)");
++    if (ok) savedata_pass_unlock();
++    return (ok == !strcmp(want, "free")) ? 0 : 1;
++}
++
++#ifndef _WIN32
++/* WSL1 (and some network file systems) do not enforce fcntl record locks between processes: case 6 is skipped there */
++static int child_probe(const char* path)
++{
++    int fd = open(path, O_RDWR);
++    struct flock fl;
++    memset(&fl, 0, sizeof fl);
++    fl.l_type = F_WRLCK; fl.l_whence = SEEK_SET; fl.l_start = (off_t)SD_LOCK_PASS; fl.l_len = 1;
++    return (fd >= 0 && fcntl(fd, F_SETLK, &fl) != 0) ? 0 : 1;     /* 0 = the parent's lock is enforced */
++}
++
++static int record_locks_enforced(const char* path)
++{
++    int fd = open(path, O_RDWR | O_CREAT, 0644);
++    struct flock fl;
++    memset(&fl, 0, sizeof fl);
++    fl.l_type = F_WRLCK; fl.l_whence = SEEK_SET; fl.l_start = (off_t)SD_LOCK_PASS; fl.l_len = 1;
++    if (fd < 0 || fcntl(fd, F_SETLK, &fl) != 0) return 0;
++    int r = run_child("probe", path);
++    close(fd);
++    return r == 0;
++}
++#endif
++
++static int child_oldlayout(void)
++{
++    const char* root = save_root();
++    char want[SD_PATH_MAX];
++    sd_getenv("TEST_WANT_ROOT", want, sizeof want);
++    CHECK(sd_same_path(root, want), "root '%s' != '%s'", root, want);
++    CHECK(!s_shared, "old layout flagged shared");
++    char lockp[SD_PATH_MAX];
++    snprintf(lockp, sizeof lockp, "%s/%s", root, SD_LOCK_NAME);
++    CHECK(!exists(lockp), "lock file in an install's own savedata");
++    CHECK(savedata_pass_lock(1) == 1, "pass lock without shared folder");
++    return g_fail;
++}
++
++/* ---------------------------------------------------------------- parent */
++static char g_base[SD_PATH_MAX];
++
++static void case_dir(char* out, size_t cap, const char* name)
++{
++    snprintf(out, cap, "%s/%s", g_base, name);
++}
++
++static void clear_env(void)
++{
++    setenv_u8("PS3_SAVEDATA_ROOT", NULL);
++    setenv_u8("PS3_SAVEDATA_IMPORT", NULL);
++    setenv_u8("PS3_VFS_STRICT", NULL);
++    setenv_u8("PS3_HDD0_ROOT", NULL);
++    setenv_u8("PS3_SAVEDATA_LOCK_MS", NULL);
++}
++
++int main(int argc, char** argv)
++{
++#ifdef _WIN32
++    /* argv in UTF-8 (the child mode arg can be a path) */
++    static char self[SD_PATH_MAX];
++    wchar_t w[SD_PATH_MAX];
++    GetModuleFileNameW(NULL, w, SD_PATH_MAX);
++    sd_utf8(w, self, sizeof self);
++    g_self = self;
++#else
++    g_self = argv[0];
++#endif
++    setvbuf(stdout, NULL, _IONBF, 0);
++    if (argc >= 4 && !strcmp(argv[1], "child")) {
++        const char* m = argv[2];
++        if (!strcmp(m, "oddpath")) return child_oddpath();
++        if (!strcmp(m, "import")) return child_import(argv[3]);
++        if (!strcmp(m, "hold")) return child_hold(argv[3]);
++        if (!strcmp(m, "second")) return child_second(argv[3]);
++        if (!strcmp(m, "idle")) return child_idle(argv[3]);
++        if (!strcmp(m, "oldlayout")) return child_oldlayout();
++#ifndef _WIN32
++        if (!strcmp(m, "probe")) return child_probe(argv[3]);
++#endif
++        return 99;
++    }
++    if (!sd_getenv("SAVEDATA_TEST_DIR", g_base, sizeof g_base)) snprintf(g_base, sizeof g_base, "savedata_shared_test");
++    {   /* every run in a new sub folder: nothing of an earlier run is reused (or deleted) */
++        char stamp[64];
++        snprintf(stamp, sizeof stamp, "/run_%lld", (long long)time(NULL));
++        strncat(g_base, stamp, sizeof g_base - strlen(g_base) - 1);
++    }
++    ensure_dirs(g_base);
++    printf("test dir: %s\n", g_base);
++    char root[SD_PATH_MAX], src[SD_PATH_MAX], p[SD_PATH_MAX], q[SD_PATH_MAX];
++    int rc;
++
++    /* 1. odd paths */
++    printf("1. a shared folder with spaces, [ ] ( ) & %% ! and non-ASCII characters\n");
++    clear_env();
++    case_dir(root, sizeof root, "1 Docs \xC3\x9Cn\xC3\xAF c\xC3\xB8" "d\xC3\xA9 \xE6\x97\xA5\xE6\x9C\xAC [x] (y) & z %TEMP% !bang!/My Games/Project 8 Plus/Saves");
++    setenv_u8("PS3_SAVEDATA_ROOT", root);
++    setenv_u8("TEST_WANT_ROOT", root);
++    rc = run_child("oddpath", "-");
++    CHECK(rc == 0, "child oddpath exit %d", rc);
++
++    /* 2. {Documents}: string only */
++    printf("2. {Documents} expands to the Documents folder (nothing created)\n");
++    {
++        char out[SD_PATH_MAX];
++        savedata_expand_root("{Documents}/My Games/Project 8 Plus/Saves", out, sizeof out);
++        printf("   -> %s\n", out);
++        CHECK(strstr(out, "/My Games/Project 8 Plus/Saves") && strncmp(out, "{", 1) != 0, "expanded '%s'", out);
++        savedata_expand_root("{documents}\\X", out, sizeof out);
++        CHECK(out[0] != '{' && strstr(out, "\\X"), "case-insensitive token: '%s'", out);
++        savedata_expand_root("D:\\Saves", out, sizeof out);
++        CHECK(!strcmp(out, "D:\\Saves"), "plain path changed: '%s'", out);
++    }
++
++    /* 3. import into an empty shared folder, then never again */
++    printf("3. import: an install's own save is copied into the empty shared folder\n");
++    clear_env();
++    case_dir(src, sizeof src, "3 old install (0.9.1) [a]/hdd0/home/00000001/savedata");
++    case_dir(root, sizeof root, "3 shared \xC3\x9C/Saves");
++    snprintf(p, sizeof p, "%s/BLUS30011_SAVE0", src);
++    make_save(p, 1);
++    s64 mt_src = mtime_of(p);
++    (void)mt_src;
++    char prg[SD_PATH_MAX];
++    snprintf(prg, sizeof prg, "%s/5B8AB877.PRG", p);
++    s64 mt_prg = mtime_of(prg);
++    setenv_u8("PS3_SAVEDATA_ROOT", root);
++    setenv_u8("PS3_SAVEDATA_IMPORT", src);
++    rc = run_child("import", "yes");
++    snprintf(q, sizeof q, "%s/BLUS30011_SAVE0", root);
++    CHECK(rc == 0 && dir_has_save(q), "no save in the shared folder after the import");
++    CHECK(same_files(p, q), "imported files differ from the source");
++    char qprg[SD_PATH_MAX];
++    snprintf(qprg, sizeof qprg, "%s/5B8AB877.PRG", q);
++    CHECK(mtime_of(qprg) == mt_prg, "write time not kept (%lld vs %lld)", (long long)mtime_of(qprg), (long long)mt_prg);
++    {
++        char mark[SD_PATH_MAX], txt[4096];
++        snprintf(mark, sizeof mark, "%s/%s", src, SD_IMPORT_MARK);
++        long n = read_file(mark, txt, sizeof txt - 1);
++        CHECK(n > 0, "no marker in the source");
++        if (n > 0) { txt[n] = 0; CHECK(strstr(txt, "COPIED") != NULL, "marker text"); }
++    }
++    CHECK(dir_has_save(p), "the source save is gone");
++    snprintf(p, sizeof p, "%s/BLUS30011_SAVE0.p3import", root);
++    CHECK(!dir_exists(p), "import tmp left");
++    /* the player empties the shared folder: no second import (marker) */
++    case_dir(root, sizeof root, "3 shared second/Saves");
++    setenv_u8("PS3_SAVEDATA_ROOT", root);
++    rc = run_child("import", "no");
++    snprintf(q, sizeof q, "%s/BLUS30011_SAVE0", root);
++    CHECK(rc == 0 && !dir_exists(q), "imported a second time despite the marker");
++
++    /* 4. never overwrite */
++    printf("4. no overwrite: a shared folder that has a save keeps it\n");
++    clear_env();
++    case_dir(src, sizeof src, "4 install/hdd0/home/00000001/savedata");
++    case_dir(root, sizeof root, "4 shared/Saves");
++    snprintf(p, sizeof p, "%s/BLUS30011_SAVE0", src);
++    make_save(p, 1);
++    snprintf(q, sizeof q, "%s/BLUS30011_SAVE0", root);
++    make_save(q, 2);
++    char keep[SD_PATH_MAX];
++    case_dir(keep, sizeof keep, "4 reference");
++    make_save(keep, 2);
++    setenv_u8("PS3_SAVEDATA_ROOT", root);
++    setenv_u8("PS3_SAVEDATA_IMPORT", src);
++    rc = run_child("import", "no");
++    CHECK(rc == 0 && same_files(keep, q), "the shared save changed");
++    {
++        char mark[SD_PATH_MAX];
++        snprintf(mark, sizeof mark, "%s/%s", src, SD_IMPORT_MARK);
++        CHECK(!exists(mark), "marker written although nothing was imported");
++    }
++
++    /* 5. interrupted import */
++    printf("5. an interrupted import is no save and is finished by the next start\n");
++    clear_env();
++    case_dir(src, sizeof src, "5 install/hdd0/home/00000001/savedata");
++    case_dir(root, sizeof root, "5 shared/Saves");
++    snprintf(p, sizeof p, "%s/BLUS30011_SAVE0", src);
++    make_save(p, 3);
++    snprintf(q, sizeof q, "%s/BLUS30011_SAVE0.p3import", root);
++    ensure_dirs(q);
++    char half[SD_PATH_MAX];
++    snprintf(half, sizeof half, "%s/5B8AB877.PRG", q);
++    write_file(half, "half", 4);
++    {
++        setenv_u8("PS3_SAVEDATA_ROOT", root);   /* this process: list the folder as the game would (no import here) */
++        CellSaveDataDirList dl[4];
++        CHECK(enumerate_save_dirs("", dl, 4) == 0, "a .p3import folder listed as a save");
++        CHECK(sd_count_saves(root) == 0, "a .p3import folder counted as a save");
++    }
++    setenv_u8("PS3_SAVEDATA_ROOT", root);
++    setenv_u8("PS3_SAVEDATA_IMPORT", src);
++    rc = run_child("import", "yes");
++    snprintf(q, sizeof q, "%s/BLUS30011_SAVE0", root);
++    CHECK(rc == 0 && same_files(p, q), "the interrupted import was not finished");
++
++    /* 6. two games on one folder */
++    printf("6. locks: a second game waits for the first one's save pass\n");
++    clear_env();
++    case_dir(root, sizeof root, "6 shared/Saves");
++#ifndef _WIN32
++    case_dir(p, sizeof p, "6 probe.lock");
++    if (!record_locks_enforced(p)) {
++        printf("   SKIP: this system does not enforce record locks between processes (WSL1?)\n");
++        goto case7;
++    }
++#endif
++    case_dir(p, sizeof p, "6 ready.txt");
++    setenv_u8("PS3_SAVEDATA_ROOT", root);
++    setenv_u8("TEST_READY", p);
++    start_child_async("hold", "2500");
++    for (int i = 0; i < 100 && !exists(p); i++) sd_sleep_ms(50);
++    CHECK(exists(p), "the holder did not start");
++    setenv_u8("PS3_SAVEDATA_LOCK_MS", "300");
++    rc = run_child("second", "busy");
++    CHECK(rc == 0, "the second game got the pass lock while the first one held it");
++    setenv_u8("PS3_SAVEDATA_LOCK_MS", "10000");
++    rc = run_child("second", "free");
++    CHECK(rc == 0, "the second game never got the lock after the first one ended");
++
++    /* 6b. the session is taken at process start (before any save-data call): the launcher sees a game at its title */
++    printf("6b. a game that has not touched its saves yet already holds the session\n");
++    case_dir(root, sizeof root, "6b shared/Saves");
++    case_dir(p, sizeof p, "6b ready.txt");
++    setenv_u8("PS3_SAVEDATA_ROOT", root);
++    setenv_u8("TEST_READY", p);
++    start_child_async("idle", "2000");
++    for (int i = 0; i < 100 && !exists(p); i++) sd_sleep_ms(50);
++    CHECK(exists(p) && session_held_by_other(root), "the idle game holds no session lock");
++    sd_sleep_ms(2600);
++    CHECK(!session_held_by_other(root), "the session lock outlived the game");
++
++#ifndef _WIN32
++case7:
++#endif
++    /* 7. the old per-install layout */
++    printf("7. without PS3_SAVEDATA_ROOT: the install's own hdd0, as before\n");
++    clear_env();
++    case_dir(p, sizeof p, "7 install/hdd0");
++    ensure_dirs(p);
++    setenv_u8("PS3_VFS_STRICT", "1");
++    setenv_u8("PS3_HDD0_ROOT", p);
++    snprintf(q, sizeof q, "%s/home/00000001/savedata", p);
++    setenv_u8("TEST_WANT_ROOT", q);
++    rc = run_child("oldlayout", "-");
++    CHECK(rc == 0, "old layout child exit %d", rc);
++
++    /* 8. a shared folder that cannot be made (below a FILE): the install's own savedata this time */
++    printf("8. a shared folder that cannot be made: the install's own savedata\n");
++    clear_env();
++    case_dir(src, sizeof src, "8 install/hdd0/home/00000001/savedata");
++    ensure_dirs(src);
++    case_dir(p, sizeof p, "8 a file");
++    write_file(p, "x", 1);
++    snprintf(root, sizeof root, "%s/Saves", p);              /* below a file: never a folder */
++    setenv_u8("PS3_SAVEDATA_ROOT", root);
++    setenv_u8("PS3_SAVEDATA_IMPORT", src);
++    setenv_u8("TEST_WANT_ROOT", src);
++    rc = run_child("oldlayout", "-");
++    CHECK(rc == 0, "fallback child exit %d", rc);
++
++    printf(g_fail ? "FAIL\n" : "PASS\n");
++    return g_fail;
++}
 diff --git a/third_party/xxhash/README.txt b/third_party/xxhash/README.txt
 new file mode 100644
 index 00000000..313ed6ad

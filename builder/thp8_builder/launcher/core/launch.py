@@ -146,6 +146,12 @@ def start(inst, variant, extra_env=None, **opts):
         for k, v in modsettings.env_for(os.path.join(inst, "mods")).items():
             env.setdefault(k, v)
     env.update(option_env(opts.get("audio")))
+    # your saves: the shared save folder this launcher resolved (core/saves.py), as P8_SAVE_DIR: the script then does not
+    # read the pointer file, and a folder name outside the console code page arrives unchanged (an environment variable)
+    from . import saves
+    if saves.ENV not in (extra_env or {}):
+        env.update(saves.launch_env())
+    saves.remember_install(inst)
     for k, v in (extra_env or {}).items():
         env[SCRIPT_OVERRIDES.get(k, k)] = str(v)
     cmd = command(inst, variant, **opts)

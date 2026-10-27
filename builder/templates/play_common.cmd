@@ -50,6 +50,30 @@ if defined THP8_OVERRIDE_HDD0 set "PS3_HDD0_ROOT=%THP8_OVERRIDE_HDD0:\=/%"
 rem the player's mod settings from the launcher's Mods page (plugins\*.user.ini as PS3MOD_* variables)
 if /i "%VARIANT%"=="p8plus" if not defined THP8_OVERRIDE_MODS if exist "%ROOT%\launcher\mod_settings.cmd" call "%ROOT%\launcher\mod_settings.cmd"
 
+rem ---- YOUR SAVES: one folder for every install and version (since 0.9.2), Documents\My Games\Project 8 Plus\Saves.
+rem   P8_SAVE_DIR wins (the launcher sets it); else the folder picked in the launcher's Settings > Saves
+rem   (%APPDATA%\Project 8 Plus\save_folder.txt, or P8_CONFIG_DIR\save_folder.txt); else the default. The game finds
+rem   {Documents} itself (also a Documents folder moved to OneDrive). The saves this install kept in hdd0 (0.9.1 and
+rem   older) are COPIED into an empty shared folder on the first start; the originals stay where they are.
+rem   The creator tools' test runs (THP8_OVERRIDE_HDD0) keep their saves in their own console drive, and so does a game
+rem   built by 0.9.1 or older (the launcher refreshes this script in old installs too): only an exe that knows the shared
+rem   folder (it contains the name PS3_SAVEDATA_IMPORT) gets it.
+set "P8_SHARED="
+findstr /m /c:"PS3_SAVEDATA_IMPORT" "%EXE%" >nul 2>&1 && set "P8_SHARED=1"
+set "P8_CFG=%APPDATA%\Project 8 Plus"
+if defined P8_CONFIG_DIR set "P8_CFG=%P8_CONFIG_DIR%"
+if not defined P8_SAVE_DIR if exist "%P8_CFG%\save_folder.txt" call :read_save_folder
+set "PS3_SAVEDATA_ROOT={Documents}\My Games\Project 8 Plus\Saves"
+set "SAVES_SHOWN=Documents\My Games\Project 8 Plus\Saves"
+if defined P8_SAVE_DIR set "PS3_SAVEDATA_ROOT=%P8_SAVE_DIR%"
+if defined P8_SAVE_DIR set "SAVES_SHOWN=%P8_SAVE_DIR%"
+set "PS3_SAVEDATA_IMPORT=%ROOT%\hdd0\home\00000001\savedata"
+if not defined P8_SHARED set "SAVES_SHOWN=%ROOT%\hdd0\home\00000001\savedata (this game was built by 0.9.1 or older)"
+if defined THP8_OVERRIDE_HDD0 set "P8_SHARED="
+if defined THP8_OVERRIDE_HDD0 set "SAVES_SHOWN=%THP8_OVERRIDE_HDD0%\home\00000001\savedata"
+if not defined P8_SHARED set "PS3_SAVEDATA_ROOT="
+if not defined P8_SHARED set "PS3_SAVEDATA_IMPORT="
+
 :args
 if "%~1"=="" goto argsdone
 if /i "%~1"=="fullscreen" ( set "PS3_FULLSCREEN=1" & shift & goto args )
@@ -108,7 +132,10 @@ echo.
 echo   Sound: the Windows default output (switch it any time in Windows Sound
 echo   settings). Pick a device: add  audio "Headphones"
 echo   A start that builds the data cache (first start, mods changed) shows a progress screen.
-echo   Saves: %ROOT%\hdd0\home\00000001\savedata
+rem delayed expansion: a folder name with special characters is printed as text, never run
+setlocal EnableDelayedExpansion
+echo   Saves: !SAVES_SHOWN!   (every install and version; back up this folder)
+endlocal
 echo   Log:   %LOG%   (the last 5 sessions: .1 = the previous one ... .5)
 echo  ==================================================================
 echo   Starting...
@@ -123,3 +150,13 @@ if exist "%LOG%" move /y "%LOG%" "%LOG%.1" >nul 2>&1
 set "RC=%ERRORLEVEL%"
 echo   Game exited (code %RC%). Log: %LOG%
 endlocal & exit /b %RC%
+
+:read_save_folder
+rem save_folder.txt is UTF-8 (the launcher writes it): read under code page 65001 so a folder name outside the console
+rem code page arrives unchanged, then switch back. This file itself is ASCII, so the switch does not change how cmd reads it.
+set "P8_OLDCP="
+for /f "tokens=2 delims=:." %%C in ('chcp') do set "P8_OLDCP=%%C"
+chcp 65001 >nul
+for /f "usebackq delims=" %%A in ("%P8_CFG%\save_folder.txt") do if not defined P8_SAVE_DIR set "P8_SAVE_DIR=%%A"
+if defined P8_OLDCP chcp %P8_OLDCP% >nul
+exit /b 0

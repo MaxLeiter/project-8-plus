@@ -14,6 +14,12 @@ suite, Create. User guide: `docs/LAUNCHER.md`.
 
 * `launcher/app.py` the shell (navigation rail, dialogs, install state), `workspace.py` the page interface (add a page:
   one module + one line in `app.WORKSPACES`), `ws_*.py` the pages.
+* `launcher/core/saves.py` + `launcher/saves_panel.py`: your saves (0.9.2): ONE folder per user for every install and version
+  (`Documents\My Games\Project 8 Plus\Saves`, Linux `$XDG_DATA_HOME/project8plus/saves`). Which folder: `P8_SAVE_DIR`, else
+  the Settings pointer `<config>\save_folder.txt` (`%APPDATA%\Project 8 Plus`, `P8_CONFIG_DIR` in tests), else the default;
+  `templates/play_common.cmd|.sh` apply the same rule and hand the game `PS3_SAVEDATA_ROOT` (`{Documents}\...` is resolved by the
+  runtime: the known folder) and `PS3_SAVEDATA_IMPORT` (the install's own `hdd0\home\00000001\savedata`: the runtime copies it
+  once into an empty shared folder, ps3recomp `libs/system/cellSaveData.c`). Tests: `tests/test_saves.py` (temp profile only).
 * `launcher/core/` is UI-free (a test forbids toolkit imports): `ini.py` + `schema.py` (the plugin settings),
   `mods.py` + `zipcheck.py` (the mod manager), `launch.py`, `jobs.py`, `context.py`, `texlib/` (texture keys, DDS,
   index, thumbnails, packs).

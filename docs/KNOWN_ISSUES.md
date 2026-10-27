@@ -19,6 +19,22 @@ the same length, and the texture cache (changed in this release so a full cache 
 If it happens, quit the mission and save, or restart the game; progress up to the last save is kept. A log of such a
 session helps: `logs\play_p8plus.log` (the last 5 sessions are kept as `.1` to `.5`).
 
+## Saves moved to one shared folder (0.9.2)
+
+From 0.9.2 your saves are in `Documents\My Games\Project 8 Plus\Saves`
+(Linux: `~/.local/share/project8plus/saves`), not in the install. The first
+start copies an install's old saves there only when that folder has no save yet;
+if it already has one, the install's own saves stay where they are and Play says
+so: import them in Settings > Saves. 0.9.1 and older installs still use their own
+`hdd0` folder, so a save made in an old install after you moved on does not show
+up in the new one until you import it again.
+
+Running two games on the same saves at once is safe for the files, but the game
+that saves last wins. On Linux the lock that tells running games apart needs a
+file system with working record locks (a save folder on a network share or under
+WSL1 may not have them); Proton games in different prefixes do not see each
+other's lock.
+
 ## Closing the window
 
 Closing the window asks the game to save and exit, the way the PS3's quit
